@@ -571,7 +571,7 @@ function populateSite(cfg, data){
       wind: (avg(ws)/3.6).toFixed(1),  // km/h -> m/s
       gust: (Math.max.apply(null,gu)/3.6).toFixed(1),
       precip: pp.toFixed(1),
-      temp: cToF(avg(temps))
+      temp: cToF(Math.max.apply(null,temps))
     };
   }
 
