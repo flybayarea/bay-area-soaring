@@ -637,7 +637,7 @@ function fetchOpenMeteo(cfg){
     +'&timezone=America%2FLos_Angeles&forecast_days=7';
   fetch(url)
     .then(function(r){return r.json();})
-    .then(function(data){populateSite(cfg,data);})
+    .then(function(data){try{populateSite(cfg,data);}catch(e){console.error('populateSite err '+cfg.pfx,e);}})
     .catch(function(e){
       console.error('Open-Meteo error for '+cfg.pfx,e);
       var statusEl=document.getElementById(cfg.pfx+'-status');
