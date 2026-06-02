@@ -184,7 +184,7 @@ footer a{color:var(--accent);text-decoration:none}
     <div class="card" id="levin">
       <div class="ch">
         <div><h2>Ed R. Levin Park</h2><div class="sub">Milpitas, CA &middot; Paragliding &middot; 37.4619 N, 121.861 W</div></div>
-        <span class="sb sl" id="levin-status">&bull; Loading...</span>
+        <span class="sb sr">&bull; Not Flyable Today</span>
       </div>
       <div class="tabs">
         <button class="tb on" onclick="sw('lev','t1',this)">Today (Mon)</button>
@@ -194,8 +194,8 @@ footer a{color:var(--accent);text-decoration:none}
       </div>
       <div id="lev-t1" class="tc on">
         <div class="stats">
-          <div class="stat"><div class="lbl">Wind Speed</div><div class="val">2.4<span class="u">m/s</span></div></div>
-          <div class="stat"><div class="lbl">Gusts</div><div class="val">5.0<span class="u">m/s</span></div></div>
+          <div class="stat"><div class="lbl">Wind Speed</div><div class="val"><span id="levin-wind-today">--</span><span class="u">m/s</span></div></div>
+          <div class="stat"><div class="lbl">Gusts</div><div class="val"	><span id="levin-gust-today">--</span><span class="u">m/s</span></div></div>
           <div class="stat"><div class="lbl">Temperature</div><div class="val">57<span class="u">F</span></div></div>
           <div class="stat"><div class="lbl">Precipitation</div><div class="val">6.5<span class="u">mm</span></div></div>
         </div>
@@ -239,7 +239,7 @@ footer a{color:var(--accent);text-decoration:none}
       <div style="padding:0 24px 24px">
         <div class="wl">&#128249; Site Video</div>
         <div style="border-radius:8px;overflow:hidden;border:1px solid var(--border)">
-          <iframe width="100%" height="300" src="https://www.youtube.com/embed/videoseries?list=PLbpi6ZahtOH6Ar_3GPy3workH_KvVOes" frameborder="0" allowfullscreen></iframe>
+          <iframe width="100%" height="300" src="https://www.youtube.com/embed/7v9mcxlk8xc" frameborder="0" allowfullscreen></iframe>
         </div>
       </div>
     </div>
@@ -248,7 +248,7 @@ footer a{color:var(--accent);text-decoration:none}
     <div class="card" id="mussel">
       <div class="ch">
         <div><h2>Mussel Rock Park</h2><div class="sub">Daly City, CA &middot; Kitesurfing / Hang Gliding &middot; 37.6740 N, 122.4887 W</div></div>
-        <span class="sb sl" id="mussel-status">&bull; Loading...</span>
+        <span class="sb sr">&bull; Dangerous Today</span>
       </div>
       <div class="tabs">
         <button class="tb on" onclick="sw('mus','t1',this)">Today (Mon)</button>
@@ -258,10 +258,10 @@ footer a{color:var(--accent);text-decoration:none}
       </div>
       <div id="mus-t1" class="tc on">
         <div class="stats">
-          <div class="stat"><div class="lbl">Wind Speed</div><div class="val">4.5<span class="u">m/s</span></div></div>
-          <div class="stat"><div class="lbl">Gusts</div><div class="val">9.2<span class="u">m/s</span></div></div>
-          <div class="stat"><div class="lbl">Temperature</div><div class="val">53<span class="u">F</span></div></div>
-          <div class="stat"><div class="lbl">Precipitation</div><div class="val">8.1<span class="u">mm</span></div></div>
+          <div class="stat"><div class="lbl">Wind Speed</div><div class="val"><span id="mussel-wind-today">--</span><span class="u">m/s</span></div></div>
+          <div class="stat"><div class="lbl">Gusts</div><div class="val"><span id="mussel-gust-today">--</span><span class="u">m/s</span></div></div>
+          <div class="stat"><div class="lbl">Temperature</div><div class="val"><span id="mussel-temp-today">--</span><span class="u">F</span></div></div>
+          <div class="stat"><div class="lbl">Precipitation</div><div class="val"><span id="mussel-precip-today">--</span><span class="u">mm</span> 7v9mcxlk8xc	7v9mcxlk8xc 4. Click Commit changes — done, no token needed! ✅  Can you see the GitHub editor open in your browser?</div></div>
         </div>
         <div class="desc"><strong>GO / NO-GO: DANGEROUS — DO NOT FLY.</strong> Heavy rain with gusts exceeding 20 mph make conditions extremely hazardous. Cold water at 57F adds hypothermia risk. No pilot level should fly today.</div>
         <div class="tags"><span class="tag tr">Heavy Rain</span><span class="tag tr">Dangerous Gusts</span><span class="tag tr">Hypothermia Risk</span><span class="tag tr">Unsafe Launch</span></div>
@@ -279,7 +279,7 @@ footer a{color:var(--accent);text-decoration:none}
       <div id="mus-t3" class="tc">
         <table><thead><tr><th>Day</th><th>Wind / Gusts</th><th>Precip</th><th>NWS Condition</th><th>Assessment</th></tr></thead>
         <tbody>
-          <tr><td class="dl"></td><td>4.5 / 9.2 m/s</td><td>8.1mm</td><td>Partly Cloudy, Rain, W 6-12mph</td><td>Dangerous</td></tr>
+          <tr><td class="dl"></td><td>4.5 / 9.2 m/s</td><td><span id="mussel-precip-today">--</span>mm</td><td>Partly Cloudy, Rain, W 6-12mph</td><td>Dangerous</td></tr>
           <tr><td class="dl"></td><td>5.8 / 7.7 m/s</td><td>0mm</td><td>Mostly Cloudy, 57F, W 13mph</td><td>Flyable PM</td></tr>
           <tr><td class="dl"></td><td>7.6 / 10.7 m/s</td><td>0mm</td><td>Mostly Sunny, 58F, WNW 13-17mph, G22</td><td>Best Day!</td></tr>
           <tr><td class="dl"></td><td>5.5 / 7.0 m/s</td><td>0mm</td><td>Sunny, 61F, WNW 6-12mph</td><td>Good</td></tr>
