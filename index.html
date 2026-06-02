@@ -1,817 +1,113 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Bay Area Soaring</title>
-<style>
-:root{--bg:#0d1117;--card:#161b22;--border:#30363d;--accent:#58a6ff;--green:#3fb950;--yellow:#d29922;--red:#f85149;--text:#e6edf3;--muted:#8b949e;--sidebar-w:220px}
-*{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;display:flex;flex-direction:column;min-height:100vh}
-header{background:linear-gradient(135deg,#0d1117,#161b22);border-bottom:1px solid var(--border);padding:28px 24px 20px;text-align:center}
-.logo{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
-header h1{font-size:clamp(22px,5vw,36px);font-weight:700}
-header p{color:var(--muted);font-size:14px;margin-top:6px}
-.badge{display:inline-block;margin-top:12px;padding:4px 12px;border-radius:20px;background:rgba(88,166,255,0.1);border:1px solid rgba(88,166,255,0.25);font-size:12px;color:var(--accent)}
-.bar{display:flex;gap:12px;padding:16px 20px;overflow-x:auto;border-bottom:1px solid var(--border);background:var(--card)}
-.pill{display:flex;align-items:center;gap:8px;padding:8px 16px;border-radius:30px;border:1px solid var(--border);white-space:nowrap;font-size:13px;background:var(--bg)}
-.dot{width:9px;height:9px;border-radius:50%}
-.dr{background:var(--red);box-shadow:0 0 6px var(--red)}
-.dy{background:var(--yellow);box-shadow:0 0 6px var(--yellow)}
-.dg{background:var(--green);box-shadow:0 0 6px var(--green)}
+▲ BAY AREA SOARING
+Flight Conditions Dashboard
+Live weather briefings for Bay Area flying sites
+Updated: · NOAA / NWS Live Data
+↻ Auto-refresh every 3 min — Next update in:
+20:00
 
-/* LAYOUT */
-.layout{display:flex;flex:1}
+Ed R. Levin — Not Flyable Today
 
-/* SIDEBAR */
-.sidebar{width:var(--sidebar-w);background:var(--card);border-right:1px solid var(--border);padding:20px 0;position:sticky;top:0;height:100vh;overflow-y:auto;flex-shrink:0}
-.sidebar-title{font-size:10px;text-transform:uppercase;letter-spacing:2px;color:var(--muted);padding:0 18px 12px;border-bottom:1px solid var(--border);margin-bottom:12px}
-.nav-item{display:flex;align-items:center;gap:10px;padding:11px 18px;cursor:pointer;text-decoration:none;color:var(--text);font-size:13px;font-weight:500;transition:background 0.15s,color 0.15s;border-left:3px solid transparent}
-.nav-item:hover{background:rgba(88,166,255,0.08);color:var(--accent);border-left-color:var(--accent)}
-.nav-item .nav-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-.nav-item .nav-sub{font-size:11px;color:var(--muted);margin-top:1px}
-.nav-item-inner{display:flex;flex-direction:column}
+Mussel Rock — Dangerous Today
 
-/* MAIN */
-main{flex:1;max-width:100%;padding:28px 20px 60px;display:flex;flex-direction:column;gap:32px}
+Ed R. Levin — Marginal Tomorrow
 
-.card{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden}
-.ch{display:flex;align-items:flex-start;justify-content:space-between;padding:20px 24px 16px;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:12px}
-.ch h2{font-size:20px;font-weight:700}
-.ch .sub{font-size:12px;color:var(--muted);margin-top:3px}
-.sb{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;white-space:nowrap}
-.sr{background:rgba(248,81,73,0.15);border:1px solid rgba(248,81,73,0.4);color:#ff7b72}
-.sy{background:rgba(210,153,34,0.15);border:1px solid rgba(210,153,34,0.4);color:#e3b341}
-.sg{background:rgba(63,185,80,0.15);border:1px solid rgba(63,185,80,0.4);color:#56d364}
-.sl{background:rgba(139,148,158,0.15);border:1px solid rgba(139,148,158,0.4);color:#8b949e}
-.tabs{display:flex;border-bottom:1px solid var(--border);padding:0 24px;background:rgba(255,255,255,0.02);flex-wrap:wrap}
-.tb{padding:12px 18px;font-size:13px;font-weight:500;color:var(--muted);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;transition:all 0.2s;white-space:nowrap}
-.tb:hover{color:var(--text)}
-.tb.on{color:var(--accent);border-bottom-color:var(--accent)}
-.tc{display:none;padding:24px}
-.tc.on{display:block}
-.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:20px}
-.stat{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:14px 16px}
-.stat .lbl{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:6px}
-.stat .val{font-size:20px;font-weight:700}
-.stat .u{font-size:12px;color:var(--muted);margin-left:2px}
-.desc{background:var(--bg);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:8px;padding:16px 18px;font-size:14px;line-height:1.7;color:var(--muted);margin-bottom:16px}
-.desc strong{color:var(--text)}
-.tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
-.tag{padding:4px 10px;border-radius:6px;font-size:11px;font-weight:600}
-.tr{background:rgba(248,81,73,0.12);color:#ff7b72;border:1px solid rgba(248,81,73,0.3)}
-.ty{background:rgba(210,153,34,0.12);color:#e3b341;border:1px solid rgba(210,153,34,0.3)}
-.tb2{background:rgba(88,166,255,0.12);color:#79c0ff;border:1px solid rgba(88,166,255,0.3)}
-.tg{background:rgba(63,185,80,0.12);color:#56d364;border:1px solid rgba(63,185,80,0.3)}
-table{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:20px}
-th{text-align:left;padding:10px 12px;font-size:11px;text-transform:uppercase;letter-spacing:0.8px;color:var(--muted);border-bottom:1px solid var(--border);background:rgba(255,255,255,0.02)}
-td{padding:11px 12px;border-bottom:1px solid rgba(48,54,61,0.5);vertical-align:top}
-.dl{font-weight:600;color:var(--text)}
-.ws{padding:0 24px 24px;border-top:1px solid var(--border)}
-.wl{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);padding:16px 0 12px}
-.ww{border-radius:8px;overflow:hidden;border:1px solid var(--border)}
-footer{text-align:center;padding:20px;font-size:12px;color:var(--muted);border-top:1px solid var(--border)}
-footer a{color:var(--accent);text-decoration:none}
-.nws-wrap{font-size:13px}
-.nws-obs-station{font-size:11px;color:var(--muted);margin-bottom:12px}
-.nws-cur{display:flex;gap:20px;align-items:flex-start;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:20px;margin-bottom:20px;flex-wrap:wrap}
-.nws-cur-left{display:flex;align-items:center;gap:16px;min-width:220px}
-.nws-cur-icon{width:86px;height:86px;object-fit:contain;filter:drop-shadow(0 2px 8px rgba(0,0,0,0.4))}
-.nws-cur-temp{font-size:52px;font-weight:700;line-height:1}
-.nws-cur-cond{font-size:16px;color:var(--muted);margin-top:4px}
-.nws-cur-right{display:grid;grid-template-columns:1fr 1fr;gap:6px 24px;font-size:13px;flex:1}
-.nws-cur-row{display:flex;justify-content:space-between;gap:8px;padding:5px 0;border-bottom:1px solid rgba(48,54,61,0.4)}
-.nws-cur-label{color:var(--muted)}
-.nws-cur-val{color:var(--text);font-weight:600}
-.nws-cur-meta{font-size:11px;color:var(--muted);margin-top:10px;grid-column:1/-1}
-.nws-section-title{font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:var(--accent);margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid var(--border)}
-.nws-7day-strip{display:flex;gap:8px;overflow-x:auto;padding-bottom:8px;margin-bottom:20px}
-.nws-day{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px 10px;text-align:center;min-width:90px;flex-shrink:0}
-.nws-day.tonight{border-color:var(--accent);background:rgba(88,166,255,0.06)}
-.nws-day-name{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted);margin-bottom:8px}
-.nws-day-icon{width:60px;height:60px;object-fit:contain;margin:0 auto 8px;display:block}
-.nws-day-temp{font-size:15px;font-weight:700;margin-bottom:4px}
-.hi{color:#f9826c}.lo{color:#79c0ff}
-.nws-day-cond{font-size:10px;color:var(--muted);line-height:1.3}
-.nws-detail-row{padding:10px 0;border-bottom:1px solid rgba(48,54,61,0.4)}
-.nws-detail-row:last-child{border-bottom:none}
-.nws-detail-period{font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px}
-.nws-detail-text{font-size:13px;color:var(--muted);line-height:1.6}
-.nws-link-bar{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
-.nws-link{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--accent);text-decoration:none;padding:6px 12px;border:1px solid rgba(88,166,255,0.3);border-radius:6px}
-.nws-link:hover{background:rgba(88,166,255,0.1)}
-.nws-loading{color:var(--muted);font-size:13px;padding:20px 0;text-align:center}
-.hr-table{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:8px}
-.hr-table th{text-align:left;padding:9px 10px;font-size:10px;text-transform:uppercase;letter-spacing:0.8px;color:var(--muted);border-bottom:2px solid var(--border);background:rgba(255,255,255,0.02);white-space:nowrap}
-.hr-table td{padding:9px 10px;border-bottom:1px solid rgba(48,54,61,0.4);vertical-align:middle;white-space:nowrap}
-.hr-table tr:last-child td{border-bottom:none}
-.hr-table tr:hover td{background:rgba(255,255,255,0.02)}
-.hr-time{font-weight:700;color:var(--text);min-width:70px}
-.hr-temp{font-weight:700;color:#f9826c}
-.hr-wind{color:var(--text)}
-.hr-gust{color:var(--muted);font-size:11px}
-.hr-sky{color:var(--muted);max-width:160px;white-space:normal;line-height:1.3}
-.fly-go{display:inline-block;padding:3px 9px;border-radius:12px;font-size:10px;font-weight:700;background:rgba(63,185,80,0.15);color:#56d364;border:1px solid rgba(63,185,80,0.3)}
-.fly-marg{display:inline-block;padding:3px 9px;border-radius:12px;font-size:10px;font-weight:700;background:rgba(210,153,34,0.15);color:#e3b341;border:1px solid rgba(210,153,34,0.3)}
-.fly-no{display:inline-block;padding:3px 9px;border-radius:12px;font-size:10px;font-weight:700;background:rgba(248,81,73,0.15);color:#ff7b72;border:1px solid rgba(248,81,73,0.3)}
-.hr-day-header td{background:rgba(88,166,255,0.06);color:var(--accent);font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:1px;padding:6px 10px;border-bottom:1px solid var(--border)}
-.hr-scroll{max-height:480px;overflow-y:auto;border-radius:8px;border:1px solid var(--border)}
+Mussel Rock — Flyable Tomorrow PM
 
-@media(max-width:700px){
-  .sidebar{display:none}
-  .layout{flex-direction:column}
-}
-</style>
-</head>
-<body>
+Best Window: calculating...
+FLYING SITES
 
-<header>
-  <div class="logo">&#9650; Bay Area Soaring</div>
-  <h1>Flight Conditions Dashboard</h1>
-  <p>Live weather briefings for Bay Area flying sites</p>
-  <div class="badge">Updated: <span id="dt"></span> &middot; NOAA / NWS Live Data</div>
-</header>
-<div style="display:flex;align-items:center;justify-content:center;gap:8px;padding:7px 16px;background:rgba(88,166,255,0.07);border-bottom:1px solid #30363d;font-size:12px;color:#8b949e">&#8635; Auto-refresh every 3 min &mdash; Next update in: <span id="refresh-countdown" style="color:#58a6ff;font-weight:700">20:00</span></div>
+Ed R. Levin Park
+Milpitas · Paragliding
 
-<!-- STATUS BAR -->
-<div class="bar">
-  <div class="pill"><span class="dot dr"></span>Ed R. Levin — Not Flyable Today</div>
-  <div class="pill"><span class="dot dr"></span>Mussel Rock — Dangerous Today</div>
-  <div class="pill"><span class="dot dy"></span>Ed R. Levin — Marginal Tomorrow</div>
-  <div class="pill"><span class="dot dg"></span>Mussel Rock — Flyable Tomorrow PM</div>
-  <div class="pill"><span class="dot dg"></span><span id="best-window-label">Best Window: calculating...</span></div>
-</div>
+Mussel Rock Park
+Daly City · Hang Gliding
 
-<div class="layout">
+Shoreline Kite Area
+Mountain View · Kites
 
-  <!-- SIDEBAR NAV -->
-  <nav class="sidebar">
-    <div class="sidebar-title">Flying Sites</div>
-    <a class="nav-item" href="#levin">
-      <span class="nav-dot dr"></span>
-      <div class="nav-item-inner">
-        <span>Ed R. Levin Park</span>
-        <span class="nav-sub">Milpitas · Paragliding</span>
-      </div>
-    </a>
-    <a class="nav-item" href="#mussel">
-      <span class="nav-dot dr"></span>
-      <div class="nav-item-inner">
-        <span>Mussel Rock Park</span>
-        <span class="nav-sub">Daly City · Hang Gliding</span>
-      </div>
-    </a>
-    <a class="nav-item" href="#shoreline">
-      <span class="nav-dot" id="nav-dot-kite" style="background:var(--muted)"></span>
-      <div class="nav-item-inner">
-        <span>Shoreline Kite Area</span>
-        <span class="nav-sub">Mountain View · Kites</span>
-      </div>
-    </a>
-    <a class="nav-item" href="#mpeak">
-      <span class="nav-dot" id="nav-dot-mpeak" style="background:var(--muted)"></span>
-      <div class="nav-item-inner">
-        <span>Mission Peak</span>
-        <span class="nav-sub">Fremont · Paragliding</span>
-      </div>
-    </a>
-  </nav>
+Mission Peak
+Fremont · Paragliding
+SITE VIDEOS
+Ed R. Levin
+WindSlammer Live Cam
+Mussel Rock
+Paragliding Video
+Ed R. Levin Park
+Milpitas, CA · Paragliding · 37.4619 N, 121.861 W
+• Not Flyable Today
+Today (Mon)
+Tomorrow (Tue)
+6-Day Outlook
+NWS Forecast
+WIND SPEED
+--m/s
+GUSTS
+--m/s
+TEMPERATURE
+--F
+PRECIPITATION
+--mm
+Loading curren...
+LIVE WINDY.APP WIDGET
 
-  <!-- MAIN CONTENT -->
-  <main>
+Mussel Rock Park
+Daly City, CA · Kitesurfing / Hang Gliding · 37.6740 N, 122.4887 W
+• Dangerous Today
+Today (Mon)
+Tomorrow (Tue)
+6-Day Outlook
+NWS Forecast
+WIND SPEED
+--m/s
+GUSTS
+--m/s
+TEMPERATURE
+--F
+PRECIPITATION
+--mm
+Loading curren...
+LIVE WINDY.APP WIDGET
 
-    <!-- ED R. LEVIN -->
-    <div class="card" id="levin">
-      <div class="ch">
-        <div><h2>Ed R. Levin Park</h2><div class="sub">Milpitas, CA &middot; Paragliding &middot; 37.4619 N, 121.861 W</div></div>
-        <span class="sb sr">&bull; Not Flyable Today</span>
-      </div>
-      <div class="tabs">
-        <button class="tb on" onclick="sw('lev','t1',this)">Today (Mon)</button>
-        <button class="tb" onclick="sw('lev','t2',this)">Tomorrow (Tue)</button>
-        <button class="tb" onclick="sw('lev','t3',this)">6-Day Outlook</button>
-        <button class="tb" onclick="sw('lev','t4',this)">NWS Forecast</button>
-      </div>
-      <div id="lev-t1" class="tc on">
-        <div class="stats">
-          <div class="stat"><div class="lbl">Wind Speed</div><div class="val"><span id="levin-wind-today">--</span><span class="u">m/s</span></div></div>
-          <div class="stat"><div class="lbl">Gusts</div><div class="val"	><span id="levin-gust-today">--</span><span class="u">m/s</span></div></div>
-          <div class="stat"><div class="lbl">Temperature</div><div class="val"><span id="levin-temp-today">--</span><span class="u">F</span></div></div>
-          <div class="stat"><div class="lbl">Precipitation</div><div class="val"><span id="levin-precip-today">--</span><span class="u">mm</span></div></div>
-        </div>
-        <div class="desc" id="levin-desc-today">Loading curren...</div>
-        <div class="tags" id="levin-tags-today"></div>
-      </div>
-      <div id="lev-t2" class="tc">
-        <div class="stats">
-          <div class="stat"><div class="lbl">Wind Speed</div><div class="val">4.1<span class="u">m/s</span></div></div>
-          <div class="stat"><div class="lbl">Gusts</div><div class="val">3.5<span class="u">m/s</span></div></div>
-          <div class="stat"><div class="lbl">Temperature</div><div class="val">68<span class="u">F</span></div></div>
-          <div class="stat"><div class="lbl">Precipitation</div><div class="val">0<span class="u">mm</span></div></div>
-        </div>
-        <div class="desc"><strong>GO / NO-GO: Marginal — P3+ only.</strong> NWS shows mostly sunny with W winds 2-9 mph. A small afternoon thermal window may open 1-3 PM. Wet launch from overnight rain — inspect carefully.</div>
-        <div class="tags"><span class="tag ty">Marginal Wind</span><span class="tag ty">Wet Launch</span><span class="tag ty">P3+ Only</span><span class="tag ty">Rain Clearing</span></div>
-      </div>
-      <div id="lev-t3" class="tc">
-        <table><thead><tr><th>Day</th><th>Wind / Gusts</th><th>Precip</th><th>NWS Condition</th><th>Assessment</th></tr></thead>
-        <tbody id="levin-outlook-body">
-          <tr><td class="dl"></td><td>--</td><td>--</td><td>--</td><td>--</td></tr>
-          <tr><td class="dl"></td><td>4.1 / 3.5 m/s</td><td>0mm</td><td>Mostly Sunny, 68F, W 2-9mph</td><td>Marginal P3+</td></tr>
-          <tr><td class="dl"></td><td>4.7 / 4.7 m/s</td><td>0mm</td><td>Mostly Sunny, 73F, WSW 2-10mph</td><td>Marginal P3+</td></tr>
-          <tr><td class="dl"></td><td>3.5 / 3.0 m/s</td><td>0mm</td><td>Sunny, 81F, W 1-10mph</td><td>Light Sledders</td></tr>
-          <tr><td class="dl"></td><td>3.0 / 2.5 m/s</td><td>0mm</td><td>Sunny, 84F, W 1-9mph</td><td>Light Sledders</td></tr>
-          <tr><td class="dl"></td><td>3.8 / 3.2 m/s</td><td>0mm</td><td>Sunny, 81F, W 1-9mph</td><td>Marginal P3+</td></tr>
-        </tbody></table>
-      </div>
-      <div id="lev-t4" class="tc">
-        <div id="lev-nws-wrap" class="nws-wrap"><div class="nws-loading">Loading NWS data...</div></div>
-        <div class="nws-link-bar">
-          <a class="nws-link" href="https://forecast.weather.gov/MapClick.php?lat=37.4619&lon=-121.861" target="_blank">&#127777; weather.gov</a>
-          <a class="nws-link" href="https://forecast.weather.gov/MapClick.php?lat=37.4619&lon=-121.861&FcstType=graphical" target="_blank">Hourly Chart</a>
-        </div>
-      </div>
-      <div class="ws">
-        <div class="wl">Live Windy.app Widget</div>
-        <div class="ww">
-          <iframe width="100%" height="350" src="https://embed.windy.com/embed2.html?lat=37.4619&lon=-121.861&detailLat=37.4619&detailLon=-121.861&width=650&height=450&zoom=11&level=surface&overlay=wind&product=ecmwf&menu=&message=&marker=true&calendar=now&pressure=&type=map&location=coordinates&detail=&metricWind=m%2Fs&metricTemp=%C2%B0F&radarRange=-1" frameborder="0"></iframe>
-        </div>
-      </div>
-      <div style="padding:0 24px 24px">
-        <div class="wl">&#128249; Site Video</div>
-     <a href="http://windslammer.net/WindSlammer/" target="_blank" rel="noopener"
-   style="display:inline-flex;align-items:center;gap:8px;padding:10px 18px;background:var(--accent);color:#fff;border-radius:8px;text-decoration:none;font-size:13px;font-weight:600">
-  🎥 WindSlammer Live Cam — Ed R. Levin
-</a>
-        </div>
-      </div>
-    </div>
+Shoreline Kite Flying Area
+Mountain View, CA · Kite Flying · 37.4297 N, 122.0766 W
+• Loading...
+Today (Mon)
+Tomorrow (Tue)
+6-Day Outlook
+NWS Forecast
+WIND SPEED
+--m/s
+GUSTS
+--m/s
+TEMPERATURE
+--F
+PRECIPITATION
+--mm
+Loading current conditions...
+LIVE WINDY.APP WIDGET
 
-    <!-- MUSSEL ROCK -->
-    <div class="card" id="mussel">
-      <div class="ch">
-        <div><h2>Mussel Rock Park</h2><div class="sub">Daly City, CA &middot; Kitesurfing / Hang Gliding &middot; 37.6740 N, 122.4887 W</div></div>
-        <span class="sb sr">&bull; Dangerous Today</span>
-      </div>
-      <div class="tabs">
-        <button class="tb on" onclick="sw('mus','t1',this)">Today (Mon)</button>
-        <button class="tb" onclick="sw('mus','t2',this)">Tomorrow (Tue)</button>
-        <button class="tb" onclick="sw('mus','t3',this)">6-Day Outlook</button>
-        <button class="tb" onclick="sw('mus','t4',this)">NWS Forecast</button>
-      </div>
-      <div id="mus-t1" class="tc on">
-        <div class="stats">
-          <div class="stat"><div class="lbl">Wind Speed</div><div class="val"><span id="mussel-wind-today">--</span><span class="u">m/s</span></div></div>
-          <div class="stat"><div class="lbl">Gusts</div><div class="val"><span id="mussel-gust-today">--</span><span class="u">m/s</span></div></div>
-          <div class="stat"><div class="lbl">Temperature</div><div class="val"><span id="mussel-temp-today">--</span><span class="u">F</span></div></div>
-          <div class="stat"><div class="lbl">Precipitation</div><div class="val"><span id="mussel-precip-today">--</span><span class="u">mm</span></div></div>
-        </div>
-        <div class="desc" id="mussel-desc-today">Loading curren...</div>
-        <div class="tags" id="mussel-tags-today"></div>
-      </div>
-      <div id="mus-t2" class="tc">
-        <div class="stats">
-          <div class="stat"><div class="lbl">Wind Speed</div><div class="val">5.8<span class="u">m/s</span></div></div>
-          <div class="stat"><div class="lbl">Gusts</div><div class="val">7.7<span class="u">m/s</span></div></div>
-          <div class="stat"><div class="lbl">Temperature</div><div class="val"><span id="levin-temp-today">--</span><span class="u">F</span></div></div>
-          <div class="stat"><div class="lbl">Precipitation</div><div class="val">0<span class="u">mm</span></div></div>
-        </div>
-        <div class="desc"><strong>GO / NO-GO: Flyable in the afternoon — experienced pilots only.</strong> W winds around 13 mph — ideal onshore direction for the cliff. Best window 1-4 PM. Wetsuit required, water at 57F.</div>
-        <div class="tags"><span class="tag tg">Afternoon Window</span><span class="tag ty">Wetsuit Required</span><span class="tag ty">Exp. Pilots Only</span><span class="tag tg">Good Wind Direction</span></div>
-      </div>
-      <div id="mus-t3" class="tc">
-        <table><thead><tr><th>Day</th><th>Wind / Gusts</th><th>Precip</th><th>NWS Condition</th><th>Assessment</th></tr></thead>
-        <tbody id="mussel-outlook-body">
-          <tr><td class="dl"></td><td>4.5 / 9.2 m/s</td><td><span id="mussel-precip-today">--</span>mm</td><td>Partly Cloudy, Rain, W 6-12mph</td><td>Dangerous</td></tr>
-          <tr><td class="dl"></td><td>5.8 / 7.7 m/s</td><td>0mm</td><td>Mostly Cloudy, 57F, W 13mph</td><td>Flyable PM</td></tr>
-          <tr><td class="dl"></td><td>7.6 / 10.7 m/s</td><td>0mm</td><td>Mostly Sunny, 58F, WNW 13-17mph, G22</td><td>Best Day!</td></tr>
-          <tr><td class="dl"></td><td>5.5 / 7.0 m/s</td><td>0mm</td><td>Sunny, 61F, WNW 6-12mph</td><td>Good</td></tr>
-          <tr><td class="dl"></td><td>4.5 / 6.0 m/s</td><td>0mm</td><td>Mostly Sunny, 62F, W 5-10mph</td><td>Flyable</td></tr>
-          <tr><td class="dl"></td><td>5.5 / 7.5 m/s</td><td>0mm</td><td>Partly Sunny, 60F, W 6-13mph</td><td>Flyable</td></tr>
-        </tbody></table>
-      </div>
-      <div id="mus-t4" class="tc">
-        <div id="mus-nws-wrap" class="nws-wrap"><div class="nws-loading">Loading NWS data...</div></div>
-        <div class="nws-link-bar">
-          <a class="nws-link" href="https://forecast.weather.gov/MapClick.php?lat=37.6740&lon=-122.4887" target="_blank">&#127777; weather.gov</a>
-          <a class="nws-link" href="https://forecast.weather.gov/MapClick.php?lat=37.6740&lon=-122.4887&FcstType=graphical" target="_blank">Hourly Chart</a>
-        </div>
-      </div>
-      <div class="ws">
-        <div class="wl">Live Windy.app Widget</div>
-        <div class="ww">
-          <iframe width="100%" height="350" src="https://embed.windy.com/embed2.html?lat=37.674&lon=-122.4887&detailLat=37.674&detailLon=-122.4887&width=650&height=450&zoom=11&level=surface&overlay=wind&product=ecmwf&menu=&message=&marker=true&calendar=now&pressure=&type=map&location=coordinates&detail=&metricWind=m%2Fs&metricTemp=%C2%B0F&radarRange=-1" frameborder="0"></iframe>
-        </div>
-      </div>
-      <div style="padding:0 24px 24px">
-        <div class="wl">&#128249; Site Video</div>
-        <div style="border-radius:8px;overflow:hidden;border:1px solid var(--border)">
-          <iframe width="100%" height="300" src="https://www.youtube.com/embed/vZEINdmawdc" frameborder="0" allowfullscreen></iframe>
-        </div>
-      </div>
-    </div>
+Mission Peak
+Fremont, CA · Paragliding / Hang Gliding · 37.5131 N, 121.8803 W
+• Loading...
+Today (Mon)
+Tomorrow (Tue)
+6-Day Outlook
+NWS Forecast
+WIND SPEED
+--m/s
+GUSTS
+--m/s
+TEMPERATURE
+--F
+PRECIPITATION
+--mm
+Loading current conditions...
+LIVE WINDY.APP WIDGET
 
-    <!-- SHORELINE KITE -->
-    <div class="card" id="shoreline">
-      <div class="ch">
-        <div><h2>Shoreline Kite Flying Area</h2><div class="sub">Mountain View, CA &middot; Kite Flying &middot; 37.4297 N, 122.0766 W</div></div>
-        <span class="sb sl" id="kite-status">&bull; Loading...</span>
-      </div>
-      <div class="tabs">
-        <button class="tb on" onclick="sw('kite','today',this)">Today (Mon)</button>
-        <button class="tb" onclick="sw('kite','tomorrow',this)">Tomorrow (Tue)</button>
-        <button class="tb" onclick="sw('kite','outlook',this)">6-Day Outlook</button>
-        <button class="tb" onclick="sw('kite','nws',this)">NWS Forecast</button>
-      </div>
-      <div id="kite-today" class="tc on">
-        <div class="stats">
-          <div class="stat"><div class="lbl">Wind Speed</div><div class="val"><span id="kite-wind-today">--</span><span class="u">m/s</span></div></div>
-          <div class="stat"><div class="lbl">Gusts</div><div class="val"><span id="kite-gust-today">--</span><span class="u">m/s</span></div></div>
-          <div class="stat"><div class="lbl">Temperature</div><div class="val"><span id="kite-temp-today">--</span><span class="u">F</span></div></div>
-          <div class="stat"><div class="lbl">Precipitation</div><div class="val"><span id="kite-precip-today">--</span><span class="u">mm</span></div></div>
-        </div>
-        <div class="desc" id="kite-desc-today">Loading current conditions...</div>
-        <div class="tags" id="kite-tags-today"></div>
-      </div>
-      <div id="kite-tomorrow" class="tc">
-        <div class="stats">
-          <div class="stat"><div class="lbl">Wind Speed</div><div class="val"><span id="kite-wind-tmrw">--</span><span class="u">m/s</span></div></div>
-          <div class="stat"><div class="lbl">Gusts</div><div class="val"><span id="kite-gust-tmrw">--</span><span class="u">m/s</span></div></div>
-          <div class="stat"><div class="lbl">Temperature</div><div class="val"><span id="kite-temp-tmrw">--</span><span class="u">F</span></div></div>
-          <div class="stat"><div class="lbl">Precipitation</div><div class="val"><span id="kite-precip-tmrw">--</span><span class="u">mm</span></div></div>
-        </div>
-        <div class="desc" id="kite-desc-tmrw">Loading tomorrow conditions...</div>
-        <div class="tags" id="kite-tags-tmrw"></div>
-      </div>
-      <div id="kite-outlook" class="tc">
-        <table><thead><tr><th>Day</th><th>Wind / Gusts</th><th>Precip</th><th>Condition</th><th>Assessment</th></tr></thead>
-        <tbody id="kite-outlook-body">
-          <tr><td class="dl"></td><td>--</td><td>--</td><td>Loading...</td><td>--</td></tr>
-          <tr><td class="dl"></td><td>--</td><td>--</td><td>Loading...</td><td>--</td></tr>
-          <tr><td class="dl"></td><td>--</td><td>--</td><td>Loading...</td><td>--</td></tr>
-          <tr><td class="dl"></td><td>--</td><td>--</td><td>Loading...</td><td>--</td></tr>
-          <tr><td class="dl"></td><td>--</td><td>--</td><td>Loading...</td><td>--</td></tr>
-          <tr><td class="dl"></td><td>--</td><td>--</td><td>Loading...</td><td>--</td></tr>
-        </tbody></table>
-      </div>
-      <div id="kite-nws" class="tc">
-        <div id="kite-nws-wrap" class="nws-wrap"><div class="nws-loading">Loading NWS data...</div></div>
-        <div class="nws-link-bar">
-          <a class="nws-link" href="https://forecast.weather.gov/MapClick.php?lat=37.4297&lon=-122.0766" target="_blank">&#127777; weather.gov</a>
-          <a class="nws-link" href="https://forecast.weather.gov/MapClick.php?lat=37.4297&lon=-122.0766&FcstType=graphical" target="_blank">Hourly Chart</a>
-        </div>
-      </div>
-      <div class="ws">
-        <div class="wl">Live Windy.app Widget</div>
-        <div class="ww">
-          <iframe width="100%" height="350" src="https://embed.windy.com/embed2.html?lat=37.4297&lon=-122.0766&detailLat=37.4297&detailLon=-122.0766&width=650&height=450&zoom=11&level=surface&overlay=wind&product=ecmwf&menu=&message=&marker=true&calendar=now&pressure=&type=map&location=coordinates&detail=&metricWind=m%2Fs&metricTemp=%C2%B0F&radarRange=-1" frameborder="0"></iframe>
-        </div>
-      </div>
-    </div>
+📹 Site Videos
+Flying footage and live cams
+ED R. LEVIN PARK
+🎥 WindSlammer Live Cam
+MUSSEL ROCK PARK
 
-    <!-- MISSION PEAK -->
-    <div class="card" id="mpeak">
-      <div class="ch">
-        <div><h2>Mission Peak</h2><div class="sub">Fremont, CA &middot; Paragliding / Hang Gliding &middot; 37.5131 N, 121.8803 W</div></div>
-        <span class="sb sl" id="mpeak-status">&bull; Loading...</span>
-      </div>
-      <div class="tabs">
-        <button class="tb on" onclick="sw('mpeak','today',this)">Today (Mon)</button>
-        <button class="tb" onclick="sw('mpeak','tomorrow',this)">Tomorrow (Tue)</button>
-        <button class="tb" onclick="sw('mpeak','outlook',this)">6-Day Outlook</button>
-        <button class="tb" onclick="sw('mpeak','nws',this)">NWS Forecast</button>
-      </div>
-      <div id="mpeak-today" class="tc on">
-        <div class="stats">
-          <div class="stat"><div class="lbl">Wind Speed</div><div class="val"><span id="mpeak-wind-today">--</span><span class="u">m/s</span></div></div>
-          <div class="stat"><div class="lbl">Gusts</div><div class="val"><span id="mpeak-gust-today">--</span><span class="u">m/s</span></div></div>
-          <div class="stat"><div class="lbl">Temperature</div><div class="val"><span id="mpeak-temp-today">--</span><span class="u">F</span></div></div>
-          <div class="stat"><div class="lbl">Precipitation</div><div class="val"><span id="mpeak-precip-today">--</span><span class="u">mm</span></div></div>
-        </div>
-        <div class="desc" id="mpeak-desc-today">Loading current conditions...</div>
-        <div class="tags" id="mpeak-tags-today"></div>
-      </div>
-      <div id="mpeak-tomorrow" class="tc">
-        <div class="stats">
-          <div class="stat"><div class="lbl">Wind Speed</div><div class="val"><span id="mpeak-wind-tmrw">--</span><span class="u">m/s</span></div></div>
-          <div class="stat"><div class="lbl">Gusts</div><div class="val"><span id="mpeak-gust-tmrw">--</span><span class="u">m/s</span></div></div>
-          <div class="stat"><div class="lbl">Temperature</div><div class="val"><span id="mpeak-temp-tmrw">--</span><span class="u">F</span></div></div>
-          <div class="stat"><div class="lbl">Precipitation</div><div class="val"><span id="mpeak-precip-tmrw">--</span><span class="u">mm</span></div></div>
-        </div>
-        <div class="desc" id="mpeak-desc-tmrw">Loading tomorrow conditions...</div>
-        <div class="tags" id="mpeak-tags-tmrw"></div>
-      </div>
-      <div id="mpeak-outlook" class="tc">
-        <table><thead><tr><th>Day</th><th>Wind / Gusts</th><th>Precip</th><th>Condition</th><th>Assessment</th></tr></thead>
-        <tbody id="mpeak-outlook-body">
-          <tr><td class="dl"></td><td>--</td><td>--</td><td>Loading...</td><td>--</td></tr>
-          <tr><td class="dl"></td><td>--</td><td>--</td><td>Loading...</td><td>--</td></tr>
-          <tr><td class="dl"></td><td>--</td><td>--</td><td>Loading...</td><td>--</td></tr>
-          <tr><td class="dl"></td><td>--</td><td>--</td><td>Loading...</td><td>--</td></tr>
-          <tr><td class="dl"></td><td>--</td><td>--</td><td>Loading...</td><td>--</td></tr>
-          <tr><td class="dl"></td><td>--</td><td>--</td><td>Loading...</td><td>--</td></tr>
-        </tbody></table>
-      </div>
-      <div id="mpeak-nws" class="tc">
-        <div id="mpeak-nws-wrap" class="nws-wrap"><div class="nws-loading">Loading NWS data...</div></div>
-        <div class="nws-link-bar">
-          <a class="nws-link" href="https://forecast.weather.gov/MapClick.php?lat=37.5131&lon=-121.8803" target="_blank">&#127777; weather.gov</a>
-          <a class="nws-link" href="https://forecast.weather.gov/MapClick.php?lat=37.5131&lon=-121.8803&FcstType=graphical" target="_blank">Hourly Chart</a>
-        </div>
-      </div>
-      <div class="ws">
-        <div class="wl">Live Windy.app Widget</div>
-        <div class="ww">
-          <iframe width="100%" height="350" src="https://embed.windy.com/embed2.html?lat=37.5131&lon=-121.8803&detailLat=37.5131&detailLon=-121.8803&width=650&height=450&zoom=11&level=surface&overlay=wind&product=ecmwf&menu=&message=&marker=true&calendar=now&pressure=&type=map&location=coordinates&detail=&metricWind=m%2Fs&metricTemp=%C2%B0F&radarRange=-1" frameborder="0"></iframe>
-        </div>
-      </div>
-    </div>
-
-  </main>
-</div>
-
-<footer>
-  Data: <a href="https://www.weather.gov" target="_blank">NOAA / NWS</a> &amp; <a href="https://windy.app" target="_blank">Windy.app</a> &middot; Bay Area Soaring &middot; Always verify conditions before flying
-</footer>
-
-<script>
-// Date display
-var d=new Date();
-document.getElementById('dt').textContent=d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'});
-
-// Update tab day labels
-(function(){
-  var days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-  var now=new Date();
-  var todayDay=days[now.getDay()];
-  var tomorrowDay=days[(now.getDay()+1)%7];
-  document.querySelectorAll('.tabs').forEach(function(tabs){
-    var btns=tabs.querySelectorAll('.tb');
-    if(btns[0])btns[0].textContent='Today ('+todayDay+')';
-    if(btns[1])btns[1].textContent='Tomorrow ('+tomorrowDay+')';
-  });
-  // Update 6-day outlook date cells
-  var months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  document.querySelectorAll('tbody').forEach(function(tbody){
-    var rows=tbody.querySelectorAll('tr');
-    rows.forEach(function(row,i){
-      var cell=row.querySelector('td.dl');
-      if(cell&&cell.textContent===''){
-        var dd=new Date(now);dd.setDate(dd.getDate()+i);
-        cell.textContent=days[dd.getDay()]+' '+months[dd.getMonth()]+' '+dd.getDate();
-      }
-    });
-  });
-})();
-
-// Tab switcher
-function sw(site,tab,btn){
-  var c=btn.closest('.card');
-  c.querySelectorAll('.tc').forEach(function(t){t.classList.remove('on')});
-  c.querySelectorAll('.tb').forEach(function(b){b.classList.remove('on')});
-  document.getElementById(site+'-'+tab).classList.add('on');
-  btn.classList.add('on');
-  var ws=c.querySelector('.ws');
-  if(ws)ws.style.display=(tab==='nws')?'none':'';
-}
-
-// Helper: wind m/s -> mph
-function msToMph(ms){return ms*2.237;}
-
-// Go/No-Go assessment for paragliding
-function paraAssess(windMs,gustMs,precipMm,tempF){
-  var wm=parseFloat(windMs)||0;
-  var gm=parseFloat(gustMs)||0;
-  var pp=parseFloat(precipMm)||0;
-  var badge,cls,desc,tags;
-  if(pp>1){
-    badge='DO NOT FLY';cls='sr';
-    desc='Rain present ('+pp.toFixed(1)+'mm precip). Wet conditions unsafe for launch. Do not fly.';
-    tags='<span class="tag tr">Rain/Wet</span><span class="tag tr">No Fly</span>';
-  } else if(wm<1.5){
-    badge='TOO LIGHT';cls='sy';
-    desc='Wind is too light at '+wm.toFixed(1)+' m/s. Insufficient for thermal or ridge lift. Not recommended.';
-    tags='<span class="tag ty">Too Light</span><span class="tag ty">No Thermals</span>';
-  } else if(wm>12||gm>15){
-    badge='TOO STRONG';cls='sr';
-    desc='Wind '+wm.toFixed(1)+' m/s with gusts '+gm.toFixed(1)+' m/s exceeds safe limits. Do not fly.';
-    tags='<span class="tag tr">Strong Wind</span><span class="tag tr">High Risk</span>';
-  } else if(wm>=3.5&&wm<=9&&gm<12&&pp<0.5){
-    badge='FLYABLE';cls='sg';
-    desc='Conditions look good. Wind '+wm.toFixed(1)+' m/s, gusts '+gm.toFixed(1)+' m/s, '+pp.toFixed(1)+'mm precip. Standard pre-flight checks apply.';
-    tags='<span class="tag tg">Good Wind</span><span class="tag tg">Go Fly</span>';
-  } else {
-    badge='MARGINAL';cls='sy';
-    desc='Borderline conditions. Wind '+wm.toFixed(1)+' m/s, gusts '+gm.toFixed(1)+' m/s, '+pp.toFixed(1)+'mm precip. P3+ pilots exercise caution.';
-    tags='<span class="tag ty">Marginal</span><span class="tag ty">P3+ Only</span>';
-  }
-  return {badge:badge,cls:cls,desc:'<strong>GO / NO-GO: '+badge+'.</strong> '+desc,tags:tags};
-}
-
-// Go/No-Go for kite flying
-function kiteAssess(windMs,precipMm){
-  var wm=parseFloat(windMs)||0;
-  var pp=parseFloat(precipMm)||0;
-  var badge,cls,desc,tags;
-  if(pp>1){
-    badge='DO NOT FLY';cls='sr';
-    desc='Rain present. Wet and gusty conditions unsafe for kite flying.';
-    tags='<span class="tag tr">Rain</span><span class="tag tr">Unsafe</span>';
-  } else if(wm<2){
-    badge='TOO LIGHT';cls='sy';
-    desc='Wind too light at '+wm.toFixed(1)+' m/s. Most kites need at least 5 MPH to stay aloft.';
-    tags='<span class="tag ty">Too Light</span><span class="tag ty">Kites Grounded</span>';
-  } else if(wm>15){
-    badge='TOO STRONG';cls='sr';
-    desc='Wind at '+wm.toFixed(1)+' m/s is dangerously strong for kite flying.';
-    tags='<span class="tag tr">Dangerous</span><span class="tag tr">Stay Grounded</span>';
-  } else if(wm>=3.5&&wm<=11&&pp<0.5){
-    badge='GREAT CONDITIONS';cls='sg';
-    desc='Ideal kite flying wind at '+wm.toFixed(1)+' m/s. Get out there!';
-    tags='<span class="tag tg">Ideal Wind</span><span class="tag tg">Go Fly</span>';
-  } else {
-    badge='MARGINAL';cls='sy';
-    desc='Borderline kite flying conditions. Wind '+wm.toFixed(1)+' m/s, '+pp.toFixed(1)+'mm precip. Check on-site.';
-    tags='<span class="tag ty">Marginal</span><span class="tag ty">Check On-Site</span>';
-  }
-  return {badge:badge,cls:cls,desc:'<strong>'+badge+'.</strong> '+desc,tags:tags};
-}
-
-// Populate a site's Today/Tomorrow/Outlook from Open-Meteo data
-function populateSite(cfg, data){
-  var hourly=data.hourly;
-  var now=new Date();
-  var todayStr=now.toISOString().split('T')[0];
-  var tmrwDate=new Date(now); tmrwDate.setDate(tmrwDate.getDate()+1);
-  var tmrwStr=tmrwDate.toISOString().split('T')[0];
-
-  // Find afternoon index for today and tomorrow (use hour 14 = 2 PM)
-  function findHourIdx(dateStr, hour){
-    for(var i=0;i<hourly.time.length;i++){
-      if(hourly.time[i].startsWith(dateStr+'T'+String(hour).padStart(2,'0')))return i;
-    }
-    // fallback: first index of that date
-    for(var i=0;i<hourly.time.length;i++){
-      if(hourly.time[i].startsWith(dateStr))return i;
-    }
-    return 0;
-  }
-
-  function dayAvg(dateStr){
-    var ws=[],gu=[],pp=0,temps=[];
-    for(var i=0;i<hourly.time.length;i++){
-      if(hourly.time[i].startsWith(dateStr)){
-        ws.push(hourly.windspeed_10m[i]);
-        gu.push(hourly.windgusts_10m[i]);
-        pp+=hourly.precipitation[i];
-        temps.push(hourly.temperature_2m[i]);
-      }
-    }
-    if(!ws.length)return null;
-    var avg=function(a){return a.reduce(function(s,v){return s+v},0)/a.length;};
-    var cToF=function(c){return Math.round(c*9/5+32);};
-    return{
-      wind: (avg(ws)/3.6).toFixed(1),  // km/h -> m/s
-      gust: (Math.max.apply(null,gu)/3.6).toFixed(1),
-      precip: pp.toFixed(1),
-      temp: cToF(Math.max.apply(null,temps))
-    };
-  }
-
-  var todayData=dayAvg(todayStr);
-  var tmrwData=dayAvg(tmrwStr);
-
-  function fillDay(pfx, dayData, isTomorrow, siteType){
-    if(!dayData)return;
-    var _w=document.getElementById(pfx+'-wind-'+(isTomorrow?'tmrw':'today'));if(_w)_w.textContent=dayData.wind;
-    var _g=document.getElementById(pfx+'-gust-'+(isTomorrow?'tmrw':'today'));if(_g)_g.textContent=dayData.gust;
-    var _t=document.getElementById(pfx+'-temp-'+(isTomorrow?'tmrw':'today'));if(_t)_t.textContent=dayData.temp;
-    var _p=document.getElementById(pfx+'-precip-'+(isTomorrow?'tmrw':'today'));if(_p)_p.textContent=dayData.precip;
-    var assess=(siteType==='kite')?kiteAssess(dayData.wind,dayData.precip):paraAssess(dayData.wind,dayData.gust,dayData.precip,dayData.temp);
-    var _d=document.getElementById(pfx+'-desc-'+(isTomorrow?'tmrw':'today'));if(_d)_d.innerHTML=assess.desc;
-    var _tg=document.getElementById(pfx+'-tags-'+(isTomorrow?'tmrw':'today'));if(_tg)_tg.innerHTML=assess.tags;
-    if(!isTomorrow){
-      var statusEl=document.getElementById(pfx+'-status');
-      if(statusEl){
-        statusEl.className='sb '+assess.cls;
-        statusEl.innerHTML='&bull; '+assess.badge;
-      }
-      // update sidebar dot
-      var dotEl=document.getElementById('nav-dot-'+pfx);
-      if(dotEl){
-        var dotColor=assess.cls==='sg'?'var(--green)':assess.cls==='sy'?'var(--yellow)':'var(--red)';
-        dotEl.style.background=dotColor;
-        dotEl.style.boxShadow='0 0 6px '+dotColor;
-      }
-    }
-  }
-
-  fillDay(cfg.pfx, todayData, false, cfg.type);
-  fillDay(cfg.pfx, tmrwData, true, cfg.type);
-
-  // Fill 6-day outlook
-  var tbody=document.getElementById(cfg.pfx+'-outlook-body');
-  if(tbody){
-    var days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-    var months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    var rows=tbody.querySelectorAll('tr');
-    rows.forEach(function(row,i){
-      var dd=new Date(now); dd.setDate(dd.getDate()+i);
-      var ds=dd.toISOString().split('T')[0];
-      var dd_data=dayAvg(ds);
-      var cells=row.querySelectorAll('td');
-      if(cells[0])cells[0].textContent=days[dd.getDay()]+' '+months[dd.getMonth()]+' '+dd.getDate();
-      if(dd_data&&cells[1])cells[1].textContent=dd_data.wind+' / '+dd_data.gust+' m/s';
-      if(dd_data&&cells[2])cells[2].textContent=dd_data.precip+'mm';
-      if(dd_data&&cells[3])cells[3].textContent=dd_data.temp+'°F';
-      if(dd_data&&cells[4]){
-        var a=(cfg.type==='kite')?kiteAssess(dd_data.wind,dd_data.precip):paraAssess(dd_data.wind,dd_data.gust,dd_data.precip,dd_data.temp);
-        cells[4].textContent=a.badge;
-      }
-    });
-  }
-}
-
-// Fetch Open-Meteo for a site
-function fetchOpenMeteo(cfg){
-  var url='https://api.open-meteo.com/v1/forecast?latitude='+cfg.lat+'&longitude='+cfg.lon
-    +'&hourly=temperature_2m,precipitation,windspeed_10m,windgusts_10m'
-    +'&temperature_unit=celsius&windspeed_unit=kmh&precipitation_unit=mm'
-    +'&timezone=America%2FLos_Angeles&forecast_days=7';
-  fetch(url)
-    .then(function(r){return r.json();})
-    .then(function(data){try{populateSite(cfg,data);}catch(e){console.error('populateSite err '+cfg.pfx,e);}})
-    .catch(function(e){
-      console.error('Open-Meteo error for '+cfg.pfx,e);
-      var statusEl=document.getElementById(cfg.pfx+'-status');
-      if(statusEl){statusEl.className='sb sr';statusEl.innerHTML='&bull; Data Error';}
-      var desc=document.getElementById(cfg.pfx+'-desc-today');
-      if(desc)desc.innerHTML='<span style="color:var(--red)">Could not load weather data. <a href="https://www.weather.gov" target="_blank" style="color:var(--accent)">Check weather.gov</a></span>';
-    });
-}
-
-// === Fetch Mission Peak & Shoreline ===
-fetchOpenMeteo({pfx:'levin',  lat:37.4619, lon:-121.8610, type:'para'});
-fetchOpenMeteo({pfx:'mussel', lat:37.6740, lon:-122.4887, type:'para'});
-fetchOpenMeteo({pfx:'mpeak',  lat:37.5131, lon:-121.8803, type:'para'});
-fetchOpenMeteo({pfx:'kite',   lat:37.4297, lon:-122.0766, type:'kite'});
-
-// === NWS Forecast Tab Functions ===
-function degToCard(deg){var dirs=['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W','WNW','NW','NNW'];return dirs[Math.round(deg/22.5)%16];}
-
-function buildHourly(periods){
-  var html='<div class="nws-section-title" style="margin-top:20px">&#9201; Hourly Forecast &mdash; Flying Conditions</div>';
-  html+='<div class="hr-scroll"><table class="hr-table"><thead><tr><th>Time</th><th>Temp</th><th>Wind</th><th>Precip %</th><th>Sky / Condition</th><th>Flying</th></tr></thead><tbody>';
-  var lastDay='';
-  var flyBadge=function(wm,sf){
-    var s=sf.toLowerCase();
-    var rain=s.includes('rain')||s.includes('storm')||s.includes('shower')||s.includes('thunder');
-    if(rain)return'<span class="fly-no">No Fly</span>';
-    if(wm<3)return'<span class="fly-no">Too Light</span>';
-    if(wm>25)return'<span class="fly-no">Too Strong</span>';
-    if(wm>=8&&wm<=20)return'<span class="fly-go">Flyable</span>';
-    return'<span class="fly-marg">Marginal</span>';
-  };
-  periods.slice(0,48).forEach(function(p){
-    var dt=new Date(p.startTime);
-    var dayStr=dt.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
-    var timeStr=dt.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',hour12:true});
-    var wm=parseInt((p.windSpeed||'0').replace(/[^0-9]/g,''))||0;
-    var precip=p.probabilityOfPrecipitation&&p.probabilityOfPrecipitation.value!==null?p.probabilityOfPrecipitation.value:0;
-    if(lastDay!==dayStr){html+='<tr class="hr-day-header"><td colspan="6">'+dayStr+'</td></tr>';lastDay=dayStr;}
-    html+='<tr><td class="hr-time">'+timeStr+'</td><td class="hr-temp">'+p.temperature+'&deg;'+p.temperatureUnit+'</td>';
-    html+='<td class="hr-wind">'+(p.windDirection||'')+' '+(p.windSpeed||'')+'</td>';
-    html+='<td class="hr-gust">'+(precip>=50?'<span style="color:#ff7b72">'+precip+'%</span>':precip>=20?'<span style="color:#e3b341">'+precip+'%</span>':'<span style="color:var(--muted)">'+precip+'%</span>')+'</td>';
-    html+='<td class="hr-sky">'+p.shortForecast+'</td><td>'+flyBadge(wm,p.shortForecast)+'</td></tr>';
-  });
-  html+='</tbody></table></div>';
-  return html;
-}
-
-function buildNWS(wrap,forecast,hourly,obs,obsStation,siteName,siteType){
-  var periods=forecast.properties.periods;
-  var html='';
-  var p=obs&&obs.properties?obs.properties:{};
-  var cond='',windMphObs=0,windDir='';
-  if(obs&&obs.properties){
-    var tempC=p.temperature&&p.temperature.value!==null?p.temperature.value:null;
-    var tempF=tempC!==null?Math.round(tempC*9/5+32):null;
-    var windSpd=p.windSpeed&&p.windSpeed.value!==null?Math.round(p.windSpeed.value*0.621371)+' MPH':null;
-    windDir=p.windDirection&&p.windDirection.value!==null?degToCard(p.windDirection.value):'';
-    windMphObs=p.windSpeed&&p.windSpeed.value!==null?Math.round(p.windSpeed.value*0.621371):0;
-    var humidity=p.relativeHumidity&&p.relativeHumidity.value!==null?Math.round(p.relativeHumidity.value)+'%':null;
-    var baro=p.barometricPressure&&p.barometricPressure.value!==null?(p.barometricPressure.value/3386.39).toFixed(2)+' in':null;
-    var dewC=p.dewpoint&&p.dewpoint.value!==null?p.dewpoint.value:null;
-    var dewF=dewC!==null?Math.round(dewC*9/5+32):null;
-    var vis=p.visibility&&p.visibility.value!==null?Math.round(p.visibility.value/1609.34*10)/10+' mi':null;
-    cond=p.textDescription||'';
-    var icon=p.icon||'';
-    var updated=p.timestamp?new Date(p.timestamp).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit',timeZoneName:'short'}):'';
-    html+='<div class="nws-obs-station">Current conditions at <strong>'+(siteName||'')+'</strong></div>';
-    html+='<div class="nws-cur"><div class="nws-cur-left">';
-    if(icon)html+='<img class="nws-cur-icon" src="'+icon+'&size=large" alt="'+cond+'"/>';
-    html+='<div><div class="nws-cur-temp">'+(tempF!==null?tempF+'&deg;F':'--')+'</div><div class="nws-cur-cond">'+cond+'</div></div></div><div class="nws-cur-right">';
-    if(humidity)html+='<div class="nws-cur-row"><span class="nws-cur-label">Humidity</span><span class="nws-cur-val">'+humidity+'</span></div>';
-    if(windSpd)html+='<div class="nws-cur-row"><span class="nws-cur-label">Wind Speed</span><span class="nws-cur-val">'+(windDir?windDir+' ':'')+windSpd+'</span></div>';
-    if(baro)html+='<div class="nws-cur-row"><span class="nws-cur-label">Barometer</span><span class="nws-cur-val">'+baro+'</span></div>';
-    if(dewF!==null)html+='<div class="nws-cur-row"><span class="nws-cur-label">Dewpoint</span><span class="nws-cur-val">'+dewF+'&deg;F</span></div>';
-    if(vis)html+='<div class="nws-cur-row"><span class="nws-cur-label">Visibility</span><span class="nws-cur-val">'+vis+'</span></div>';
-    html+='<div class="nws-cur-meta">Last update: '+updated+'</div></div></div>';
-  }
-  var firstHourly=hourly&&hourly.properties&&hourly.properties.periods&&hourly.properties.periods[0];
-  var precipPct=firstHourly&&firstHourly.probabilityOfPrecipitation&&firstHourly.probabilityOfPrecipitation.value!==null?firstHourly.probabilityOfPrecipitation.value:0;
-  var condLow=cond.toLowerCase();
-  var hasRain=condLow.includes('rain')||condLow.includes('storm')||condLow.includes('shower')||condLow.includes('thunder')||precipPct>=50;
-  var visNum=p.visibility&&p.visibility.value!==null?p.visibility.value/1609.34:99;
-  var gonogo,gonogoClass,gonogoText,tags;
-  if(siteType==='kite'){
-    if(hasRain){gonogo='DO NOT FLY';gonogoClass='sr';gonogoText='Rain or storms present. Unsafe for kite flying.';tags='<span class="tag tr">Rain/Storms</span><span class="tag tr">Unsafe</span>';}
-    else if(windMphObs<5){gonogo='TOO LIGHT';gonogoClass='sy';gonogoText='Wind too light at '+windMphObs+' MPH for kite flying.';tags='<span class="tag ty">Wind Too Light</span><span class="tag ty">Kites Grounded</span>';}
-    else if(windMphObs>35){gonogo='TOO STRONG';gonogoClass='sr';gonogoText='Wind at '+windMphObs+' MPH is dangerously strong.';tags='<span class="tag tr">Dangerous Wind</span><span class="tag tr">Stay Grounded</span>';}
-    else if(windMphObs>=8&&windMphObs<=25&&precipPct<20){gonogo='GREAT CONDITIONS';gonogoClass='sg';gonogoText='Ideal kite flying wind at '+windMphObs+' MPH '+windDir+'. Get out there!';tags='<span class="tag tg">Ideal Wind</span><span class="tag tg">Go Fly</span>';}
-    else{gonogo='MARGINAL';gonogoClass='sy';gonogoText='Borderline conditions. Wind '+windMphObs+' MPH. Check on-site.';tags='<span class="tag ty">Marginal</span><span class="tag ty">Check On-Site</span>';}
-  }else{
-    if(hasRain){gonogo='DO NOT FLY';gonogoClass='sr';gonogoText='Rain/storms present. Wet launch unsafe.';tags='<span class="tag tr">Rain/Storms</span><span class="tag tr">No-Fly</span>';}
-    else if(windMphObs<3){gonogo='TOO LIGHT';gonogoClass='sy';gonogoText='Wind too light at '+windMphObs+' MPH. Sled rides only.';tags='<span class="tag ty">Too Light</span><span class="tag ty">No Thermals</span>';}
-    else if(windMphObs>25){gonogo='TOO STRONG';gonogoClass='sr';gonogoText='Wind '+windMphObs+' MPH exceeds safe limits. Do not fly.';tags='<span class="tag tr">Overpowering</span><span class="tag tr">High Risk</span>';}
-    else if(visNum<3){gonogo='LOW VISIBILITY';gonogoClass='sr';gonogoText='Visibility below 3 miles. Disorientation risk.';tags='<span class="tag tr">Low Visibility</span><span class="tag tr">No-Fly</span>';}
-    else if(windMphObs>=8&&windMphObs<=20&&precipPct<20){gonogo='FLYABLE';gonogoClass='sg';gonogoText='Conditions look good. Wind '+windMphObs+' MPH '+windDir+'.';tags='<span class="tag tg">Good Wind</span><span class="tag tg">Go Fly</span>';}
-    else{gonogo='MARGINAL';gonogoClass='sy';gonogoText='Borderline. Wind '+windMphObs+' MPH. P3+ caution.';tags='<span class="tag ty">Marginal</span><span class="tag ty">P3+ Only</span>';}
-  }
-  html+='<div style="margin-bottom:20px"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px"><div class="nws-section-title" style="margin-bottom:0">GO / NO-GO Assessment</div><span class="sb '+gonogoClass+'">'+gonogo+'</span></div>';
-  html+='<div class="desc"><strong>GO / NO-GO: '+gonogo+'.</strong> '+gonogoText+'</div><div class="tags">'+tags+'</div></div>';
-  html+='<div class="nws-section-title">Extended Forecast</div><div class="nws-7day-strip">';
-  periods.slice(0,8).forEach(function(pp,i){
-    var isNight=pp.isDaytime===false;
-    html+='<div class="nws-day'+(i===0?' tonight':'')+'"><div class="nws-day-name">'+pp.name+'</div>';
-    html+='<img class="nws-day-icon" src="'+pp.icon+'&size=medium" alt="'+pp.shortForecast+'"/>';
-    html+='<div class="nws-day-temp '+(isNight?'lo':'hi')+'">'+(isNight?'Low: ':'High: ')+pp.temperature+'&deg;'+pp.temperatureUnit+'</div>';
-    html+='<div class="nws-day-cond">'+pp.shortForecast+'</div></div>';
-  });
-  html+='</div>';
-  if(hourly&&hourly.properties&&hourly.properties.periods)html+=buildHourly(hourly.properties.periods);
-  html+='<div class="nws-section-title" style="margin-top:20px">Detailed Forecast</div>';
-  periods.slice(0,8).forEach(function(pp){
-    html+='<div class="nws-detail-row"><div class="nws-detail-period">'+pp.name+'</div><div class="nws-detail-text">'+pp.detailedForecast+'</div></div>';
-  });
-  wrap.innerHTML=html;
-}
-
-function loadSite(gridUrl,wrapId,obsStn,siteName,siteType){
-  var wrap=document.getElementById(wrapId);
-  if(!wrap)return;
-  var fP=fetch('https://api.weather.gov/gridpoints/'+gridUrl+'/forecast').then(function(r){return r.json()});
-  var hP=fetch('https://api.weather.gov/gridpoints/'+gridUrl+'/forecast/hourly').then(function(r){return r.json()}).catch(function(){return null});
-  var oP=obsStn?fetch('https://api.weather.gov/stations/'+obsStn+'/observations/latest').then(function(r){return r.json()}).catch(function(){return null}):Promise.resolve(null);
-  var sP=obsStn?fetch('https://api.weather.gov/stations/'+obsStn).then(function(r){return r.json()}).catch(function(){return null}):Promise.resolve(null);
-  Promise.all([fP,hP,oP,sP]).then(function(res){
-    buildNWS(wrap,res[0],res[1],res[2],res[3],siteName,siteType||'para');
-  }).catch(function(){
-    wrap.innerHTML='<div class="nws-loading">Could not load NWS data. <a href="https://www.weather.gov" target="_blank" style="color:var(--accent)">Visit weather.gov</a></div>';
-  });
-}
-
-loadSite('MTR/101,87','lev-nws-wrap','KSJC','Ed R. Levin Park','para');
-loadSite('MTR/81,101','mus-nws-wrap','KSFO','Mussel Rock Park','para');
-loadSite('MTR/94,88','kite-nws-wrap','KNUQ','Shoreline Kite Flying Area','kite');
-loadSite('MTR/101,90','mpeak-nws-wrap','KSJC','Mission Peak','para');updateBestWindow();
-
-var _refreshSecs=180,_cdEl=document.getElementById('refresh-countdown');
-function _tick(){var m=Math.floor(_refreshSecs/60),s=_refreshSecs%60;if(_cdEl)_cdEl.textContent=m+':'+(s<10?'0':'')+s;_refreshSecs--;if(_refreshSecs<0){_refreshSecs=180;fetchOpenMeteo({pfx:'levin',lat:37.4619,lon:-121.8610,type:'para'});fetchOpenMeteo({pfx:'mussel',lat:37.6740,lon:-122.4887,type:'para'});fetchOpenMeteo({pfx:'mpeak',lat:37.5131,lon:-121.8803,type:'para'});fetchOpenMeteo({pfx:'kite',lat:37.4297,lon:-122.0766,type:'kite'});loadSite('MTR/101,87','lev-nws-wrap','KSJC','Ed R. Levin Park','para');loadSite('MTR/81,101','mus-nws-wrap','KSFO','Mussel Rock Park','para');loadSite('MTR/94,88','kite-nws-wrap','KNUQ','Shoreline Kite Flying Area','kite');loadSite('MTR/101,90','mpeak-nws-wrap','KSJC','Mission Peak','para');updateBestWindow();document.getElementById('dt').textContent=new Date().toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'})+' (auto-refreshed)';}};
-setInterval(_tick,1000);function updateBestWindow(){
-  var sites=[
-    {name:'Ed R. Levin',lat:37.4619,lon:-121.8610},
-    {name:'Mussel Rock',lat:37.6740,lon:-122.4887},
-    {name:'Mission Peak',lat:37.5131,lon:-121.8803}
-  ];
-  var today=new Date(); today.setHours(0,0,0,0);
-  var forecasts=[];
-  var promises=sites.map(function(site){
-    var url='https://api.open-meteo.com/v1/forecast?latitude='+site.lat+'&longitude='+site.lon+'&daily=windspeed_10m_max,windgusts_10m_max,precipitation_sum&wind_speed_unit=ms&timezone=America%2FLos_Angeles&forecast_days=7';
-    return fetch(url).then(function(r){return r.json();}).then(function(data){
-      data.daily.time.forEach(function(dateStr,i){
-        var date=new Date(dateStr+'T00:00:00');
-        if(date<=today) return;
-        var wind=data.daily.windspeed_10m_max[i];
-        var gusts=data.daily.windgusts_10m_max[i];
-        var precip=data.daily.precipitation_sum[i];
-        var score=0;
-        if(wind>=3&&wind<=7) score+=3; else if(wind>=2&&wind<=9) score+=1;
-        if(gusts<10) score+=2;
-        if(precip===0) score+=2;
-        forecasts.push({site:site.name,date:date,score:score});
-      });
-    });
-  });
-  Promise.all(promises).then(function(){
-    if(!forecasts.length) return;
-    forecasts.sort(function(a,b){return b.score-a.score||a.date-b.date;});
-    var best=forecasts[0];
-    var dayName=best.date.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
-    var el=document.getElementById('best-window-label');
-    if(el) el.textContent='Best Window: '+best.site+' '+dayName;
-  });
-}
-updateBestWindow();
-</script>
-</body>
-</html>
+Data: NOAA / NWS & Windy.app · Bay Area Soaring · Always verify conditions before flying
