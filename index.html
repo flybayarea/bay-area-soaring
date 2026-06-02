@@ -131,6 +131,7 @@ footer a{color:var(--accent);text-decoration:none}
   <p>Live weather briefings for Bay Area flying sites</p>
   <div class="badge">Updated: <span id="dt"></span> &middot; NOAA / NWS Live Data</div>
 </header>
+<div style="display:flex;align-items:center;justify-content:center;gap:8px;padding:7px 16px;background:rgba(88,166,255,0.07);border-bottom:1px solid #30363d;font-size:12px;color:#8b949e">&#8635; Auto-refresh every 20 min &mdash; Next update in: <span id="refresh-countdown" style="color:#58a6ff;font-weight:700">20:00</span></div>
 
 <!-- STATUS BAR -->
 <div class="bar">
@@ -647,8 +648,10 @@ function fetchOpenMeteo(cfg){
 }
 
 // === Fetch Mission Peak & Shoreline ===
-fetchOpenMeteo({pfx:'mpeak', lat:37.5131, lon:-121.8803, type:'para'});
-fetchOpenMeteo({pfx:'kite',  lat:37.4297, lon:-122.0766, type:'kite'});
+fetchOpenMeteo({pfx:'levin',  lat:37.4619, lon:-121.8610, type:'para'});
+fetchOpenMeteo({pfx:'mussel', lat:37.6740, lon:-122.4887, type:'para'});
+fetchOpenMeteo({pfx:'mpeak',  lat:37.5131, lon:-121.8803, type:'para'});
+fetchOpenMeteo({pfx:'kite',   lat:37.4297, lon:-122.0766, type:'kite'});
 
 // === NWS Forecast Tab Functions ===
 function degToCard(deg){var dirs=['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W','WNW','NW','NNW'];return dirs[Math.round(deg/22.5)%16];}
@@ -769,6 +772,10 @@ loadSite('MTR/101,87','lev-nws-wrap','KSJC','Ed R. Levin Park','para');
 loadSite('MTR/81,101','mus-nws-wrap','KSFO','Mussel Rock Park','para');
 loadSite('MTR/94,88','kite-nws-wrap','KNUQ','Shoreline Kite Flying Area','kite');
 loadSite('MTR/101,90','mpeak-nws-wrap','KSJC','Mission Peak','para');
+
+var _refreshSecs=1200,_cdEl=document.getElementById('refresh-countdown');
+function _tick(){var m=Math.floor(_refreshSecs/60),s=_refreshSecs%60;if(_cdEl)_cdEl.textContent=m+':'+(s<10?'0':'')+s;_refreshSecs--;if(_refreshSecs<0){_refreshSecs=1200;fetchOpenMeteo({pfx:'levin',lat:37.4619,lon:-121.8610,type:'para'});fetchOpenMeteo({pfx:'mussel',lat:37.6740,lon:-122.4887,type:'para'});fetchOpenMeteo({pfx:'mpeak',lat:37.5131,lon:-121.8803,type:'para'});fetchOpenMeteo({pfx:'kite',lat:37.4297,lon:-122.0766,type:'kite'});loadSite('MTR/101,87','lev-nws-wrap','KSJC','Ed R. Levin Park','para');loadSite('MTR/81,101','mus-nws-wrap','KSFO','Mussel Rock Park','para');loadSite('MTR/94,88','kite-nws-wrap','KNUQ','Shoreline Kite Flying Area','kite');loadSite('MTR/101,90','mpeak-nws-wrap','KSJC','Mission Peak','para');document.getElementById('dt').textContent=new Date().toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'})+' (auto-refreshed)';}};
+setInterval(_tick,1000);
 </script>
 </body>
 </html>
