@@ -139,7 +139,7 @@ footer a{color:var(--accent);text-decoration:none}
   <div class="pill"><span class="dot dr"></span>Mussel Rock — Dangerous Today</div>
   <div class="pill"><span class="dot dy"></span>Ed R. Levin — Marginal Tomorrow</div>
   <div class="pill"><span class="dot dg"></span>Mussel Rock — Flyable Tomorrow PM</div>
-  <div class="pill"><span class="dot dg"></span>Best Window: Mussel Rock Sat May 30</div>
+  <div class="pill"><span class="dot dg"></span><span id="best-window-label">Best Window: calculating...</span></div>
 </div>
 
 <div class="layout">
@@ -771,11 +771,45 @@ function loadSite(gridUrl,wrapId,obsStn,siteName,siteType){
 loadSite('MTR/101,87','lev-nws-wrap','KSJC','Ed R. Levin Park','para');
 loadSite('MTR/81,101','mus-nws-wrap','KSFO','Mussel Rock Park','para');
 loadSite('MTR/94,88','kite-nws-wrap','KNUQ','Shoreline Kite Flying Area','kite');
-loadSite('MTR/101,90','mpeak-nws-wrap','KSJC','Mission Peak','para');
+loadSite('MTR/101,90','mpeak-nws-wrap','KSJC','Mission Peak','para');updateBestWindow();
 
 var _refreshSecs=1200,_cdEl=document.getElementById('refresh-countdown');
-function _tick(){var m=Math.floor(_refreshSecs/60),s=_refreshSecs%60;if(_cdEl)_cdEl.textContent=m+':'+(s<10?'0':'')+s;_refreshSecs--;if(_refreshSecs<0){_refreshSecs=1200;fetchOpenMeteo({pfx:'levin',lat:37.4619,lon:-121.8610,type:'para'});fetchOpenMeteo({pfx:'mussel',lat:37.6740,lon:-122.4887,type:'para'});fetchOpenMeteo({pfx:'mpeak',lat:37.5131,lon:-121.8803,type:'para'});fetchOpenMeteo({pfx:'kite',lat:37.4297,lon:-122.0766,type:'kite'});loadSite('MTR/101,87','lev-nws-wrap','KSJC','Ed R. Levin Park','para');loadSite('MTR/81,101','mus-nws-wrap','KSFO','Mussel Rock Park','para');loadSite('MTR/94,88','kite-nws-wrap','KNUQ','Shoreline Kite Flying Area','kite');loadSite('MTR/101,90','mpeak-nws-wrap','KSJC','Mission Peak','para');document.getElementById('dt').textContent=new Date().toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'})+' (auto-refreshed)';}};
-setInterval(_tick,1000);
+function _tick(){var m=Math.floor(_refreshSecs/60),s=_refreshSecs%60;if(_cdEl)_cdEl.textContent=m+':'+(s<10?'0':'')+s;_refreshSecs--;if(_refreshSecs<0){_refreshSecs=1200;fetchOpenMeteo({pfx:'levin',lat:37.4619,lon:-121.8610,type:'para'});fetchOpenMeteo({pfx:'mussel',lat:37.6740,lon:-122.4887,type:'para'});fetchOpenMeteo({pfx:'mpeak',lat:37.5131,lon:-121.8803,type:'para'});fetchOpenMeteo({pfx:'kite',lat:37.4297,lon:-122.0766,type:'kite'});loadSite('MTR/101,87','lev-nws-wrap','KSJC','Ed R. Levin Park','para');loadSite('MTR/81,101','mus-nws-wrap','KSFO','Mussel Rock Park','para');loadSite('MTR/94,88','kite-nws-wrap','KNUQ','Shoreline Kite Flying Area','kite');loadSite('MTR/101,90','mpeak-nws-wrap','KSJC','Mission Peak','para');updateBestWindow();document.getElementById('dt').textContent=new Date().toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'})+' (auto-refreshed)';}};
+setInterval(_tick,1000);function updateBestWindow(){
+  var sites=[
+    {name:'Ed R. Levin',lat:37.4619,lon:-121.8610},
+    {name:'Mussel Rock',lat:37.6740,lon:-122.4887},
+    {name:'Mission Peak',lat:37.5131,lon:-121.8803}
+  ];
+  var today=new Date(); today.setHours(0,0,0,0);
+  var forecasts=[];
+  var promises=sites.map(function(site){
+    var url='https://api.open-meteo.com/v1/forecast?latitude='+site.lat+'&longitude='+site.lon+'&daily=windspeed_10m_max,windgusts_10m_max,precipitation_sum&wind_speed_unit=ms&timezone=America%2FLos_Angeles&forecast_days=7';
+    return fetch(url).then(function(r){return r.json();}).then(function(data){
+      data.daily.time.forEach(function(dateStr,i){
+        var date=new Date(dateStr+'T00:00:00');
+        if(date<=today) return;
+        var wind=data.daily.windspeed_10m_max[i];
+        var gusts=data.daily.windgusts_10m_max[i];
+        var precip=data.daily.precipitation_sum[i];
+        var score=0;
+        if(wind>=3&&wind<=7) score+=3; else if(wind>=2&&wind<=9) score+=1;
+        if(gusts<10) score+=2;
+        if(precip===0) score+=2;
+        forecasts.push({site:site.name,date:date,score:score});
+      });
+    });
+  });
+  Promise.all(promises).then(function(){
+    if(!forecasts.length) return;
+    forecasts.sort(function(a,b){return b.score-a.score||a.date-b.date;});
+    var best=forecasts[0];
+    var dayName=best.date.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
+    var el=document.getElementById('best-window-label');
+    if(el) el.textContent='Best Window: '+best.site+' '+dayName;
+  });
+}
+updateBestWindow();
 </script>
 </body>
 </html>
