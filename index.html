@@ -580,13 +580,13 @@ function populateSite(cfg, data){
 
   function fillDay(pfx, dayData, isTomorrow, siteType){
     if(!dayData)return;
-    document.getElementById(pfx+'-wind-'+(isTomorrow?'tmrw':'today')).textContent=dayData.wind;
-    document.getElementById(pfx+'-gust-'+(isTomorrow?'tmrw':'today')).textContent=dayData.gust;
-    document.getElementById(pfx+'-temp-'+(isTomorrow?'tmrw':'today')).textContent=dayData.temp;
-    document.getElementById(pfx+'-precip-'+(isTomorrow?'tmrw':'today')).textContent=dayData.precip;
+    var _w=document.getElementById(pfx+'-wind-'+(isTomorrow?'tmrw':'today'));if(_w)_w.textContent=dayData.wind;
+    var _g=document.getElementById(pfx+'-gust-'+(isTomorrow?'tmrw':'today'));if(_g)_g.textContent=dayData.gust;
+    var _t=document.getElementById(pfx+'-temp-'+(isTomorrow?'tmrw':'today'));if(_t)_t.textContent=dayData.temp;
+    var _p=document.getElementById(pfx+'-precip-'+(isTomorrow?'tmrw':'today'));if(_p)_p.textContent=dayData.precip;
     var assess=(siteType==='kite')?kiteAssess(dayData.wind,dayData.precip):paraAssess(dayData.wind,dayData.gust,dayData.precip,dayData.temp);
-    document.getElementById(pfx+'-desc-'+(isTomorrow?'tmrw':'today')).innerHTML=assess.desc;
-    document.getElementById(pfx+'-tags-'+(isTomorrow?'tmrw':'today')).innerHTML=assess.tags;
+    var _d=document.getElementById(pfx+'-desc-'+(isTomorrow?'tmrw':'today'));if(_d)_d.innerHTML=assess.desc;
+    var _tg=document.getElementById(pfx+'-tags-'+(isTomorrow?'tmrw':'today'));if(_tg)_tg.innerHTML=assess.tags;
     if(!isTomorrow){
       var statusEl=document.getElementById(pfx+'-status');
       if(statusEl){
