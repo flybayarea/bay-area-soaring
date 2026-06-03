@@ -76,7 +76,6 @@ body{
   text-rendering:optimizeLegibility;
   overflow-x:hidden;
 }
-
 ::-webkit-scrollbar{width:8px;height:8px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{
@@ -480,18 +479,6 @@ button{
   font-family:'JetBrains Mono',monospace;
   color:var(--muted-soft);
 }
-.change-alert{
-  margin-top:2px;
-  border-radius:var(--radius-md);
-  padding:6px 9px;
-  font-size:11px;
-  display:flex;
-  align-items:center;
-  gap:6px;
-  background:radial-gradient(circle at left,rgba(249,115,22,0.22),rgba(30,64,175,0.1));
-  border:1px solid rgba(249,115,22,0.6);
-  color:#fed7aa;
-}
 .detail-grid-top{
   display:grid;
   grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);
@@ -554,7 +541,7 @@ button{
   border-radius:var(--radius-pill);
   padding:3px 9px;
   font-size:11px;
-  display:inline-flex;
+  display:none;
   align-items:center;
   gap:4px;
   background:rgba(34,197,94,0.14);
@@ -575,13 +562,13 @@ button{
   color:var(--muted);
 }
 .ai-error{
+  margin-top:8px;
   font-size:12px;
   color:#fecaca;
   display:none;
   align-items:center;
   justify-content:space-between;
   gap:8px;
-  margin-top:6px;
 }
 .ai-error button{
   border-radius:999px;
@@ -704,14 +691,12 @@ button{
   border-radius:999px;
 }
 
-/* Middle grids */
+/* Middle / bottom grids */
 .detail-grid-mid{
   display:grid;
   grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);
   gap:10px;
 }
-
-/* Cards */
 .card{
   border-radius:var(--radius-lg);
   background:linear-gradient(135deg,rgba(15,23,42,0.98),rgba(15,23,42,0.94));
@@ -751,7 +736,6 @@ button{
 }
 .card-body.open{display:block}
 
-/* Forecast grid */
 .forecast-tabs{
   display:flex;
   gap:4px;
@@ -1094,7 +1078,7 @@ button{
     </div>
   </main>
 
-  <nav class="mobile-nav" id="mobile-nav">
+  <nav class="mobile-nav">
     <div class="mobile-nav-inner" id="mobile-nav-inner"></div>
   </nav>
 
@@ -1113,96 +1097,53 @@ button{
 <script>
 "use strict";
 
-const SITES = [
-  {
-    id:"levin",
-    name:"Ed R. Levin Park",
-    emoji:"🪂",
-    city:"Milpitas, CA",
-    type:"Paragliding",
-    lat:37.4619,
-    lon:-121.861,
-    elevation:"1,102 ft (336 m)",
-    difficulty:"intermediate",
-    typicalWind:"SW thermic in afternoon",
-    emergency:"Santa Clara County Parks · +1 (408) 262‑6980",
-    landing:"Lower park LZ near main entrance",
-    windyEmbed:"https://embed.windy.com/embed2.html?lat=37.4619&lon=-121.861&detailLat=37.4619&detailLon=-121.861&width=650&height=350&zoom=11&level=surface&overlay=wind&product=ecmwf&menu=&message=&marker=true&calendar=now&pressure=true&type=map&location=coordinates&detail=true&metricWind=mph&metricTemp=%C2%B0F&radarRange=-1",
-    nwsOffice:"MTR",
-    nwsX:97,
-    nwsY:93,
-    notamHint:"Check KSJC / NUQ for TFRs",
-    webcam:null,
-    youtube:"https://www.youtube.com/embed/VKXH7c0Rk7Q?autoplay=1&mute=1&loop=1&playlist=VKXH7c0Rk7Q"
+/* --- Core state --- */
+const SITES=[
+  {id:"levin",name:"Ed R. Levin Park",emoji:"🪂",city:"Milpitas, CA",type:"Paragliding",
+   lat:37.4619,lon:-121.861,elevation:"1,102 ft (336 m)",difficulty:"intermediate",
+   typicalWind:"SW thermic in afternoon",emergency:"Santa Clara County Parks · +1 (408) 262‑6980",
+   landing:"Lower park LZ near main entrance",
+   windyEmbed:"https://embed.windy.com/embed2.html?lat=37.4619&lon=-121.861&detailLat=37.4619&detailLon=-121.861&width=650&height=350&zoom=11&level=surface&overlay=wind&product=ecmwf&menu=&message=&marker=true&calendar=now&pressure=true&type=map&location=coordinates&detail=true&metricWind=mph&metricTemp=%C2%B0F&radarRange=-1",
+   nwsOffice:"MTR",nwsX:97,nwsY:93,
+   notamHint:"Check KSJC / NUQ for TFRs",
+   webcam:null,
+   youtube:"https://www.youtube.com/embed/VKXH7c0Rk7Q?autoplay=1&mute=1&loop=1&playlist=VKXH7c0Rk7Q"
   },
-  {
-    id:"mussel",
-    name:"Mussel Rock Park",
-    emoji:"🏔",
-    city:"Daly City, CA",
-    type:"Hang / Paraglide",
-    lat:37.674,
-    lon:-122.4887,
-    elevation:"557 ft (170 m)",
-    difficulty:"advanced",
-    typicalWind:"Strong W–NW ocean flow",
-    emergency:"San Mateo County Dispatch · 911",
-    landing:"Beach below cliffs — advanced pilots only",
-    windyEmbed:"https://embed.windy.com/embed2.html?lat=37.674&lon=-122.4887&detailLat=37.674&detailLon=-122.4887&width=650&height=350&zoom=12&level=surface&overlay=wind&product=ecmwf&menu=&message=&marker=true&calendar=now&pressure=true&type=map&location=coordinates&detail=true&metricWind=mph&metricTemp=%C2%B0F&radarRange=-1",
-    nwsOffice:"MTR",
-    nwsX:82,
-    nwsY:120,
-    notamHint:"Check KSFO / Class B shelves & TFRs",
-    webcam:"https://www.youtube.com/embed/live_stream?channel=UCH-iMvI7MtskM4ulRbD7-Tg&autoplay=1&mute=1&loop=1",
-    youtube:null
+  {id:"mussel",name:"Mussel Rock Park",emoji:"🏔",city:"Daly City, CA",type:"Hang / Paraglide",
+   lat:37.674,lon:-122.4887,elevation:"557 ft (170 m)",difficulty:"advanced",
+   typicalWind:"Strong W–NW ocean flow",emergency:"San Mateo County Dispatch · 911",
+   landing:"Beach below cliffs — advanced pilots only",
+   windyEmbed:"https://embed.windy.com/embed2.html?lat=37.674&lon=-122.4887&detailLat=37.674&detailLon=-122.4887&width=650&height=350&zoom=12&level=surface&overlay=wind&product=ecmwf&menu=&message=&marker=true&calendar=now&pressure=true&type=map&location=coordinates&detail=true&metricWind=mph&metricTemp=%C2%B0F&radarRange=-1",
+   nwsOffice:"MTR",nwsX:82,nwsY:120,
+   notamHint:"Check KSFO / Class B shelves & TFRs",
+   webcam:"https://www.youtube.com/embed/live_stream?channel=UCH-iMvI7MtskM4ulRbD7-Tg&autoplay=1&mute=1&loop=1",
+   youtube:null
   },
-  {
-    id:"shoreline",
-    name:"Shoreline Kite Area",
-    emoji:"🪁",
-    city:"Mountain View, CA",
-    type:"Kite Flying",
-    lat:37.4297,
-    lon:-122.0766,
-    elevation:"3 ft (1 m)",
-    difficulty:"beginner",
-    typicalWind:"NW bay breeze, afternoons",
-    emergency:"Mountain View Fire · 911",
-    landing:"Open grass fields throughout park",
-    windyEmbed:"https://embed.windy.com/embed2.html?lat=37.4297&lon=-122.0766&detailLat=37.4297&detailLon=-122.0766&width=650&height=350&zoom=12&level=surface&overlay=wind&product=ecmwf&menu=&message=&marker=true&calendar=now&pressure=true&type=map&location=coordinates&detail=true&metricWind=mph&metricTemp=%C2%B0F&radarRange=-1",
-    nwsOffice:"MTR",
-    nwsX:90,
-    nwsY:93,
-    notamHint:"Near PAO / NUQ — check NOTAMs",
-    webcam:null,
-    youtube:"https://www.youtube.com/embed/sqQbWv7YgEk?autoplay=1&mute=1&loop=1&playlist=sqQbWv7YgEk"
+  {id:"shoreline",name:"Shoreline Kite Area",emoji:"🪁",city:"Mountain View, CA",type:"Kite Flying",
+   lat:37.4297,lon:-122.0766,elevation:"3 ft (1 m)",difficulty:"beginner",
+   typicalWind:"NW bay breeze, afternoons",emergency:"Mountain View Fire · 911",
+   landing:"Open grass fields throughout park",
+   windyEmbed:"https://embed.windy.com/embed2.html?lat=37.4297&lon=-122.0766&detailLat=37.4297&detailLon=-122.0766&width=650&height=350&zoom=12&level=surface&overlay=wind&product=ecmwf&menu=&message=&marker=true&calendar=now&pressure=true&type=map&location=coordinates&detail=true&metricWind=mph&metricTemp=%C2%B0F&radarRange=-1",
+   nwsOffice:"MTR",nwsX:90,nwsY:93,
+   notamHint:"Near PAO / NUQ — check NOTAMs",
+   webcam:null,
+   youtube:"https://www.youtube.com/embed/sqQbWv7YgEk?autoplay=1&mute=1&loop=1&playlist=sqQbWv7YgEk"
   },
-  {
-    id:"mission",
-    name:"Mission Peak",
-    emoji:"⛰",
-    city:"Fremont, CA",
-    type:"Paragliding / Hang",
-    lat:37.5131,
-    lon:-121.8803,
-    elevation:"2,305 ft (703 m)",
-    difficulty:"advanced",
-    typicalWind:"SSW thermic with valley breeze",
-    emergency:"EBRPD Police · +1 (510) 881‑1833",
-    landing:"Designated LZ in Fremont foothills",
-    windyEmbed:"https://embed.windy.com/embed2.html?lat=37.5131&lon=-121.8803&detailLat=37.5131&detailLon=-121.8803&width=650&height=350&zoom=12&level=surface&overlay=wind&product=ecmwf&menu=&message=&marker=true&calendar=now&pressure=true&type=map&location=coordinates&detail=true&metricWind=mph&metricTemp=%C2%B0F&radarRange=-1",
-    nwsOffice:"MTR",
-    nwsX:100,
-    nwsY:99,
-    notamHint:"Check KSJC TFRs and local advisories",
-    webcam:null,
-    youtube:"https://www.youtube.com/embed/6uJdeuY2Z7A?autoplay=1&mute=1&loop=1&playlist=6uJdeuY2Z7A"
+  {id:"mission",name:"Mission Peak",emoji:"⛰",city:"Fremont, CA",type:"Paragliding / Hang",
+   lat:37.5131,lon:-121.8803,elevation:"2,305 ft (703 m)",difficulty:"advanced",
+   typicalWind:"SSW thermic with valley breeze",emergency:"EBRPD Police · +1 (510) 881‑1833",
+   landing:"Designated LZ in Fremont foothills",
+   windyEmbed:"https://embed.windy.com/embed2.html?lat=37.5131&lon=-121.8803&detailLat=37.5131&detailLon=-121.8803&width=650&height=350&zoom=12&level=surface&overlay=wind&product=ecmwf&menu=&message=&marker=true&calendar=now&pressure=true&type=map&location=coordinates&detail=true&metricWind=mph&metricTemp=%C2%B0F&radarRange=-1",
+   nwsOffice:"MTR",nwsX:100,nwsY:99,
+   notamHint:"Check KSJC TFRs and local advisories",
+   webcam:null,
+   youtube:"https://www.youtube.com/embed/6uJdeuY2Z7A?autoplay=1&mute=1&loop=1&playlist=6uJdeuY2Z7A"
   }
 ];
 
-const STATE = {
+const STATE={
   currentId:SITES[0].id,
-  siteData:{},
+  siteData:{},        // per-site: om, nws, safety, advisorState
   countdown:180,
   countdownTimer:null,
   localCacheTTL:3600000,
@@ -1225,6 +1166,7 @@ function dirFromDeg(deg){
 function clamp(v,min,max){return v<min?min:v>max?max:v;}
 function esc(str){return String(str).replace(/</g,"&lt;").replace(/>/g,"&gt;");}
 
+/* Cache helpers */
 function cacheKey(siteId,suffix){return "bas_"+siteId+"_"+suffix;}
 function cacheSet(siteId,suffix,data){
   try{localStorage.setItem(cacheKey(siteId,suffix),JSON.stringify({ts:Date.now(),data}));}catch(e){}
@@ -1254,7 +1196,7 @@ function saveReport(siteId,text){
   try{localStorage.setItem("bas_reports_"+siteId,JSON.stringify(STATE.reports[siteId]));}catch(e){}
 }
 
-/* Safety score */
+/* Safety / scoring */
 function computeSafetyScore(site,current,precip){
   const wind=current.windspeed_10m||0;
   const gust=current.windgusts_10m||wind;
@@ -1285,7 +1227,7 @@ function safetyCategory(score,site){
   return "DANGEROUS";
 }
 
-/* Best window */
+/* Best window (advisor + UI) */
 function bestWindowFromHourly(site,hourly){
   if(!hourly||!hourly.time) return null;
   const now=nowLocal();
@@ -1316,17 +1258,18 @@ function bestWindowFromHourly(site,hourly){
   return `${fmt(start)} – ${fmt(end)}`;
 }
 
-/* Advisor summary builders */
-function buildAdvisorSummary(site,data){
-  const om=data.om.data;
+/* Advisor text */
+function buildAdvisorSummary(site,forecast){
+  const om=forecast.om.data;
   const current=om.current||{};
   const wind=current.windspeed_10m||0;
   const gust=current.windgusts_10m||wind;
   const dir=dirFromDeg(current.winddirection_10m||0);
   const temp=Math.round(current.temperature_2m||0);
   const precip=current.precipitation||0;
-  const score=data.safetyScore;
-  const cat=data.safetyCategory;
+  const score=forecast.safetyScore;
+  const cat=forecast.safetyCategory;
+
   let intro="";
   if(cat==="SAFE"){
     intro=site.type==="Kite Flying"
@@ -1337,12 +1280,14 @@ function buildAdvisorSummary(site,data){
   }else{
     intro=`⛔ High‑risk conditions at ${site.name}. `;
   }
-  let windPart=`${dir} winds ${wind.toFixed(1)} mph, gusting ${gust.toFixed(1)} mph. `;
-  let tempPart=`Temperature around ${temp}°F. `;
+
+  const windPart=`${dir} winds ${wind.toFixed(1)} mph, gusting ${gust.toFixed(1)} mph. `;
+  const tempPart=`Temperature around ${temp}°F. `;
   let precipPart="";
   if(precip>0.2) precipPart="Light to moderate precipitation nearby — expect wet gear and possible shutdowns. ";
   else if(precip>0) precipPart="Isolated showers possible. ";
   else precipPart="Skies dry with no significant precipitation. ";
+
   let advice="";
   if(cat==="SAFE"){
     advice=site.difficulty==="beginner"
@@ -1353,66 +1298,76 @@ function buildAdvisorSummary(site,data){
   }else{
     advice="Stand down — treat this as a non‑flying day unless you have strong alpine experience and local coaching. ";
   }
-  if(data.bestWindow){
-    advice+=`Best time window: ${data.bestWindow}.`;
+
+  if(forecast.bestWindow){
+    advice+=`Best time window: ${forecast.bestWindow}.`;
   }
   return intro+windPart+tempPart+precipPart+advice;
 }
-function buildDailyBrief(site,data){
-  const om=data.om.data;
+function buildDailyBrief(site,forecast){
   const now=nowLocal();
   const dayLabel=now.toLocaleDateString([], {weekday:"long"});
-  let keyPhrase="";
-  if(data.safetyCategory==="SAFE"){
-    keyPhrase="Overall a workable day with at least one decent flying window.";
-  }else if(data.safetyCategory==="MARGINAL"){
-    keyPhrase="Day looks sketchy — tight margins and variable wind.";
+  let phrase="";
+  if(forecast.safetyCategory==="SAFE"){
+    phrase="Overall a workable day with at least one decent flying window.";
+  }else if(forecast.safetyCategory==="MARGINAL"){
+    phrase="Day looks sketchy — tight margins and variable wind.";
   }else{
-    keyPhrase="Today looks mostly blown out or unstable for safe flying.";
+    phrase="Today looks mostly blown out or unstable for safe flying.";
   }
-  const windowText=data.bestWindow?` Primary window: ${data.bestWindow}.`:"";
-  const nwsExtra=data.nws&&data.nws.periods&&data.nws.periods[0]
-    ? ` NWS calls it “${data.nws.periods[0].shortForecast}” with ${data.nws.periods[0].temperature}°${data.nws.periods[0].temperatureUnit}.`
+  const win=forecast.bestWindow?` Primary window: ${forecast.bestWindow}.`:"";
+  const nwsExtra=forecast.nws&&forecast.nws.periods&&forecast.nws.periods[0]
+    ? ` NWS calls it “${forecast.nws.periods[0].shortForecast}” with ${forecast.nws.periods[0].temperature}°${forecast.nws.periods[0].temperatureUnit}.`
     : "";
-  return `${dayLabel} overview: ${keyPhrase}${windowText}${nwsExtra}`;
+  return `${dayLabel} overview: ${phrase}${win}${nwsExtra}`;
 }
 
-/* Advisor UI helpers */
-function setAdvisorLoading(siteId,isLoading){
+/* Advisor UI state: loading / success / error */
+function setAdvisorState(siteId,state){
   const card=document.getElementById("advisor-card-"+siteId);
   if(!card) return;
   const textEl=card.querySelector(".ai-summary-text");
   const briefEl=card.querySelector(".ai-daily-brief");
   const bestEl=card.querySelector(".ai-best-window");
   const errorEl=card.querySelector(".ai-error");
-  if(isLoading){
-    if(textEl) textEl.innerHTML=
-      `<span class="skel skel-line" style="width:82%;display:block;"></span>
-       <span class="skel skel-line" style="width:65%;display:block;"></span>
-       <span class="skel skel-line" style="width:74%;display:block;"></span>`;
+
+  if(state==="loading"){
+    if(textEl){
+      textEl.innerHTML=`<span class="skel skel-line" style="width:82%;display:block;"></span>
+        <span class="skel skel-line" style="width:65%;display:block;"></span>
+        <span class="skel skel-line" style="width:74%;display:block;"></span>`;
+    }
     if(briefEl) briefEl.textContent="Daily briefing will appear once forecast data loads.";
     if(bestEl) bestEl.style.display="none";
     if(errorEl) errorEl.style.display="none";
+  }else if(state==="success"){
+    if(errorEl) errorEl.style.display="none";
+  }else if(state==="error"){
+    if(bestEl) bestEl.style.display="none";
   }
+  const siteState=STATE.siteData[siteId]||{};
+  siteState.advisorState=state;
+  STATE.siteData[siteId]=siteState;
 }
-function renderAdvisorSummary(siteId,summaryText,dailyText,bestWindow){
+function renderAdvisorSummary(siteId,forecast){
   const card=document.getElementById("advisor-card-"+siteId);
   if(!card) return;
+  const site=SITES.find(s=>s.id===siteId);
   const textEl=card.querySelector(".ai-summary-text");
   const briefEl=card.querySelector(".ai-daily-brief");
   const bestEl=card.querySelector(".ai-best-window");
-  const errorEl=card.querySelector(".ai-error");
-  if(textEl) textEl.textContent=summaryText;
-  if(briefEl) briefEl.textContent=dailyText||"";
+  const summary=buildAdvisorSummary(site,forecast);
+  const brief=buildDailyBrief(site,forecast);
+  if(textEl) textEl.textContent=summary;
+  if(briefEl) briefEl.textContent=brief;
   if(bestEl){
-    if(bestWindow){
+    if(forecast.bestWindow){
       bestEl.style.display="inline-flex";
-      bestEl.querySelector("span:last-child").textContent="Best window: "+bestWindow;
+      bestEl.querySelector("span:last-child").textContent="Best window: "+forecast.bestWindow;
     }else{
       bestEl.style.display="none";
     }
   }
-  if(errorEl) errorEl.style.display="none";
 }
 function renderAdvisorError(siteId,message){
   const card=document.getElementById("advisor-card-"+siteId);
@@ -1424,8 +1379,7 @@ function renderAdvisorError(siteId,message){
   if(!errorEl){
     errorEl=document.createElement("div");
     errorEl.className="ai-error";
-    errorEl.innerHTML=`<span>⚠ ${esc(message)}</span>
-      <button type="button" data-site="${siteId}">Retry</button>`;
+    errorEl.innerHTML=`<span>⚠ ${esc(message)}</span><button type="button" data-site="${siteId}">Retry</button>`;
     card.querySelector(".ai-card-inner").appendChild(errorEl);
   }else{
     errorEl.querySelector("span").textContent="⚠ "+message;
@@ -1436,8 +1390,8 @@ function renderAdvisorError(siteId,message){
   errorEl.style.display="flex";
 }
 
-/* Weather data for advisor */
-async function getSiteWeatherData(siteId){
+/* Shared forecast loader for advisor + metrics */
+async function loadForecastForAdvisor(siteId){
   const site=SITES.find(s=>s.id===siteId);
   if(!site) throw new Error("Unknown site");
   let omRes=cacheGet(site.id,"om");
@@ -1447,17 +1401,20 @@ async function getSiteWeatherData(siteId){
       `&hourly=windspeed_10m,windgusts_10m,precipitation,winddirection_10m,temperature_2m`+
       `&temperature_unit=fahrenheit&windspeed_unit=mph&precipitation_unit=inch&timezone=auto&forecast_days=7`;
     const resp=await fetch(url);
-    if(!resp.ok) throw new Error("Open‑Meteo "+resp.status);
+    if(!resp.ok) throw new Error("Open‑Meteo HTTP "+resp.status);
     const data=await resp.json();
+    if(!data.current||!data.hourly) throw new Error("Open‑Meteo missing fields");
     cacheSet(site.id,"om",data);
     omRes={ts:Date.now(),data};
   }
   const om=omRes.data;
   const current=om.current||{};
   const precip=current.precipitation||0;
-  const score=computeSafetyScore(site,current,precip);
-  const cat=safetyCategory(score,site);
+  const safetyScore=computeSafetyScore(site,current,precip);
+  const safetyCategory=safetyCategoryWrapper(site,safetyScore);
   const bestWindow=bestWindowFromHourly(site,om.hourly||{});
+
+  let nwsWrap=null;
   let nwsRes=cacheGet(site.id,"nws");
   if(!nwsRes){
     try{
@@ -1468,41 +1425,49 @@ async function getSiteWeatherData(siteId){
       }});
       if(resp2.ok){
         const data2=await resp2.json();
+        const periods=(data2.properties&&data2.properties.periods)||null;
+        if(periods) nwsWrap={periods};
         cacheSet(site.id,"nws",data2);
-        nwsRes={ts:Date.now(),data:data2};
       }
-    }catch(e){}
+    }catch(e){
+      // advisor stays usable without NWS
+    }
+  }else{
+    const periods=(nwsRes.data.properties&&nwsRes.data.properties.periods)||null;
+    if(periods) nwsWrap={periods};
   }
+
   return {
     site,
     om:omRes,
-    nws:nwsRes?{periods:(nwsRes.data.properties&&nwsRes.data.properties.periods)||[]}:null,
-    safetyScore:score,
-    safetyCategory:cat,
+    nws:nwsWrap,
+    safetyScore,
+    safetyCategory,
     bestWindow,
     updatedTs:Date.now()
   };
 }
+function safetyCategoryWrapper(site,score){
+  return safetyCategory(score,site);
+}
 
-/* Advisor controller */
+/* Advisor controller: always leaves loading state */
 async function updateAdvisor(siteId){
-  setAdvisorLoading(siteId,true);
+  setAdvisorState(siteId,"loading");
   try{
-    const data=await getSiteWeatherData(siteId);
+    const forecast=await loadForecastForAdvisor(siteId);
     const prev=STATE.siteData[siteId]||{};
-    STATE.siteData[siteId]=Object.assign({},prev,data,{prevCat:prev.safetyCategory||null});
-    const summary=buildAdvisorSummary(data.site,data);
-    const daily=buildDailyBrief(data.site,data);
-    renderAdvisorSummary(siteId,summary,daily,data.bestWindow||null);
+    STATE.siteData[siteId]=Object.assign({},prev,forecast);
+    renderAdvisorSummary(siteId,forecast);
+    setAdvisorState(siteId,"success");
   }catch(err){
-    console.error("Advisor error",siteId,err);
-    renderAdvisorError(siteId,"Could not load advisor data. Please refresh.");
-  }finally{
-    setAdvisorLoading(siteId,false);
+    console.error("Advisor error for",siteId,err);
+    renderAdvisorError(siteId,"Could not load advisor data. Please refresh or tap Retry.");
+    setAdvisorState(siteId,"error");
   }
 }
 
-/* Open‑Meteo for metrics/forecast */
+/* Metrics / forecast loader reuses same OM cache */
 async function fetchOpenMeteo(site){
   const cached=cacheGet(site.id,"om");
   if(cached) return cached;
@@ -1511,13 +1476,11 @@ async function fetchOpenMeteo(site){
     `&hourly=windspeed_10m,windgusts_10m,precipitation,winddirection_10m,temperature_2m`+
     `&temperature_unit=fahrenheit&windspeed_unit=mph&precipitation_unit=inch&timezone=auto&forecast_days=7`;
   const resp=await fetch(url);
-  if(!resp.ok) throw new Error("Open‑Meteo "+resp.status);
+  if(!resp.ok) throw new Error("Open‑Meteo HTTP "+resp.status);
   const data=await resp.json();
   cacheSet(site.id,"om",data);
   return {ts:Date.now(),data};
 }
-
-/* NWS forecast */
 async function fetchNWS(site){
   const cached=cacheGet(site.id,"nws");
   if(cached) return cached;
@@ -1526,13 +1489,13 @@ async function fetchNWS(site){
     "User-Agent":"BayAreaSoaring/1.0 (github.com/flybayarea)",
     "Accept":"application/geo+json"
   }});
-  if(!resp.ok) throw new Error("NWS "+resp.status);
+  if(!resp.ok) throw new Error("NWS HTTP "+resp.status);
   const data=await resp.json();
   cacheSet(site.id,"nws",data);
   return {ts:Date.now(),data};
 }
 
-/* Sidebar + mobile nav */
+/* Sidebar + mobile */
 function renderSiteLists(){
   const list=document.getElementById("site-list");
   const mobile=document.getElementById("mobile-nav-inner");
@@ -1562,6 +1525,7 @@ function renderSiteLists(){
       </div>`;
     pill.addEventListener("click",()=>selectSite(site.id));
     list.appendChild(pill);
+
     const btn=document.createElement("button");
     btn.className="mobile-nav-btn";
     btn.dataset.site=site.id;
@@ -1569,19 +1533,6 @@ function renderSiteLists(){
     btn.addEventListener("click",()=>selectSite(site.id));
     mobile.appendChild(btn);
   }
-}
-
-/* Select site */
-function selectSite(id){
-  STATE.currentId=id;
-  document.querySelectorAll(".site-pill").forEach(el=>{
-    el.classList.toggle("active",el.id==="site-pill-"+id);
-  });
-  document.querySelectorAll(".mobile-nav-btn").forEach(el=>{
-    el.classList.toggle("active",el.dataset.site===id);
-  });
-  renderDetailSkeleton();
-  loadSiteData(id,false);
 }
 
 /* Skeleton detail */
@@ -1598,9 +1549,7 @@ function renderDetailSkeleton(){
         <div class="detail-title-sub">${site.city} · ${site.type}</div>
       </div>
       <div class="detail-header-right">
-        <div class="condition-pill marginal">
-          <span>Loading</span>
-        </div>
+        <div class="condition-pill marginal"><span>Loading</span></div>
         <div class="safety-chip marginal">
           <span class="safety-score-val">--</span>
           <span class="safety-label">Safety score</span>
@@ -1621,7 +1570,7 @@ function renderDetailSkeleton(){
             <span class="skel skel-line" style="width:65%;display:block;"></span>
             <span class="skel skel-line" style="width:74%;display:block;"></span>
           </div>
-          <div class="ai-best-window" style="display:none;">
+          <div class="ai-best-window">
             <span class="emoji">🪂</span>
             <span>Best window: --</span>
           </div>
@@ -1689,7 +1638,7 @@ function renderDetailSkeleton(){
           <span style="font-size:10px;color:#9ca3af;">Map: drag / zoom for detail · Forecast panel open by default</span>
         </div>
         <div class="windy-embed-wrapper">
-          <iframe class="windy-iframe" src="${site.windyEmbed}" loading="lazy" title="Wind map for ${site.name}"></iframe>
+          <iframe class="windy-iframe" src="${site.windyEmbed}" loading="lazy"></iframe>
         </div>
       </div>
       <div class="media-card" id="media-card-${site.id}"></div>
@@ -1697,7 +1646,7 @@ function renderDetailSkeleton(){
   `;
 }
 
-/* Detail with metrics/forecast/info/media */
+/* Detail with metrics & cards */
 function renderDetail(siteId){
   const site=SITES.find(s=>s.id===siteId);
   const state=STATE.siteData[siteId];
@@ -1788,22 +1737,13 @@ function renderDetail(siteId){
   }
 
   const omBody=document.getElementById("om-body-"+site.id);
-  if(omBody){
-    omBody.innerHTML=renderOpenMeteoForecast(site,state);
-    wireOmTabs(site.id);
-  }
+  if(omBody){omBody.innerHTML=renderOpenMeteoForecast(site,state);wireOmTabs(site.id);}
   const infoBody=document.getElementById("info-body-"+site.id);
-  if(infoBody){
-    infoBody.innerHTML=renderSiteInfo(site);
-  }
+  if(infoBody) infoBody.innerHTML=renderSiteInfo(site);
   const reportsBody=document.getElementById("reports-body-"+site.id);
-  if(reportsBody){
-    reportsBody.innerHTML=renderReports(site.id);
-  }
+  if(reportsBody) reportsBody.innerHTML=renderReports(site.id);
   const mediaCard=document.getElementById("media-card-"+site.id);
-  if(mediaCard){
-    mediaCard.innerHTML=renderMediaBlock(site);
-  }
+  if(mediaCard) mediaCard.innerHTML=renderMediaBlock(site);
 
   document.querySelectorAll(".card-header").forEach(h=>{
     h.addEventListener("click",()=>{
@@ -1828,7 +1768,7 @@ function renderDetail(siteId){
   });
 }
 
-/* OM forecast */
+/* Open‑Meteo forecast UI */
 function renderOpenMeteoForecast(site,state){
   const om=state.om.data;
   const hourly=om.hourly||{};
@@ -1883,11 +1823,26 @@ function renderOpenMeteoForecast(site,state){
     </div>
   `;
 }
+function wireOmTabs(siteId){
+  const detail=document.getElementById("detail");
+  const tabs=detail.querySelectorAll(`.forecast-tab[data-site="${siteId}"]`);
+  tabs.forEach(tab=>{
+    tab.addEventListener("click",()=>{
+      const mode=tab.getAttribute("data-om-tab");
+      tabs.forEach(t=>t.classList.remove("active"));
+      tab.classList.add("active");
+      ["today","tomorrow","week"].forEach(m=>{
+        const panel=document.getElementById(`om-panel-${siteId}-${m}`);
+        if(panel) panel.style.display=m===mode?"block":"none";
+      });
+    });
+  });
+}
 
 /* NWS forecast card */
 async function ensureNwsLoaded(siteId){
   const site=SITES.find(s=>s.id===siteId);
-  const state=STATE.siteData[siteId];
+  const state=STATE.siteData[siteId]||{};
   const body=document.getElementById("nws-body-"+siteId);
   const pill=document.getElementById("nws-pill-"+siteId);
   if(state.nwsLoaded) return;
@@ -1896,19 +1851,17 @@ async function ensureNwsLoaded(siteId){
   try{
     const nwsRes=await fetchNWS(site);
     const periods=(nwsRes.data.properties&&nwsRes.data.properties.periods)||[];
-    const take=periods.slice(0,8);
-    state.nws={periods:take};
+    state.nws={periods};
     state.nwsLoaded=true;
     STATE.siteData[siteId]=state;
     body.innerHTML=`
       <div class="forecast-grid">
-        ${take.map(p=>{
-          return `<div class="forecast-item">
+        ${periods.slice(0,8).map(p=>`
+          <div class="forecast-item">
             <div class="forecast-item-title">${esc(p.name)}</div>
             <div class="forecast-item-temp">${p.temperature}°${p.temperatureUnit}</div>
             <div class="forecast-item-text">${esc(p.shortForecast)} · ${esc(p.windSpeed)} ${esc(p.windDirection||"")}</div>
-          </div>`;
-        }).join("")}
+          </div>`).join("")}
       </div>
     `;
     pill.textContent="Tap to collapse";
@@ -1955,12 +1908,11 @@ function renderSiteInfo(site){
 }
 function renderReports(siteId){
   const list=STATE.reports[siteId]||[];
-  const items=list.length?list.map(r=>{
-    return `<div class="report-item">
+  const items=list.length?list.map(r=>`
+    <div class="report-item">
       <div class="report-meta">${new Date(r.ts).toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"})} · ${minutesAgo(r.ts)}</div>
       <div class="report-text">${esc(r.text)}</div>
-    </div>`;
-  }).join(""):`<div style="font-size:12px;color:#9ca3af;">No recent pilot reports. Be the first to post what you see on launch.</div>`;
+    </div>`).join(""):`<div style="font-size:12px;color:#9ca3af;">No recent pilot reports. Be the first to post what you see on launch.</div>`;
   return `
     <div class="report-list">${items}</div>
     <div class="report-form">
@@ -1976,34 +1928,74 @@ function renderMediaBlock(site){
   return `
     <div style="font-size:11px;color:#9ca3af;margin-bottom:4px;">${label}</div>
     <div class="video-wrapper">
-      ${src?`<iframe src="${src}" title="${label}" loading="lazy" allow="autoplay; encrypted-media"></iframe>`:"<div style='padding:16px;font-size:12px;color:#9ca3af;'>No public webcam available.</div>"}
+      ${src?`<iframe src="${src}" loading="lazy" allow="autoplay; encrypted-media"></iframe>`:"<div style='padding:16px;font-size:12px;color:#9ca3af;'>No public webcam available.</div>"}
     </div>
   `;
 }
+
+/* Sidebar row update */
+function updateSidebarRow(siteId){
+  const site=SITES.find(s=>s.id===siteId);
+  const state=STATE.siteData[siteId];
+  if(!state||!state.om) return;
+  const om=state.om.data;
+  const current=om.current||{};
+  const wind=current.windspeed_10m||0;
+  const gust=current.windgusts_10m||wind;
+  const dir=dirFromDeg(current.winddirection_10m||0);
+  const cat=state.safetyCategory;
+  const label=cat==="SAFE"?"Safe":cat==="MARGINAL"?"Marginal":"Dangerous";
+
+  const condEl=document.getElementById("site-cond-"+siteId);
+  const scoreEl=document.getElementById("site-score-"+siteId);
+  const windEl=document.getElementById("site-wind-"+siteId);
+  const gustDot=document.getElementById("gust-dot-"+siteId);
+
+  if(condEl){
+    condEl.textContent=label;
+    condEl.className="site-pill-condition "+(cat==="SAFE"?"site-pill-safe":cat==="MARGINAL"?"site-pill-marginal":"site-pill-danger");
+  }
+  if(scoreEl) scoreEl.textContent=state.safetyScore+"/100";
+  if(windEl) windEl.textContent=`${wind.toFixed(1)} ${dir}`;
+  if(gustDot) gustDot.style.display=gust>=STATE.gustThreshold?"block":"none";
+}
+
+/* Reports + advisor retry handlers */
 document.addEventListener("click",e=>{
-  const btn=e.target.closest(".report-submit");
-  if(btn){
-    const siteId=btn.dataset.site;
+  const reportBtn=e.target.closest(".report-submit");
+  if(reportBtn){
+    const siteId=reportBtn.dataset.site;
     const textarea=document.getElementById("report-input-"+siteId);
     if(!textarea) return;
     const text=textarea.value.trim();
     if(!text) return;
     saveReport(siteId,text);
     textarea.value="";
-    const body=document.getElementById("reports-body-"+siteId);
-    if(body) body.innerHTML=renderReports(siteId);
-    const media=document.getElementById("media-card-"+siteId);
-    if(media) media.innerHTML=renderMediaBlock(SITES.find(s=>s.id===siteId));
+    const reportsBody=document.getElementById("reports-body-"+siteId);
+    if(reportsBody) reportsBody.innerHTML=renderReports(siteId);
   }
-  const retry=e.target.closest(".ai-error button");
-  if(retry){
-    const siteId=retry.dataset.site;
+  const retryBtn=e.target.closest(".ai-error button");
+  if(retryBtn){
+    const siteId=retryBtn.dataset.site;
     updateAdvisor(siteId);
   }
 });
 
-/* Load site data for metrics/forecast/sidebar */
-async function loadSiteData(siteId,force){
+/* Site selection */
+function selectSite(id){
+  STATE.currentId=id;
+  document.querySelectorAll(".site-pill").forEach(el=>{
+    el.classList.toggle("active",el.id==="site-pill-"+id);
+  });
+  document.querySelectorAll(".mobile-nav-btn").forEach(el=>{
+    el.classList.toggle("active",el.dataset.site===id);
+  });
+  renderDetailSkeleton();
+  loadSiteData(id);
+}
+
+/* Load metrics/forecast & then advisor uses same data/caches */
+async function loadSiteData(siteId){
   const site=SITES.find(s=>s.id===siteId);
   if(!site) return;
   try{
@@ -2014,23 +2006,20 @@ async function loadSiteData(siteId,force){
     const score=computeSafetyScore(site,current,precip);
     const cat=safetyCategory(score,site);
     const bestWindow=bestWindowFromHourly(site,om.hourly||{});
-    const prev=STATE.siteData[siteId];
-    const prevCat=prev?prev.safetyCategory:null;
-    const merged=Object.assign({},prev,{
+    const prev=STATE.siteData[siteId]||{};
+    STATE.siteData[siteId]=Object.assign({},prev,{
       om:omRes,
       safetyScore:score,
       safetyCategory:cat,
       bestWindow,
-      updatedTs:Date.now(),
-      prevCat,
-      nws:prev&&prev.nws?prev.nws:null,
-      nwsLoaded:prev&&prev.nwsLoaded||false
+      updatedTs:Date.now()
     });
-    STATE.siteData[siteId]=merged;
     updateSidebarRow(siteId);
     if(STATE.currentId===siteId){
       renderDetail(siteId);
     }
+    // Advisor uses the same cache and will not refetch OM
+    updateAdvisor(siteId);
   }catch(e){
     console.error("Open‑Meteo error",e);
     if(STATE.currentId===siteId){
@@ -2040,47 +2029,7 @@ async function loadSiteData(siteId,force){
   }
 }
 
-/* Sidebar row */
-function updateSidebarRow(siteId){
-  const site=SITES.find(s=>s.id===siteId);
-  const state=STATE.siteData[siteId];
-  if(!state||!state.om) return;
-  const condEl=document.getElementById("site-cond-"+siteId);
-  const scoreEl=document.getElementById("site-score-"+siteId);
-  const windEl=document.getElementById("site-wind-"+siteId);
-  const gustDot=document.getElementById("gust-dot-"+siteId);
-  const om=state.om.data;
-  const current=om.current||{};
-  const wind=current.windspeed_10m||0;
-  const gust=current.windgusts_10m||wind;
-  const dir=dirFromDeg(current.winddirection_10m||0);
-  const cat=state.safetyCategory;
-  const label=cat==="SAFE"?"Safe":cat==="MARGINAL"?"Marginal":"Dangerous";
-  condEl.textContent=label;
-  condEl.className="site-pill-condition "+(cat==="SAFE"?"site-pill-safe":cat==="MARGINAL"?"site-pill-marginal":"site-pill-danger");
-  scoreEl.textContent=state.safetyScore+"/100";
-  windEl.textContent=`${wind.toFixed(1)} ${dir}`;
-  gustDot.style.display=gust>=STATE.gustThreshold?"block":"none";
-}
-
-/* OM tabs */
-function wireOmTabs(siteId){
-  const detail=document.getElementById("detail");
-  const tabs=detail.querySelectorAll(`.forecast-tab[data-site="${siteId}"]`);
-  tabs.forEach(tab=>{
-    tab.addEventListener("click",()=>{
-      const mode=tab.getAttribute("data-om-tab");
-      tabs.forEach(t=>t.classList.remove("active"));
-      tab.classList.add("active");
-      ["today","tomorrow","week"].forEach(m=>{
-        const panel=document.getElementById(`om-panel-${siteId}-${m}`);
-        if(panel) panel.style.display=m===mode?"block":"none";
-      });
-    });
-  });
-}
-
-/* Clock + countdown */
+/* Clock & countdown */
 function startClock(){
   const clock=document.getElementById("clock");
   function tick(){clock.textContent=fmtClock(nowLocal());}
@@ -2102,7 +2051,7 @@ function startCountdown(){
   },1000);
 }
 
-/* Offline detection */
+/* Offline & gust toast */
 function setupOffline(){
   const banner=document.getElementById("offline-banner");
   function handle(){banner.style.display=navigator.onLine?"none":"flex";}
@@ -2110,8 +2059,6 @@ function setupOffline(){
   window.addEventListener("offline",handle);
   handle();
 }
-
-/* Gust toast */
 function showGustToast(site,gust){
   const toast=document.getElementById("gust-toast");
   toast.textContent=`Gust alert at ${site.name}: ${gust.toFixed(1)} mph`;
@@ -2122,12 +2069,11 @@ function showGustToast(site,gust){
 /* Global refresh */
 function refreshAll(){
   for(const site of SITES){
-    updateAdvisor(site.id);
-    loadSiteData(site.id,false);
+    loadSiteData(site.id);
   }
 }
 
-/* SW */
+/* Service worker (unchanged) */
 const SW_CODE=`
 const CACHE_NAME='bay-area-soaring-v1';
 self.addEventListener('install',event=>{
@@ -2173,7 +2119,6 @@ document.addEventListener("DOMContentLoaded",()=>{
   renderSiteLists();
   loadReports();
   selectSite(STATE.currentId);
-  refreshAll();
   startClock();
   startCountdown();
   setupOffline();
