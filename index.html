@@ -21,82 +21,77 @@ header p{color:var(--muted);font-size:14px;margin-top:6px}
 .dg{background:var(--green);box-shadow:0 0 6px var(--green)}
 
 /* LAYOUT */
-.layout{display:flex;flex:1} /* sidebar is now fixed/overlaid, no flex child */
+.layout{display:flex;flex:1}
 
-/* SIDEBAR — collapsible hover panel */
-/* Remove sidebar from normal flow; it's now fixed/overlaid */
+/* SIDEBAR — always-visible compact panel */
 .sidebar{
   position:fixed;
-  top:0;left:0;
-  height:100vh;
+  top:80px;
+  left:12px;
   z-index:200;
-  display:flex;
-  flex-direction:row;
-  pointer-events:none; /* let clicks pass through when collapsed */
-}
-
-/* The slim tab — always visible */
-.sidebar-tab{
-  pointer-events:all;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  gap:6px;
-  width:28px;
-  background:var(--card);
-  border-right:1px solid var(--border);
-  border-top-right-radius:0;
-  border-bottom-right-radius:0;
-  cursor:pointer;
-  padding:16px 0;
-  transition:background 0.2s;
-  user-select:none;
-}
-.sidebar-tab:hover{background:rgba(88,166,255,0.12);}
-.sidebar-tab-icon{font-size:16px;line-height:1;}
-.sidebar-tab-chevron{
-  font-size:11px;
-  color:var(--accent);
-  transition:transform 0.3s;
-  line-height:1;
-}
-.sidebar-tab-label{
-  writing-mode:vertical-rl;
-  text-orientation:mixed;
-  transform:rotate(180deg);
-  font-size:9px;
-  letter-spacing:2px;
-  text-transform:uppercase;
-  color:var(--muted);
-  margin-top:4px;
-}
-
-/* The panel that slides out */
-.sidebar-panel{
-  pointer-events:all;
-  width:var(--sidebar-w);
-  background:var(--card);
-  border-right:1px solid var(--border);
-  height:100vh;
+  width:170px;
+  background:rgba(22,27,34,0.92);
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:10px 0 8px;
+  backdrop-filter:blur(8px);
+  box-shadow:0 4px 20px rgba(0,0,0,0.4);
+  max-height:calc(100vh - 100px);
   overflow-y:auto;
-  padding:20px 0;
-  transform:translateX(-100%);
-  transition:transform 0.28s cubic-bezier(0.4,0,0.2,1);
-  box-shadow:4px 0 24px rgba(0,0,0,0.35);
 }
-/* Open state — triggered by JS on hover/tap */
-.sidebar.open .sidebar-panel{transform:translateX(0);}
-.sidebar.open .sidebar-tab-chevron{transform:rotate(180deg);}
-.sidebar.open .sidebar-tab{background:rgba(88,166,255,0.12);}
-
-.sidebar-title{font-size:10px;text-transform:uppercase;letter-spacing:2px;color:var(--muted);padding:0 18px 12px;border-bottom:1px solid var(--border);margin-bottom:12px}
-.nav-item{display:flex;align-items:center;gap:10px;padding:11px 18px;cursor:pointer;text-decoration:none;color:var(--text);font-size:13px;font-weight:500;transition:background 0.15s,color 0.15s;border-left:3px solid transparent}
-.nav-item:hover{background:rgba(88,166,255,0.08);color:var(--accent);border-left-color:var(--accent)}
-.nav-item .nav-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-.nav-item .nav-sub{font-size:11px;color:var(--muted);margin-top:1px}
+.sidebar-title{
+  font-size:9px;
+  text-transform:uppercase;
+  letter-spacing:2px;
+  color:var(--muted);
+  padding:0 12px 8px;
+  border-bottom:1px solid var(--border);
+  margin-bottom:6px;
+}
+.nav-item{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:8px 12px;
+  cursor:pointer;
+  text-decoration:none;
+  color:var(--text);
+  font-size:12px;
+  font-weight:500;
+  transition:background 0.15s,color 0.15s;
+  border-left:3px solid transparent;
+}
+.nav-item:hover{background:rgba(88,166,255,0.1);color:var(--accent);border-left-color:var(--accent)}
+.nav-item .nav-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.nav-item .nav-sub{font-size:10px;color:var(--muted);margin-top:1px}
 .nav-item-inner{display:flex;flex-direction:column}
 
+/* Mobile: smaller panel, tap to collapse */
+@media(max-width:600px){
+  .sidebar{
+    top:auto;
+    bottom:12px;
+    left:8px;
+    width:auto;
+    max-width:160px;
+    max-height:none;
+  }
+  .sidebar.mobile-collapsed .nav-item{display:none}
+  .sidebar-toggle{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    padding:6px 12px 2px;
+    cursor:pointer;
+    font-size:11px;
+    color:var(--accent);
+    font-weight:600;
+    user-select:none;
+  }
+}
+@media(min-width:601px){
+  .sidebar-toggle{display:none}
+}
 /* MAIN */
 main{flex:1;max-width:100%;padding:28px 20px 60px;display:flex;flex-direction:column;gap:32px}
 
@@ -184,8 +179,6 @@ footer a{color:var(--accent);text-decoration:none}
 
 @media(max-width:700px){
   .layout{flex-direction:column}
-  /* Sidebar tab always visible on mobile; tap to toggle */
-  .sidebar-panel{width:240px}
 }
 </style>
 </head>
@@ -210,46 +203,38 @@ footer a{color:var(--accent);text-decoration:none}
 
 <div class="layout">
 
-  <!-- SIDEBAR NAV — collapsible hover panel -->
+  <!-- SIDEBAR NAV — always-visible -->
   <nav class="sidebar" id="sidebar">
-    <!-- Slim always-visible tab -->
-    <div class="sidebar-tab" id="sidebar-tab" aria-label="Toggle flying sites menu">
-      <span class="sidebar-tab-icon">🪂</span>
-      <span class="sidebar-tab-chevron">❯</span>
-      <span class="sidebar-tab-label">Sites</span>
-    </div>
-    <!-- Slide-out panel -->
-    <div class="sidebar-panel">
-      <div class="sidebar-title">Flying Sites</div>
-      <a class="nav-item" href="#levin" onclick="closeSidebarOnMobile()">
-        <span class="nav-dot dr"></span>
-        <div class="nav-item-inner">
-          <span>Ed R. Levin Park</span>
-          <span class="nav-sub">Milpitas · Paragliding</span>
-        </div>
-      </a>
-      <a class="nav-item" href="#mussel" onclick="closeSidebarOnMobile()">
-        <span class="nav-dot dr"></span>
-        <div class="nav-item-inner">
-          <span>Mussel Rock Park</span>
-          <span class="nav-sub">Daly City · Hang Gliding</span>
-        </div>
-      </a>
-      <a class="nav-item" href="#shoreline" onclick="closeSidebarOnMobile()">
-        <span class="nav-dot" id="nav-dot-kite" style="background:var(--muted)"></span>
-        <div class="nav-item-inner">
-          <span>Shoreline Kite Area</span>
-          <span class="nav-sub">Mountain View · Kites</span>
-        </div>
-      </a>
-      <a class="nav-item" href="#mpeak" onclick="closeSidebarOnMobile()">
-        <span class="nav-dot" id="nav-dot-mpeak" style="background:var(--muted)"></span>
-        <div class="nav-item-inner">
-          <span>Mission Peak</span>
-          <span class="nav-sub">Fremont · Paragliding</span>
-        </div>
-      </a>
-    </div>
+    <div class="sidebar-title">Flying Sites</div>
+    <div class="sidebar-toggle" id="sidebar-toggle" onclick="toggleSidebarMobile()">🪂 Sites ▾</div>
+    <a class="nav-item" href="#levin">
+      <span class="nav-dot dr"></span>
+      <div class="nav-item-inner">
+        <span>Ed R. Levin Park</span>
+        <span class="nav-sub">Milpitas · Paragliding</span>
+      </div>
+    </a>
+    <a class="nav-item" href="#mussel">
+      <span class="nav-dot dr"></span>
+      <div class="nav-item-inner">
+        <span>Mussel Rock Park</span>
+        <span class="nav-sub">Daly City · Hang Gliding</span>
+      </div>
+    </a>
+    <a class="nav-item" href="#shoreline">
+      <span class="nav-dot" id="nav-dot-kite" style="background:var(--muted)"></span>
+      <div class="nav-item-inner">
+        <span>Shoreline Kite Area</span>
+        <span class="nav-sub">Mountain View · Kites</span>
+      </div>
+    </a>
+    <a class="nav-item" href="#mpeak">
+      <span class="nav-dot" id="nav-dot-mpeak" style="background:var(--muted)"></span>
+      <div class="nav-item-inner">
+        <span>Mission Peak</span>
+        <span class="nav-sub">Fremont · Paragliding</span>
+      </div>
+    </a>
   </nav>
 
   <!-- MAIN CONTENT -->
@@ -907,56 +892,21 @@ setInterval(_tick,1000);function updateBestWindow(){
 }
 updateBestWindow();
 
-// ── Collapsible Sidebar ───────────────────────────────────────────────────
-(function(){
-  var sidebar  = document.getElementById('sidebar');
-  var tab      = document.getElementById('sidebar-tab');
-  var isMobile = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
-  var closeTimer;
-
-  function openSidebar(){
-    clearTimeout(closeTimer);
-    sidebar.classList.add('open');
-  }
-  function closeSidebar(){
-    sidebar.classList.remove('open');
-  }
-  function scheduleClose(){
-    closeTimer = setTimeout(closeSidebar, 200);
-  }
-
-  if(isMobile){
-    // Mobile: tap the tab to toggle
-    tab.addEventListener('click', function(e){
-      e.stopPropagation();
-      sidebar.classList.toggle('open');
-    });
-    // Tap anywhere outside to close
-    document.addEventListener('click', function(e){
-      if(!sidebar.contains(e.target)) closeSidebar();
-    });
-  } else {
-    // Desktop: hover over the whole sidebar (tab + panel)
-    sidebar.addEventListener('mouseenter', openSidebar);
-    sidebar.addEventListener('mouseleave', scheduleClose);
-    // Cancel close if mouse re-enters
-    sidebar.addEventListener('mouseenter', function(){ clearTimeout(closeTimer); });
-  }
-
-  // Close after clicking a nav link (mobile helper called inline, but also cover desktop)
-  sidebar.querySelectorAll('.nav-item').forEach(function(a){
-    a.addEventListener('click', function(){
-      if(!isMobile) scheduleClose();
-    });
-  });
-})();
-
-function closeSidebarOnMobile(){
-  if(('ontouchstart' in window)||(navigator.maxTouchPoints>0)){
-    document.getElementById('sidebar').classList.remove('open');
+// ── Flying Sites panel — mobile tap toggle ───────────────────────────────────
+function toggleSidebarMobile(){
+  var sb=document.getElementById('sidebar');
+  var tog=document.getElementById('sidebar-toggle');
+  if(sb){
+    sb.classList.toggle('mobile-collapsed');
+    if(tog) tog.textContent=sb.classList.contains('mobile-collapsed')?'🪂 Sites ▸':'🪂 Sites ▾';
   }
 }
-// ─────────────────────────────────────────────────────────────────────────
+// On mobile, start collapsed
+if(window.innerWidth<=600){
+  var _sb=document.getElementById('sidebar');
+  if(_sb) _sb.classList.add('mobile-collapsed');
+}
+// ─────────────────────────────────────────────────────────────────────────────
 </script>
 </body>
 </html>
