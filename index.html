@@ -77,7 +77,6 @@ body{
   overflow-x:hidden;
 }
 
-/* Scrollbars */
 ::-webkit-scrollbar{width:8px;height:8px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{
@@ -86,7 +85,6 @@ body{
 }
 ::-webkit-scrollbar-thumb:hover{background:rgba(148,163,184,0.65)}
 
-/* Links, buttons, base */
 a{color:var(--accent-soft);text-decoration:none}
 a:hover{text-decoration:underline}
 button{
@@ -203,11 +201,6 @@ button{
   align-items:center;
   gap:8px;
 }
-.refresh-countdown{
-  font-family:'JetBrains Mono',monospace;
-  font-size:11px;
-  color:var(--muted-soft);
-}
 .refresh-button{
   border-radius:var(--radius-pill);
   padding:6px 14px;
@@ -233,7 +226,7 @@ button{
   box-shadow:0 4px 15px rgba(37,99,235,0.45);
 }
 
-/* Layout: split dashboard */
+/* Layout */
 .app-main{
   flex:1;
   display:flex;
@@ -375,7 +368,7 @@ button{
   100%{transform:scale(1);box-shadow:0 0 0 0 rgba(248,113,113,0)}
 }
 
-/* Detail panel */
+/* Detail */
 .detail{
   flex:1;
   min-width:0;
@@ -487,8 +480,6 @@ button{
   font-family:'JetBrains Mono',monospace;
   color:var(--muted-soft);
 }
-
-/* Condition change alert */
 .change-alert{
   margin-top:2px;
   border-radius:var(--radius-md);
@@ -501,15 +492,13 @@ button{
   border:1px solid rgba(249,115,22,0.6);
   color:#fed7aa;
 }
-
-/* Layout: top grid under header */
 .detail-grid-top{
   display:grid;
   grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);
   gap:10px;
 }
 
-/* AI cards */
+/* AI card */
 .ai-card{
   position:relative;
   border-radius:var(--radius-lg);
@@ -588,7 +577,7 @@ button{
 .ai-error{
   font-size:12px;
   color:#fecaca;
-  display:flex;
+  display:none;
   align-items:center;
   justify-content:space-between;
   gap:8px;
@@ -698,7 +687,7 @@ button{
   color:#fee2e2;
 }
 
-/* Skeletons */
+/* Skeleton */
 .skel{
   border-radius:6px;
   background:linear-gradient(90deg,rgba(15,23,42,0.9) 0,rgba(30,64,175,0.6) 40%,rgba(15,23,42,0.9) 80%);
@@ -715,14 +704,14 @@ button{
   border-radius:999px;
 }
 
-/* Middle row: forecast + info */
+/* Middle grids */
 .detail-grid-mid{
   display:grid;
   grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);
   gap:10px;
 }
 
-/* Forecast cards */
+/* Cards */
 .card{
   border-radius:var(--radius-lg);
   background:linear-gradient(135deg,rgba(15,23,42,0.98),rgba(15,23,42,0.94));
@@ -761,10 +750,8 @@ button{
   display:none;
 }
 .card-body.open{display:block}
-.chevron{
-  font-size:11px;
-  color:var(--muted-soft);
-}
+
+/* Forecast grid */
 .forecast-tabs{
   display:flex;
   gap:4px;
@@ -864,7 +851,7 @@ button{
   color:#f9fafb;
 }
 
-/* Bottom row: Windy + media + reports */
+/* Bottom row */
 .detail-grid-bottom{
   display:grid;
   grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);
@@ -899,7 +886,7 @@ button{
   border:0;
 }
 
-/* Media + reports */
+/* Media & reports */
 .media-card{
   border-radius:var(--radius-lg);
   background:linear-gradient(135deg,rgba(15,23,42,0.98),rgba(15,23,42,0.94));
@@ -988,7 +975,7 @@ button{
   max-width:520px;
 }
 
-/* Bottom mobile nav */
+/* Mobile nav */
 .mobile-nav{
   position:fixed;
   bottom:0;
@@ -1126,7 +1113,6 @@ button{
 <script>
 "use strict";
 
-/* ========= SITE CONFIG ========= */
 const SITES = [
   {
     id:"levin",
@@ -1216,7 +1202,7 @@ const SITES = [
 
 const STATE = {
   currentId:SITES[0].id,
-  siteData:{},      // siteId -> {om, safetyScore, safetyCategory, bestWindow, updatedTs, prevCat, nws, nwsLoaded, advisorState}
+  siteData:{},
   countdown:180,
   countdownTimer:null,
   localCacheTTL:3600000,
@@ -1239,7 +1225,6 @@ function dirFromDeg(deg){
 function clamp(v,min,max){return v<min?min:v>max?max:v;}
 function esc(str){return String(str).replace(/</g,"&lt;").replace(/>/g,"&gt;");}
 
-/* Local storage cache */
 function cacheKey(siteId,suffix){return "bas_"+siteId+"_"+suffix;}
 function cacheSet(siteId,suffix,data){
   try{localStorage.setItem(cacheKey(siteId,suffix),JSON.stringify({ts:Date.now(),data}));}catch(e){}
@@ -1392,8 +1377,8 @@ function buildDailyBrief(site,data){
   return `${dayLabel} overview: ${keyPhrase}${windowText}${nwsExtra}`;
 }
 
-/* Advisor UI state helpers */
-function setAdvisorLoading(siteId, isLoading){
+/* Advisor UI helpers */
+function setAdvisorLoading(siteId,isLoading){
   const card=document.getElementById("advisor-card-"+siteId);
   if(!card) return;
   const textEl=card.querySelector(".ai-summary-text");
@@ -1401,15 +1386,16 @@ function setAdvisorLoading(siteId, isLoading){
   const bestEl=card.querySelector(".ai-best-window");
   const errorEl=card.querySelector(".ai-error");
   if(isLoading){
-    if(textEl) textEl.innerHTML=`<span class="skel skel-line" style="width:82%;display:block;"></span>
-      <span class="skel skel-line" style="width:65%;display:block;"></span>
-      <span class="skel skel-line" style="width:74%;display:block;"></span>`;
+    if(textEl) textEl.innerHTML=
+      `<span class="skel skel-line" style="width:82%;display:block;"></span>
+       <span class="skel skel-line" style="width:65%;display:block;"></span>
+       <span class="skel skel-line" style="width:74%;display:block;"></span>`;
     if(briefEl) briefEl.textContent="Daily briefing will appear once forecast data loads.";
     if(bestEl) bestEl.style.display="none";
     if(errorEl) errorEl.style.display="none";
   }
 }
-function renderAdvisorSummary(siteId, summaryText, dailyText, bestWindow){
+function renderAdvisorSummary(siteId,summaryText,dailyText,bestWindow){
   const card=document.getElementById("advisor-card-"+siteId);
   if(!card) return;
   const textEl=card.querySelector(".ai-summary-text");
@@ -1428,7 +1414,7 @@ function renderAdvisorSummary(siteId, summaryText, dailyText, bestWindow){
   }
   if(errorEl) errorEl.style.display="none";
 }
-function renderAdvisorError(siteId, message){
+function renderAdvisorError(siteId,message){
   const card=document.getElementById("advisor-card-"+siteId);
   if(!card) return;
   const textEl=card.querySelector(".ai-summary-text");
@@ -1450,14 +1436,12 @@ function renderAdvisorError(siteId, message){
   errorEl.style.display="flex";
 }
 
-/* getSiteWeatherData: returns data or throws */
+/* Weather data for advisor */
 async function getSiteWeatherData(siteId){
   const site=SITES.find(s=>s.id===siteId);
   if(!site) throw new Error("Unknown site");
-  let omRes=null, nwsRes=null;
-  const omCached=cacheGet(site.id,"om");
-  if(omCached) omRes=omCached;
-  else{
+  let omRes=cacheGet(site.id,"om");
+  if(!omRes){
     const url=`https://api.open-meteo.com/v1/forecast?latitude=${site.lat}&longitude=${site.lon}`+
       `&current=temperature_2m,precipitation,windspeed_10m,windgusts_10m,winddirection_10m`+
       `&hourly=windspeed_10m,windgusts_10m,precipitation,winddirection_10m,temperature_2m`+
@@ -1474,9 +1458,8 @@ async function getSiteWeatherData(siteId){
   const score=computeSafetyScore(site,current,precip);
   const cat=safetyCategory(score,site);
   const bestWindow=bestWindowFromHourly(site,om.hourly||{});
-  const nwsCached=cacheGet(site.id,"nws");
-  if(nwsCached) nwsRes=nwsCached;
-  else{
+  let nwsRes=cacheGet(site.id,"nws");
+  if(!nwsRes){
     try{
       const url2=`https://api.weather.gov/gridpoints/${site.nwsOffice}/${site.nwsX},${site.nwsY}/forecast`;
       const resp2=await fetch(url2,{headers:{
@@ -1488,9 +1471,7 @@ async function getSiteWeatherData(siteId){
         cacheSet(site.id,"nws",data2);
         nwsRes={ts:Date.now(),data:data2};
       }
-    }catch(e){
-      // ignore, advisor can still run without NWS
-    }
+    }catch(e){}
   }
   return {
     site,
@@ -1503,28 +1484,25 @@ async function getSiteWeatherData(siteId){
   };
 }
 
-/* Advisor orchestration */
+/* Advisor controller */
 async function updateAdvisor(siteId){
   setAdvisorLoading(siteId,true);
   try{
     const data=await getSiteWeatherData(siteId);
-    // merge into STATE.siteData without losing prior fields
     const prev=STATE.siteData[siteId]||{};
-    STATE.siteData[siteId]=Object.assign({},prev,data,{
-      prevCat:prev.safetyCategory||null
-    });
+    STATE.siteData[siteId]=Object.assign({},prev,data,{prevCat:prev.safetyCategory||null});
     const summary=buildAdvisorSummary(data.site,data);
     const daily=buildDailyBrief(data.site,data);
     renderAdvisorSummary(siteId,summary,daily,data.bestWindow||null);
   }catch(err){
-    console.error("Advisor error for",siteId,err);
+    console.error("Advisor error",siteId,err);
     renderAdvisorError(siteId,"Could not load advisor data. Please refresh.");
   }finally{
     setAdvisorLoading(siteId,false);
   }
 }
 
-/* Fetch Open‑Meteo (used by metrics/forecast & sidebar) */
+/* Open‑Meteo for metrics/forecast */
 async function fetchOpenMeteo(site){
   const cached=cacheGet(site.id,"om");
   if(cached) return cached;
@@ -1539,7 +1517,7 @@ async function fetchOpenMeteo(site){
   return {ts:Date.now(),data};
 }
 
-/* Fetch NWS for forecast card */
+/* NWS forecast */
 async function fetchNWS(site){
   const cached=cacheGet(site.id,"nws");
   if(cached) return cached;
@@ -1603,8 +1581,6 @@ function selectSite(id){
     el.classList.toggle("active",el.dataset.site===id);
   });
   renderDetailSkeleton();
-  // Advisor + other data updated independently
-  updateAdvisor(id);
   loadSiteData(id,false);
 }
 
@@ -1650,6 +1626,7 @@ function renderDetailSkeleton(){
             <span>Best window: --</span>
           </div>
           <div class="ai-daily-brief">Daily briefing will appear once forecast data loads.</div>
+          <div class="ai-error"></div>
         </div>
       </div>
       <div class="metrics-card">
@@ -1676,8 +1653,7 @@ function renderDetailSkeleton(){
           <div class="card-title">Open‑Meteo Forecast</div>
           <div class="card-toggle-pill" id="om-pill-${site.id}">Tap to expand</div>
         </div>
-        <div class="card-body" id="om-body-${site.id}">
-        </div>
+        <div class="card-body" id="om-body-${site.id}"></div>
       </div>
 
       <div class="card" id="nws-card-${site.id}">
@@ -1695,16 +1671,14 @@ function renderDetailSkeleton(){
           <div class="card-title">Site Information</div>
           <div class="card-toggle-pill" id="info-pill-${site.id}">Tap to expand</div>
         </div>
-        <div class="card-body" id="info-body-${site.id}">
-        </div>
+        <div class="card-body" id="info-body-${site.id}"></div>
       </div>
       <div class="card">
         <div class="card-header" data-target="reports-body-${site.id}">
           <div class="card-title">Pilot Condition Reports</div>
           <div class="card-toggle-pill" id="reports-pill-${site.id}">Tap to expand</div>
         </div>
-        <div class="card-body" id="reports-body-${site.id}">
-        </div>
+        <div class="card-body" id="reports-body-${site.id}"></div>
       </div>
     </div>
 
@@ -1718,13 +1692,12 @@ function renderDetailSkeleton(){
           <iframe class="windy-iframe" src="${site.windyEmbed}" loading="lazy" title="Wind map for ${site.name}"></iframe>
         </div>
       </div>
-      <div class="media-card" id="media-card-${site.id}">
-      </div>
+      <div class="media-card" id="media-card-${site.id}"></div>
     </div>
   `;
 }
 
-/* Render detail with data for metrics/forecast/info/media */
+/* Detail with metrics/forecast/info/media */
 function renderDetail(siteId){
   const site=SITES.find(s=>s.id===siteId);
   const state=STATE.siteData[siteId];
@@ -1732,8 +1705,6 @@ function renderDetail(siteId){
     renderDetailSkeleton();
     return;
   }
-  const detail=document.getElementById("detail");
-  renderDetailSkeleton(); // build structure with advisor card, then fill rest
   const om=state.om.data;
   const current=om.current||{};
   const precip=current.precipitation||0;
@@ -1745,10 +1716,12 @@ function renderDetail(siteId){
   const condClass=cat==="SAFE"?"safe":cat==="MARGINAL"?"marginal":"danger";
   const lastTs=state.updatedTs;
   const lastText=lastTs?("Last updated "+minutesAgo(lastTs)):"Awaiting first update";
+
   const header=document.querySelector(".detail-header");
   const lastEl=document.querySelector(".last-updated");
   if(header){
-    header.querySelector(".detail-title-sub").textContent=`${site.city} · ${site.type}`;
+    const sub=header.querySelector(".detail-title-sub");
+    if(sub) sub.textContent=`${site.city} · ${site.type}`;
     const condPill=header.querySelector(".condition-pill");
     const safetyChip=header.querySelector(".safety-chip");
     if(condPill){
@@ -1761,6 +1734,7 @@ function renderDetail(siteId){
     }
   }
   if(lastEl) lastEl.textContent=lastText;
+
   const metricsCard=document.querySelector(".metrics-card");
   if(metricsCard){
     const wind=current.windspeed_10m||0;
@@ -1812,6 +1786,7 @@ function renderDetail(siteId){
       </div>
     `;
   }
+
   const omBody=document.getElementById("om-body-"+site.id);
   if(omBody){
     omBody.innerHTML=renderOpenMeteoForecast(site,state);
@@ -1829,6 +1804,7 @@ function renderDetail(siteId){
   if(mediaCard){
     mediaCard.innerHTML=renderMediaBlock(site);
   }
+
   document.querySelectorAll(".card-header").forEach(h=>{
     h.addEventListener("click",()=>{
       const targetId=h.getAttribute("data-target");
@@ -1852,7 +1828,7 @@ function renderDetail(siteId){
   });
 }
 
-/* Open‑Meteo forecast rendering */
+/* OM forecast */
 function renderOpenMeteoForecast(site,state){
   const om=state.om.data;
   const hourly=om.hourly||{};
@@ -1942,7 +1918,7 @@ async function ensureNwsLoaded(siteId){
   }
 }
 
-/* Site info / media / reports */
+/* Site info / reports / media */
 function renderSiteInfo(site){
   const diffClass=site.difficulty==="beginner"?"diff-beginner":site.difficulty==="advanced"?"diff-advanced":"diff-intermediate";
   const diffLabel=site.difficulty==="beginner"?"Beginner":site.difficulty==="advanced"?"Advanced":"Intermediate";
@@ -2006,27 +1982,27 @@ function renderMediaBlock(site){
 }
 document.addEventListener("click",e=>{
   const btn=e.target.closest(".report-submit");
-  if(!btn) return;
-  const siteId=btn.dataset.site;
-  const textarea=document.getElementById("report-input-"+siteId);
-  if(!textarea) return;
-  const text=textarea.value.trim();
-  if(!text) return;
-  saveReport(siteId,text);
-  textarea.value="";
-  const container=document.getElementById("reports-body-"+siteId);
-  if(container) container.innerHTML=renderReports(siteId);
-  const mediaCard=document.getElementById("media-card-"+siteId);
-  if(mediaCard) mediaCard.innerHTML=renderMediaBlock(SITES.find(s=>s.id===siteId));
-});
-document.addEventListener("click",e=>{
+  if(btn){
+    const siteId=btn.dataset.site;
+    const textarea=document.getElementById("report-input-"+siteId);
+    if(!textarea) return;
+    const text=textarea.value.trim();
+    if(!text) return;
+    saveReport(siteId,text);
+    textarea.value="";
+    const body=document.getElementById("reports-body-"+siteId);
+    if(body) body.innerHTML=renderReports(siteId);
+    const media=document.getElementById("media-card-"+siteId);
+    if(media) media.innerHTML=renderMediaBlock(SITES.find(s=>s.id===siteId));
+  }
   const retry=e.target.closest(".ai-error button");
-  if(!retry) return;
-  const siteId=retry.dataset.site;
-  updateAdvisor(siteId);
+  if(retry){
+    const siteId=retry.dataset.site;
+    updateAdvisor(siteId);
+  }
 });
 
-/* Load site data (metrics/forecast/sidebar) */
+/* Load site data for metrics/forecast/sidebar */
 async function loadSiteData(siteId,force){
   const site=SITES.find(s=>s.id===siteId);
   if(!site) return;
@@ -2047,7 +2023,6 @@ async function loadSiteData(siteId,force){
       bestWindow,
       updatedTs:Date.now(),
       prevCat,
-      // keep any existing nws/advisor state
       nws:prev&&prev.nws?prev.nws:null,
       nwsLoaded:prev&&prev.nwsLoaded||false
     });
@@ -2055,10 +2030,6 @@ async function loadSiteData(siteId,force){
     updateSidebarRow(siteId);
     if(STATE.currentId===siteId){
       renderDetail(siteId);
-    }
-    const omDataForAdvisor=STATE.siteData[siteId];
-    if(omDataForAdvisor && omDataForAdvisor.advisorState!=="loading"){
-      // advisor will be updated separately via updateAdvisor()
     }
   }catch(e){
     console.error("Open‑Meteo error",e);
@@ -2073,11 +2044,11 @@ async function loadSiteData(siteId,force){
 function updateSidebarRow(siteId){
   const site=SITES.find(s=>s.id===siteId);
   const state=STATE.siteData[siteId];
+  if(!state||!state.om) return;
   const condEl=document.getElementById("site-cond-"+siteId);
   const scoreEl=document.getElementById("site-score-"+siteId);
   const windEl=document.getElementById("site-wind-"+siteId);
   const gustDot=document.getElementById("gust-dot-"+siteId);
-  if(!state||!state.om) return;
   const om=state.om.data;
   const current=om.current||{};
   const wind=current.windspeed_10m||0;
@@ -2086,8 +2057,7 @@ function updateSidebarRow(siteId){
   const cat=state.safetyCategory;
   const label=cat==="SAFE"?"Safe":cat==="MARGINAL"?"Marginal":"Dangerous";
   condEl.textContent=label;
-  condEl.className="site-pill-condition "+
-    (cat==="SAFE"?"site-pill-safe":cat==="MARGINAL"?"site-pill-marginal":"site-pill-danger");
+  condEl.className="site-pill-condition "+(cat==="SAFE"?"site-pill-safe":cat==="MARGINAL"?"site-pill-marginal":"site-pill-danger");
   scoreEl.textContent=state.safetyScore+"/100";
   windEl.textContent=`${wind.toFixed(1)} ${dir}`;
   gustDot.style.display=gust>=STATE.gustThreshold?"block":"none";
