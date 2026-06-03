@@ -205,10 +205,10 @@ footer a{color:var(--accent);text-decoration:none}
 
 <!-- STATUS BAR -->
 <div class="bar">
-  <div class="pill"><span class="dot dr"></span>Ed R. Levin — Not Flyable Today</div>
-  <div class="pill"><span class="dot dr"></span>Mussel Rock — Dangerous Today</div>
-  <div class="pill"><span class="dot dy"></span>Ed R. Levin — Marginal Tomorrow</div>
-  <div class="pill"><span class="dot dg"></span>Mussel Rock — Flyable Tomorrow PM</div>
+  <div class="pill"><span class="dot dr" id="pill-dot-levin-today"></span><span id="pill-text-levin-today">Ed R. Levin — Loading...</span></div>
+  <div class="pill"><span class="dot dr" id="pill-dot-mussel-today"></span><span id="pill-text-mussel-today">Mussel Rock — Loading...</span></div>
+  <div class="pill"><span class="dot dy" id="pill-dot-levin-tmrw"></span><span id="pill-text-levin-tmrw">Ed R. Levin Tomorrow — Loading...</span></div>
+  <div class="pill"><span class="dot dy" id="pill-dot-mussel-tmrw"></span><span id="pill-text-mussel-tmrw">Mussel Rock Tomorrow — Loading...</span></div>
   <div class="pill"><span class="dot dg"></span><span id="best-window-label">Best Window: calculating...</span></div>
 </div>
 
@@ -261,7 +261,7 @@ footer a{color:var(--accent);text-decoration:none}
     <div class="card" id="levin">
       <div class="ch">
         <div><h2>Ed R. Levin Park</h2><div class="sub">Milpitas, CA &middot; Paragliding &middot; 37.4619 N, 121.861 W</div></div>
-        <span class="sb sr">&bull; Not Flyable Today</span>
+        <span class="sb sl" id="levin-status">&bull; Loading...</span>
       </div>
       <div class="tabs">
         <button class="tb on" onclick="sw('lev','t1',this)">Today (Mon)</button>
@@ -273,6 +273,7 @@ footer a{color:var(--accent);text-decoration:none}
         <div class="stats">
           <div class="stat"><div class="lbl">Wind Speed</div><div class="val"><span id="levin-wind-today">--</span><span class="u">m/s</span></div></div>
           <div class="stat"><div class="lbl">Gusts</div><div class="val"	><span id="levin-gust-today">--</span><span class="u">m/s</span></div></div>
+          <div class="stat"><div class="lbl">Wind Dir</div><div class="val"><span id="levin-wdir-today">--</span></div></div>
           <div class="stat"><div class="lbl">Temperature</div><div class="val"><span id="levin-temp-today">--</span><span class="u">F</span></div></div>
           <div class="stat"><div class="lbl">Precipitation</div><div class="val"><span id="levin-precip-today">--</span><span class="u">mm</span></div></div>
         </div>
@@ -283,6 +284,7 @@ footer a{color:var(--accent);text-decoration:none}
         <div class="stats">
           <div class="stat"><div class="lbl">Wind Speed</div><div class="val"><span id="levin-wind-tmrw">--</span><span class="u">m/s</span></div></div>
           <div class="stat"><div class="lbl">Gusts</div><div class="val"><span id="levin-gust-tmrw">--</span><span class="u">m/s</span></div></div>
+          <div class="stat"><div class="lbl">Wind Dir</div><div class="val"><span id="levin-wdir-tmrw">--</span></div></div>
           <div class="stat"><div class="lbl">Temperature</div><div class="val"><span id="levin-temp-tmrw">--</span><span class="u">°F</span></div></div>
           <div class="stat"><div class="lbl">Precipitation</div><div class="val"><span id="levin-precip-tmrw">--</span><span class="u">mm</span></div></div>
         </div>
@@ -327,7 +329,7 @@ footer a{color:var(--accent);text-decoration:none}
     <div class="card" id="mussel">
       <div class="ch">
         <div><h2>Mussel Rock Park</h2><div class="sub">Daly City, CA &middot; Kitesurfing / Hang Gliding &middot; 37.6740 N, 122.4887 W</div></div>
-        <span class="sb sr">&bull; Dangerous Today</span>
+        <span class="sb sl" id="mussel-status">&bull; Loading...</span>
       </div>
       <div class="tabs">
         <button class="tb on" onclick="sw('mus','t1',this)">Today (Mon)</button>
@@ -339,6 +341,7 @@ footer a{color:var(--accent);text-decoration:none}
         <div class="stats">
           <div class="stat"><div class="lbl">Wind Speed</div><div class="val"><span id="mussel-wind-today">--</span><span class="u">m/s</span></div></div>
           <div class="stat"><div class="lbl">Gusts</div><div class="val"><span id="mussel-gust-today">--</span><span class="u">m/s</span></div></div>
+          <div class="stat"><div class="lbl">Wind Dir</div><div class="val"><span id="mussel-wdir-today">--</span></div></div>
           <div class="stat"><div class="lbl">Temperature</div><div class="val"><span id="mussel-temp-today">--</span><span class="u">F</span></div></div>
           <div class="stat"><div class="lbl">Precipitation</div><div class="val"><span id="mussel-precip-today">--</span><span class="u">mm</span></div></div>
         </div>
@@ -349,6 +352,7 @@ footer a{color:var(--accent);text-decoration:none}
         <div class="stats">
           <div class="stat"><div class="lbl">Wind Speed</div><div class="val"><span id="mussel-wind-tmrw">--</span><span class="u">m/s</span></div></div>
           <div class="stat"><div class="lbl">Gusts</div><div class="val"><span id="mussel-gust-tmrw">--</span><span class="u">m/s</span></div></div>
+          <div class="stat"><div class="lbl">Wind Dir</div><div class="val"><span id="mussel-wdir-tmrw">--</span></div></div>
           <div class="stat"><div class="lbl">Temperature</div><div class="val"><span id="mussel-temp-tmrw">--</span><span class="u">°F</span></div></div>
           <div class="stat"><div class="lbl">Precipitation</div><div class="val"><span id="mussel-precip-tmrw">--</span><span class="u">mm</span></div></div>
         </div>
@@ -403,6 +407,7 @@ footer a{color:var(--accent);text-decoration:none}
         <div class="stats">
           <div class="stat"><div class="lbl">Wind Speed</div><div class="val"><span id="kite-wind-today">--</span><span class="u">m/s</span></div></div>
           <div class="stat"><div class="lbl">Gusts</div><div class="val"><span id="kite-gust-today">--</span><span class="u">m/s</span></div></div>
+          <div class="stat"><div class="lbl">Wind Dir</div><div class="val"><span id="kite-wdir-today">--</span></div></div>
           <div class="stat"><div class="lbl">Temperature</div><div class="val"><span id="kite-temp-today">--</span><span class="u">F</span></div></div>
           <div class="stat"><div class="lbl">Precipitation</div><div class="val"><span id="kite-precip-today">--</span><span class="u">mm</span></div></div>
         </div>
@@ -413,6 +418,7 @@ footer a{color:var(--accent);text-decoration:none}
         <div class="stats">
           <div class="stat"><div class="lbl">Wind Speed</div><div class="val"><span id="kite-wind-tmrw">--</span><span class="u">m/s</span></div></div>
           <div class="stat"><div class="lbl">Gusts</div><div class="val"><span id="kite-gust-tmrw">--</span><span class="u">m/s</span></div></div>
+          <div class="stat"><div class="lbl">Wind Dir</div><div class="val"><span id="kite-wdir-tmrw">--</span></div></div>
           <div class="stat"><div class="lbl">Temperature</div><div class="val"><span id="kite-temp-tmrw">--</span><span class="u">F</span></div></div>
           <div class="stat"><div class="lbl">Precipitation</div><div class="val"><span id="kite-precip-tmrw">--</span><span class="u">mm</span></div></div>
         </div>
@@ -461,6 +467,7 @@ footer a{color:var(--accent);text-decoration:none}
         <div class="stats">
           <div class="stat"><div class="lbl">Wind Speed</div><div class="val"><span id="mpeak-wind-today">--</span><span class="u">m/s</span></div></div>
           <div class="stat"><div class="lbl">Gusts</div><div class="val"><span id="mpeak-gust-today">--</span><span class="u">m/s</span></div></div>
+          <div class="stat"><div class="lbl">Wind Dir</div><div class="val"><span id="mpeak-wdir-today">--</span></div></div>
           <div class="stat"><div class="lbl">Temperature</div><div class="val"><span id="mpeak-temp-today">--</span><span class="u">F</span></div></div>
           <div class="stat"><div class="lbl">Precipitation</div><div class="val"><span id="mpeak-precip-today">--</span><span class="u">mm</span></div></div>
         </div>
@@ -471,6 +478,7 @@ footer a{color:var(--accent);text-decoration:none}
         <div class="stats">
           <div class="stat"><div class="lbl">Wind Speed</div><div class="val"><span id="mpeak-wind-tmrw">--</span><span class="u">m/s</span></div></div>
           <div class="stat"><div class="lbl">Gusts</div><div class="val"><span id="mpeak-gust-tmrw">--</span><span class="u">m/s</span></div></div>
+          <div class="stat"><div class="lbl">Wind Dir</div><div class="val"><span id="mpeak-wdir-tmrw">--</span></div></div>
           <div class="stat"><div class="lbl">Temperature</div><div class="val"><span id="mpeak-temp-tmrw">--</span><span class="u">F</span></div></div>
           <div class="stat"><div class="lbl">Precipitation</div><div class="val"><span id="mpeak-precip-tmrw">--</span><span class="u">mm</span></div></div>
         </div>
@@ -636,24 +644,27 @@ function populateSite(cfg, data){
   }
 
   function dayAvg(dateStr){
-    var ws=[],gu=[],pp=0,temps=[];
+    var ws=[],gu=[],pp=0,temps=[],wd=[];
     for(var i=0;i<hourly.time.length;i++){
       if(hourly.time[i].startsWith(dateStr)){
         ws.push(hourly.windspeed_10m[i]);
         gu.push(hourly.windgusts_10m[i]);
         pp += hourly.precipitation[i];
         temps.push(hourly.temperature_2m[i]);
+        if(hourly.winddirection_10m) wd.push(hourly.winddirection_10m[i]);
       }
     }
     if(!ws.length) return null;
     var avg=function(a){return a.reduce(function(s,v){return s+v},0)/a.length;};
     var cToF=function(c){return Math.round(c*9/5+32);};
     var vt=temps.filter(function(v){return v!=null&&!isNaN(v);});
+    var avgDeg=wd.length?wd.reduce(function(a,b){return a+b},0)/wd.length:null;
     return {
       wind: (avg(ws)/3.6).toFixed(1),
       gust: (Math.max.apply(null,gu)/3.6).toFixed(1),
       precip: pp.toFixed(1),
-      temp: vt.length ? cToF(Math.max.apply(null,vt)) : null
+      temp: vt.length ? cToF(Math.max.apply(null,vt)) : null,
+      wdir: avgDeg!==null ? degToCard(Math.round(avgDeg)) : '--'
     };
   }
 
@@ -665,6 +676,7 @@ function populateSite(cfg, data){
     var sfx = isTomorrow ? 'tmrw' : 'today';
     var _w=document.getElementById(pfx+'-wind-'+sfx); if(_w) _w.textContent=dayData.wind;
     var _g=document.getElementById(pfx+'-gust-'+sfx); if(_g) _g.textContent=dayData.gust;
+    var _wd=document.getElementById(pfx+'-wdir-'+sfx); if(_wd) _wd.textContent=dayData.wdir||'--';
     var _t=document.getElementById(pfx+'-temp-'+sfx); if(_t) _t.textContent=dayData.temp!=null?dayData.temp:'--';
     var _p=document.getElementById(pfx+'-precip-'+sfx); if(_p) _p.textContent=dayData.precip;
     var assess=(siteType==='kite')?kiteAssess(dayData.wind,dayData.precip):paraAssess(dayData.wind,dayData.gust,dayData.precip,dayData.temp);
@@ -678,6 +690,20 @@ function populateSite(cfg, data){
         var dotColor=assess.cls==='sg'?'var(--green)':assess.cls==='sy'?'var(--yellow)':'var(--red)';
         dotEl.style.background=dotColor;
         dotEl.style.boxShadow='0 0 6px '+dotColor;
+      }
+    }
+    // Update status bar pills for levin and mussel
+    var pillPfx=(pfx==='levin'||pfx==='mussel')?pfx:null;
+    if(pillPfx){
+      var pillSfx=isTomorrow?'tmrw':'today';
+      var pillTxt=document.getElementById('pill-text-'+pillPfx+'-'+pillSfx);
+      var pillDot=document.getElementById('pill-dot-'+pillPfx+'-'+pillSfx);
+      var siteLbl=pillPfx==='levin'?'Ed R. Levin':'Mussel Rock';
+      var dayLbl=isTomorrow?' Tomorrow':' Today';
+      if(pillTxt) pillTxt.textContent=siteLbl+' — '+assess.badge+dayLbl;
+      if(pillDot){
+        var pc=assess.cls==='sg'?'var(--green)':assess.cls==='sy'?'var(--yellow)':'var(--red)';
+        pillDot.style.background=pc;
       }
     }
   }
@@ -710,7 +736,7 @@ function populateSite(cfg, data){
 // Fetch Open-Meteo for a site
 function fetchOpenMeteo(cfg){
   var url='https://api.open-meteo.com/v1/forecast?latitude='+cfg.lat+'&longitude='+cfg.lon
-    +'&hourly=temperature_2m,precipitation,windspeed_10m,windgusts_10m'
+    +'&hourly=temperature_2m,precipitation,windspeed_10m,windgusts_10m,winddirection_10m'
     +'&temperature_unit=celsius&windspeed_unit=kmh&precipitation_unit=mm'
     +'&timezone=America%2FLos_Angeles&forecast_days=7';
   fetch(url)
