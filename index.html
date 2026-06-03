@@ -23,74 +23,85 @@ header p{color:var(--muted);font-size:14px;margin-top:6px}
 /* LAYOUT */
 .layout{display:flex;flex:1}
 
-/* SIDEBAR — always-visible compact panel */
-.sidebar{
+/* SITES FAB — floating action button + dropdown */
+.fab-wrap{
   position:fixed;
-  top:80px;
-  left:12px;
-  z-index:200;
-  width:170px;
-  background:rgba(22,27,34,0.92);
+  top:16px;
+  left:16px;
+  z-index:300;
+}
+.fab-btn{
+  display:flex;
+  align-items:center;
+  gap:7px;
+  padding:8px 14px 8px 10px;
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:24px;
+  cursor:pointer;
+  font-size:13px;
+  font-weight:600;
+  color:var(--text);
+  box-shadow:0 2px 12px rgba(0,0,0,0.45);
+  transition:background 0.15s, border-color 0.15s;
+  user-select:none;
+  white-space:nowrap;
+}
+.fab-btn:hover{background:rgba(88,166,255,0.12);border-color:var(--accent);}
+.fab-btn.open{background:rgba(88,166,255,0.12);border-color:var(--accent);}
+.fab-icon{font-size:15px;line-height:1;}
+.fab-arrow{font-size:10px;color:var(--muted);transition:transform 0.2s;margin-left:2px;}
+.fab-btn.open .fab-arrow{transform:rotate(180deg);}
+
+.fab-dropdown{
+  position:absolute;
+  top:calc(100% + 8px);
+  left:0;
+  width:200px;
+  background:var(--card);
   border:1px solid var(--border);
   border-radius:10px;
-  padding:10px 0 8px;
-  backdrop-filter:blur(8px);
-  box-shadow:0 4px 20px rgba(0,0,0,0.4);
-  max-height:calc(100vh - 100px);
-  overflow-y:auto;
+  box-shadow:0 8px 32px rgba(0,0,0,0.5);
+  overflow:hidden;
+  opacity:0;
+  transform:translateY(-6px);
+  pointer-events:none;
+  transition:opacity 0.18s, transform 0.18s;
 }
-.sidebar-title{
+.fab-dropdown.open{
+  opacity:1;
+  transform:translateY(0);
+  pointer-events:all;
+}
+.fab-dropdown-title{
   font-size:9px;
   text-transform:uppercase;
   letter-spacing:2px;
   color:var(--muted);
-  padding:0 12px 8px;
+  padding:10px 14px 8px;
   border-bottom:1px solid var(--border);
-  margin-bottom:6px;
 }
-.nav-item{
+.fab-nav-item{
   display:flex;
   align-items:center;
-  gap:8px;
-  padding:8px 12px;
-  cursor:pointer;
+  gap:9px;
+  padding:10px 14px;
   text-decoration:none;
   color:var(--text);
-  font-size:12px;
+  font-size:13px;
   font-weight:500;
-  transition:background 0.15s,color 0.15s;
+  transition:background 0.12s, color 0.12s;
   border-left:3px solid transparent;
 }
-.nav-item:hover{background:rgba(88,166,255,0.1);color:var(--accent);border-left-color:var(--accent)}
-.nav-item .nav-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
-.nav-item .nav-sub{font-size:10px;color:var(--muted);margin-top:1px}
-.nav-item-inner{display:flex;flex-direction:column}
+.fab-nav-item:hover{background:rgba(88,166,255,0.1);color:var(--accent);border-left-color:var(--accent);}
+.fab-nav-item .nav-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.fab-nav-inner{display:flex;flex-direction:column;}
+.fab-nav-sub{font-size:10px;color:var(--muted);margin-top:1px;}
 
-/* Mobile: smaller panel, tap to collapse */
 @media(max-width:600px){
-  .sidebar{
-    top:auto;
-    bottom:12px;
-    left:8px;
-    width:auto;
-    max-width:160px;
-    max-height:none;
-  }
-  .sidebar.mobile-collapsed .nav-item{display:none}
-  .sidebar-toggle{
-    display:flex;
-    align-items:center;
-    gap:6px;
-    padding:6px 12px 2px;
-    cursor:pointer;
-    font-size:11px;
-    color:var(--accent);
-    font-weight:600;
-    user-select:none;
-  }
-}
-@media(min-width:601px){
-  .sidebar-toggle{display:none}
+  .fab-wrap{top:10px;left:10px;}
+  .fab-btn{padding:7px 12px 7px 9px;font-size:12px;}
+  .fab-dropdown{width:185px;}
 }
 /* MAIN */
 main{flex:1;max-width:100%;padding:28px 20px 60px;display:flex;flex-direction:column;gap:32px}
@@ -203,39 +214,45 @@ footer a{color:var(--accent);text-decoration:none}
 
 <div class="layout">
 
-  <!-- SIDEBAR NAV — always-visible -->
-  <nav class="sidebar" id="sidebar">
-    <div class="sidebar-title">Flying Sites</div>
-    <div class="sidebar-toggle" id="sidebar-toggle" onclick="toggleSidebarMobile()">🪂 Sites ▾</div>
-    <a class="nav-item" href="#levin">
-      <span class="nav-dot dr"></span>
-      <div class="nav-item-inner">
-        <span>Ed R. Levin Park</span>
-        <span class="nav-sub">Milpitas · Paragliding</span>
-      </div>
-    </a>
-    <a class="nav-item" href="#mussel">
-      <span class="nav-dot dr"></span>
-      <div class="nav-item-inner">
-        <span>Mussel Rock Park</span>
-        <span class="nav-sub">Daly City · Hang Gliding</span>
-      </div>
-    </a>
-    <a class="nav-item" href="#shoreline">
-      <span class="nav-dot" id="nav-dot-kite" style="background:var(--muted)"></span>
-      <div class="nav-item-inner">
-        <span>Shoreline Kite Area</span>
-        <span class="nav-sub">Mountain View · Kites</span>
-      </div>
-    </a>
-    <a class="nav-item" href="#mpeak">
-      <span class="nav-dot" id="nav-dot-mpeak" style="background:var(--muted)"></span>
-      <div class="nav-item-inner">
-        <span>Mission Peak</span>
-        <span class="nav-sub">Fremont · Paragliding</span>
-      </div>
-    </a>
-  </nav>
+  <!-- SITES FAB — floating button + dropdown -->
+  <div class="fab-wrap" id="fab-wrap">
+    <div class="fab-btn" id="fab-btn" role="button" aria-expanded="false" aria-haspopup="true" onclick="toggleFab()">
+      <span class="fab-icon">🪂</span>
+      <span>Flying Sites</span>
+      <span class="fab-arrow">▼</span>
+    </div>
+    <div class="fab-dropdown" id="fab-dropdown" role="menu">
+      <div class="fab-dropdown-title">Select a site</div>
+      <a class="fab-nav-item" href="#levin" role="menuitem" onclick="closeFab()">
+        <span class="nav-dot dr"></span>
+        <div class="fab-nav-inner">
+          <span>Ed R. Levin Park</span>
+          <span class="fab-nav-sub">Milpitas · Paragliding</span>
+        </div>
+      </a>
+      <a class="fab-nav-item" href="#mussel" role="menuitem" onclick="closeFab()">
+        <span class="nav-dot dr"></span>
+        <div class="fab-nav-inner">
+          <span>Mussel Rock Park</span>
+          <span class="fab-nav-sub">Daly City · Hang Gliding</span>
+        </div>
+      </a>
+      <a class="fab-nav-item" href="#shoreline" role="menuitem" onclick="closeFab()">
+        <span class="nav-dot" id="nav-dot-kite" style="background:var(--muted)"></span>
+        <div class="fab-nav-inner">
+          <span>Shoreline Kite Area</span>
+          <span class="fab-nav-sub">Mountain View · Kites</span>
+        </div>
+      </a>
+      <a class="fab-nav-item" href="#mpeak" role="menuitem" onclick="closeFab()">
+        <span class="nav-dot" id="nav-dot-mpeak" style="background:var(--muted)"></span>
+        <div class="fab-nav-inner">
+          <span>Mission Peak</span>
+          <span class="fab-nav-sub">Fremont · Paragliding</span>
+        </div>
+      </a>
+    </div>
+  </div>
 
   <!-- MAIN CONTENT -->
   <main>
@@ -892,20 +909,29 @@ setInterval(_tick,1000);function updateBestWindow(){
 }
 updateBestWindow();
 
-// ── Flying Sites panel — mobile tap toggle ───────────────────────────────────
-function toggleSidebarMobile(){
-  var sb=document.getElementById('sidebar');
-  var tog=document.getElementById('sidebar-toggle');
-  if(sb){
-    sb.classList.toggle('mobile-collapsed');
-    if(tog) tog.textContent=sb.classList.contains('mobile-collapsed')?'🪂 Sites ▸':'🪂 Sites ▾';
+// ── Flying Sites FAB ──────────────────────────────────────────────────────────
+function toggleFab(){
+  var btn=document.getElementById('fab-btn');
+  var dd=document.getElementById('fab-dropdown');
+  var isOpen=dd.classList.contains('open');
+  if(isOpen){closeFab();}else{
+    btn.classList.add('open');
+    dd.classList.add('open');
+    btn.setAttribute('aria-expanded','true');
   }
 }
-// On mobile, start collapsed
-if(window.innerWidth<=600){
-  var _sb=document.getElementById('sidebar');
-  if(_sb) _sb.classList.add('mobile-collapsed');
+function closeFab(){
+  var btn=document.getElementById('fab-btn');
+  var dd=document.getElementById('fab-dropdown');
+  btn.classList.remove('open');
+  dd.classList.remove('open');
+  btn.setAttribute('aria-expanded','false');
 }
+document.addEventListener('click',function(e){
+  var wrap=document.getElementById('fab-wrap');
+  if(wrap&&!wrap.contains(e.target))closeFab();
+});
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeFab();});
 // ─────────────────────────────────────────────────────────────────────────────
 </script>
 </body>
