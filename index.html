@@ -135,6 +135,22 @@ main{flex:1;max-width:100%;padding:28px 20px 60px;display:flex;flex-direction:co
 .fcast-btn:hover{color:#86efac !important;}
 .fcast-dd-item.on{color:#4ade80 !important;background:rgba(74,222,128,0.07) !important;}
 .fcast-dd-item:hover{background:rgba(74,222,128,0.09) !important;color:#4ade80 !important;}
+.nws-wrap-dd{position:relative;display:flex;align-items:stretch;}
+.nws-dd-btn{padding:10px 16px;font-size:13px;font-weight:500;color:var(--muted);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;transition:all 0.2s;display:flex;flex-direction:column;align-items:flex-start;gap:1px;}
+.nws-dd-btn:hover .nws-dd-main{color:var(--text);}
+.nws-dd-btn .nws-dd-main{font-size:13px;font-weight:500;color:var(--muted);display:flex;align-items:center;gap:5px;transition:color 0.2s;white-space:nowrap;}
+.nws-dd-btn .nws-dd-sub{font-size:9px;color:var(--muted);letter-spacing:0.4px;opacity:0.7;white-space:nowrap;}
+.nws-dd-btn .fa2{font-size:9px;transition:transform 0.18s;}
+.nws-dd-btn.open .fa2{transform:rotate(180deg);}
+.nws-dd-btn.on{border-bottom-color:var(--accent);}
+.nws-dd-btn.on .nws-dd-main{color:var(--accent);}
+.nws-dd-btn.on .nws-dd-sub{color:rgba(88,166,255,0.65);}
+.nws-dd{position:absolute;top:100%;left:0;min-width:180px;background:var(--card);border:1px solid var(--border);border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,0.45);z-index:400;opacity:0;transform:translateY(-6px);pointer-events:none;transition:opacity 0.15s,transform 0.15s;overflow:hidden;}
+.nws-dd.open{opacity:1;transform:translateY(0);pointer-events:all;}
+.nws-dd-item{display:block;width:100%;padding:10px 16px;font-size:13px;font-weight:500;color:var(--muted);background:none;border:none;cursor:pointer;text-align:left;transition:background 0.12s,color 0.12s;white-space:nowrap;}
+.nws-dd-item:hover{background:rgba(88,166,255,0.1);color:var(--accent);}
+.nws-dd-item.on{color:var(--accent);font-weight:600;background:rgba(88,166,255,0.07);}
+.nws-section-anchor{scroll-margin-top:8px;}
 /* NWS tab — two-line label */
 .tb-nws{display:inline-flex;flex-direction:column;align-items:center;gap:1px;padding:8px 18px;background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;transition:all 0.2s;}
 .tb-nws:hover .tb-main{color:var(--text);}
@@ -322,10 +338,17 @@ footer a:hover{text-decoration:underline}
             <button class="fcast-dd-item" id="lev-dd-t3" onclick="swForecast('lev','t3','📅 6-Day Outlook',this)">📅 6-Day Outlook</button>
           </div>
         </div>
-        <button class="tb-nws tb" onclick="sw('lev','t4',this)">
-          <span class="tb-main">📋 NWS Forecast</span>
-          <span class="tb-sub">via weather.gov</span>
-        </button>
+        <div class="nws-wrap-dd">
+          <button class="nws-dd-btn" id="lev-nws-dd-btn" onclick="toggleNwsDd('lev',event)">
+            <span class="nws-dd-main">📋 NWS Forecast <span class="fa2">▾</span></span>
+            <span class="nws-dd-sub">via weather.gov</span>
+          </button>
+          <div class="nws-dd" id="lev-nws-dd">
+            <button class="nws-dd-item on" id="lev-nws-dd-now" onclick="swNws('lev','t4','today',this)"><span id="lev-nws-today-lbl">📋 Today</span></button>
+            <button class="nws-dd-item" id="lev-nws-dd-tmrw" onclick="swNws('lev','t4','tomorrow',this)"><span id="lev-nws-tmrw-lbl">📋 Tomorrow</span></button>
+            <button class="nws-dd-item" id="lev-nws-dd-out" onclick="swNws('lev','t4','outlook',this)">📋 6-Day Outlook</button>
+          </div>
+        </div>
       </div>
       <div class="tabs-badges">
         <span class="src-badge src-badge-green">📡 <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a></span>
@@ -404,10 +427,17 @@ footer a:hover{text-decoration:underline}
             <button class="fcast-dd-item" id="mus-dd-t3" onclick="swForecast('mus','t3','📅 6-Day Outlook',this)">📅 6-Day Outlook</button>
           </div>
         </div>
-        <button class="tb-nws tb" onclick="sw('mus','t4',this)">
-          <span class="tb-main">📋 NWS Forecast</span>
-          <span class="tb-sub">via weather.gov</span>
-        </button>
+        <div class="nws-wrap-dd">
+          <button class="nws-dd-btn" id="mus-nws-dd-btn" onclick="toggleNwsDd('mus',event)">
+            <span class="nws-dd-main">📋 NWS Forecast <span class="fa2">▾</span></span>
+            <span class="nws-dd-sub">via weather.gov</span>
+          </button>
+          <div class="nws-dd" id="mus-nws-dd">
+            <button class="nws-dd-item on" id="mus-nws-dd-now" onclick="swNws('mus','t4','today',this)"><span id="mus-nws-today-lbl">📋 Today</span></button>
+            <button class="nws-dd-item" id="mus-nws-dd-tmrw" onclick="swNws('mus','t4','tomorrow',this)"><span id="mus-nws-tmrw-lbl">📋 Tomorrow</span></button>
+            <button class="nws-dd-item" id="mus-nws-dd-out" onclick="swNws('mus','t4','outlook',this)">📋 6-Day Outlook</button>
+          </div>
+        </div>
       </div>
       <div class="tabs-badges">
         <span class="src-badge src-badge-green">📡 <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a></span>
@@ -484,10 +514,17 @@ footer a:hover{text-decoration:underline}
             <button class="fcast-dd-item" id="kite-dd-t3" onclick="swForecast('kite','outlook','📅 6-Day Outlook',this)">📅 6-Day Outlook</button>
           </div>
         </div>
-        <button class="tb-nws tb" onclick="sw('kite','nws',this)">
-          <span class="tb-main">📋 NWS Forecast</span>
-          <span class="tb-sub">via weather.gov</span>
-        </button>
+        <div class="nws-wrap-dd">
+          <button class="nws-dd-btn" id="kite-nws-dd-btn" onclick="toggleNwsDd('kite',event)">
+            <span class="nws-dd-main">📋 NWS Forecast <span class="fa2">▾</span></span>
+            <span class="nws-dd-sub">via weather.gov</span>
+          </button>
+          <div class="nws-dd" id="kite-nws-dd">
+            <button class="nws-dd-item on" id="kite-nws-dd-now" onclick="swNws('kite','nws','today',this)"><span id="kite-nws-today-lbl">📋 Today</span></button>
+            <button class="nws-dd-item" id="kite-nws-dd-tmrw" onclick="swNws('kite','nws','tomorrow',this)"><span id="kite-nws-tmrw-lbl">📋 Tomorrow</span></button>
+            <button class="nws-dd-item" id="kite-nws-dd-out" onclick="swNws('kite','nws','outlook',this)">📋 6-Day Outlook</button>
+          </div>
+        </div>
       </div>
       <div class="tabs-badges">
         <span class="src-badge src-badge-green">📡 <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a></span>
@@ -558,10 +595,17 @@ footer a:hover{text-decoration:underline}
             <button class="fcast-dd-item" id="mpeak-dd-t3" onclick="swForecast('mpeak','outlook','📅 6-Day Outlook',this)">📅 6-Day Outlook</button>
           </div>
         </div>
-        <button class="tb-nws tb" onclick="sw('mpeak','nws',this)">
-          <span class="tb-main">📋 NWS Forecast</span>
-          <span class="tb-sub">via weather.gov</span>
-        </button>
+        <div class="nws-wrap-dd">
+          <button class="nws-dd-btn" id="mpeak-nws-dd-btn" onclick="toggleNwsDd('mpeak',event)">
+            <span class="nws-dd-main">📋 NWS Forecast <span class="fa2">▾</span></span>
+            <span class="nws-dd-sub">via weather.gov</span>
+          </button>
+          <div class="nws-dd" id="mpeak-nws-dd">
+            <button class="nws-dd-item on" id="mpeak-nws-dd-now" onclick="swNws('mpeak','nws','today',this)"><span id="mpeak-nws-today-lbl">📋 Today</span></button>
+            <button class="nws-dd-item" id="mpeak-nws-dd-tmrw" onclick="swNws('mpeak','nws','tomorrow',this)"><span id="mpeak-nws-tmrw-lbl">📋 Tomorrow</span></button>
+            <button class="nws-dd-item" id="mpeak-nws-dd-out" onclick="swNws('mpeak','nws','outlook',this)">📋 6-Day Outlook</button>
+          </div>
+        </div>
       </div>
       <div class="tabs-badges">
         <span class="src-badge src-badge-green">📡 <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a></span>
@@ -1138,6 +1182,67 @@ document.addEventListener('click',function(){
   ['lev','mus','kite','mpeak'].forEach(function(sid){
     var el=document.getElementById(sid+'-tmrw-label');
     if(el)el.textContent='📅 Tomorrow ('+dayName+')';
+  });
+})();
+// ── NWS Forecast dropdown
+function swNws(site,tabKey,section,itemBtn){
+  var card=itemBtn.closest('.card');
+  var panel=document.getElementById(site+'-'+tabKey);
+  if(panel&&!panel.classList.contains('on')){
+    card.querySelectorAll('.tc').forEach(function(t){t.classList.remove('on');});
+    card.querySelectorAll('.tb').forEach(function(b){b.classList.remove('on');});
+    panel.classList.add('on');
+    var ws=card.querySelector('.ws');if(ws)ws.style.display='none';
+    fetchNWSForSite(site);
+  }
+  var dd=document.getElementById(site+'-nws-dd');
+  if(dd)dd.querySelectorAll('.nws-dd-item').forEach(function(b){b.classList.remove('on');});
+  itemBtn.classList.add('on');
+  var btn=document.getElementById(site+'-nws-dd-btn');
+  if(btn)btn.classList.add('on');
+  closeNwsDd(site);
+  var aid='nws-sec-'+section;
+  function doScroll(){
+    var p=document.getElementById(site+'-'+tabKey);
+    if(!p)return;
+    var a=p.querySelector('#'+aid);
+    if(a){a.scrollIntoView({behavior:'smooth',block:'start'});}else{setTimeout(doScroll,250);}
+  }
+  setTimeout(doScroll,100);
+}
+function toggleNwsDd(site,e){
+  if(e)e.stopPropagation();
+  var btn=document.getElementById(site+'-nws-dd-btn');
+  var dd=document.getElementById(site+'-nws-dd');
+  var open=dd.classList.contains('open');
+  document.querySelectorAll('.nws-dd.open').forEach(function(d){
+    d.classList.remove('open');
+    var b=document.getElementById(d.id.replace('-nws-dd','-nws-dd-btn'));if(b)b.classList.remove('open');
+  });
+  if(!open){dd.classList.add('open');btn.classList.add('open');}
+}
+function closeNwsDd(site){
+  var btn=document.getElementById(site+'-nws-dd-btn');
+  var dd=document.getElementById(site+'-nws-dd');
+  if(btn)btn.classList.remove('open');if(dd)dd.classList.remove('open');
+}
+document.addEventListener('click',function(e){
+  if(!e.target.closest('.nws-wrap-dd')){
+    document.querySelectorAll('.nws-dd.open').forEach(function(d){
+      d.classList.remove('open');
+      var b=document.getElementById(d.id.replace('-nws-dd','-nws-dd-btn'));if(b)b.classList.remove('open');
+    });
+  }
+});
+(function(){
+  var days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  var now=new Date();var tmrw=new Date();tmrw.setDate(tmrw.getDate()+1);
+  var td=days[now.getDay()];var tr=days[tmrw.getDay()];
+  ['lev','mus','kite','mpeak'].forEach(function(sid){
+    var t=document.getElementById(sid+'-nws-today-lbl');
+    var r=document.getElementById(sid+'-nws-tmrw-lbl');
+    if(t)t.textContent='📋 Today ('+td+')';
+    if(r)r.textContent='📋 Tomorrow ('+tr+')';
   });
 })();
 // ── Flying Sites FAB ──────────────────────────────────────────────────────────
