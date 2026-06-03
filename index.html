@@ -15,15 +15,13 @@
 :root{--bg:#0d1117;--card:#161b22;--border:#30363d;--accent:#58a6ff;--green:#3fb950;--yellow:#d29922;--red:#f85149;--text:#e6edf3;--muted:#8b949e;--sidebar-w:220px}
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;display:flex;flex-direction:column;min-height:100vh}
-/* PWA / iOS safe area & touch */
+/* PWA iOS safe area & touch */
 body{padding-bottom:env(safe-area-inset-bottom);}
-.card,.bar,.fab-wrap{padding-left:max(0px,env(safe-area-inset-left));}
 button,.tb,.fab-btn,.fcast-dd-btn,.nws-dd-btn,.fcast-dd-item,.nws-dd-item,.fab-item{min-height:44px;min-width:44px;-webkit-tap-highlight-color:transparent;}
 .logo,.card-title,.ft-safety,.ft-attr,.pill-text,header h1,header p{-webkit-user-select:none;user-select:none;}
 .tb{touch-action:manipulation;}
 @media(max-width:600px){
   header{padding:max(28px,calc(14px + env(safe-area-inset-top))) 16px 16px;}
-  .card{margin:0 0 12px;border-radius:0;}
   .tabs-badges{overflow-x:auto;-webkit-overflow-scrolling:touch;}
   .bar{padding:12px 16px;}
   .fab-wrap{top:max(12px,calc(4px + env(safe-area-inset-top)));left:max(12px,env(safe-area-inset-left));}
@@ -277,6 +275,26 @@ footer a:hover{text-decoration:underline}
 @media(max-width:700px){
   .layout{flex-direction:column}
 }
+
+/* AI Briefing */
+.ai-brief{margin:0 24px 16px;padding:14px 18px;background:linear-gradient(135deg,rgba(88,166,255,0.07),rgba(63,185,80,0.05));border:1px solid rgba(88,166,255,0.2);border-left:3px solid var(--accent);border-radius:8px;font-size:13px;line-height:1.7;}
+.ai-label{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--accent);font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:6px;}
+.ai-text{color:var(--muted);} .ai-text strong{color:var(--text);}
+.safety-row{display:flex;align-items:center;gap:14px;padding:4px 24px 16px;flex-wrap:wrap;}
+.safety-score{display:flex;align-items:center;gap:8px;padding:6px 14px;border-radius:20px;font-size:13px;font-weight:700;border:1px solid;}
+.ss-green{background:rgba(63,185,80,0.12);border-color:rgba(63,185,80,0.35);color:#56d364;}
+.ss-yellow{background:rgba(210,153,34,0.12);border-color:rgba(210,153,34,0.35);color:#e3b341;}
+.ss-red{background:rgba(248,81,73,0.12);border-color:rgba(248,81,73,0.35);color:#ff7b72;}
+.best-window{font-size:13px;color:var(--muted);} .best-window strong{color:var(--green);}
+.gust-alert{display:none;margin:0 24px 14px;padding:10px 16px;background:rgba(248,81,73,0.12);border:1px solid rgba(248,81,73,0.4);border-radius:8px;font-size:13px;font-weight:600;color:#ff7b72;}
+.skel{display:inline-block;background:linear-gradient(90deg,rgba(255,255,255,0.04) 25%,rgba(255,255,255,0.09) 50%,rgba(255,255,255,0.04) 75%);background-size:200% 100%;animation:shimmer 1.4s infinite;border-radius:4px;height:13px;width:100%;margin:3px 0;}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.mob-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--border);z-index:500;padding:6px 0;}
+.mob-nav-inner{display:flex;justify-content:space-around;}
+.mob-nav-btn{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 10px;background:none;border:none;color:var(--muted);font-size:10px;cursor:pointer;border-top:2px solid transparent;transition:color 0.15s,border-color 0.15s;}
+.mob-nav-btn.on{color:var(--accent);border-top-color:var(--accent);}
+.mob-nav-btn .mn-icon{font-size:18px;line-height:1;}
+@media(max-width:600px){.mob-nav{display:block;}body{padding-bottom:70px;}}
 </style>
 </head>
 <body>
@@ -416,10 +434,13 @@ footer a:hover{text-decoration:underline}
           <a class="nws-link" href="https://forecast.weather.gov/MapClick.php?lat=37.4619&lon=-121.861&FcstType=graphical" target="_blank">Hourly Chart</a>
         </div>
       </div>
+      <div class="gust-alert" id="lev-gust-alert">GUST ALERT: Gusts exceed safe threshold at Ed R. Levin!</div>
+      <div class="ai-brief"><div class="ai-label">AI Flying Briefing</div><div class="ai-text" id="lev-ai-text"><span class="skel" style="width:85%"></span><span class="skel" style="width:60%"></span></div></div>
+      <div class="safety-row"><span class="safety-score ss-yellow" id="lev-score-badge">Score: --</span><span class="best-window" id="lev-best-window">Best window: calculating...</span></div>
       <div class="ws">
         <div class="wl">🗺 Live Windy Map</div>
         <div class="ww">
-          <iframe width="100%" height="450" src="https://embed.windy.com/embed2.html?lat=37.4619&lon=-121.861&zoom=11&level=surface&overlay=wind&menu=&message=true&marker=true&forecast=12&detailLat=37.4619&detailLon=-121.861&detail=true&metricWind=m%2Fs&metricTemp=%C2%B0F&radarRange=-1" loading="lazy" frameborder="0"></iframe>
+          <iframe width="100%" height="450" src="https://embed.windy.com/embed2.html?lat=37.4619&lon=-121.861&zoom=11&level=surface&overlay=wind&product=ecmwf&menu=&message=true&marker=true&calendar=now&type=map&location=coordinates&forecast=12&detailLat=37.4619&detailLon=-121.861&detail=true&metricWind=m%2Fs&metricTemp=%C2%B0F&radarRange=-1" loading="lazy" frameborder="0"></iframe>
         </div>
       </div>
       <div style="padding:0 24px 24px">
@@ -505,10 +526,13 @@ footer a:hover{text-decoration:underline}
           <a class="nws-link" href="https://forecast.weather.gov/MapClick.php?lat=37.6740&lon=-122.4887&FcstType=graphical" target="_blank">Hourly Chart</a>
         </div>
       </div>
+      <div class="gust-alert" id="mus-gust-alert">GUST ALERT: Gusts exceed safe threshold at Mussel Rock!</div>
+      <div class="ai-brief"><div class="ai-label">AI Flying Briefing</div><div class="ai-text" id="mus-ai-text"><span class="skel" style="width:85%"></span><span class="skel" style="width:60%"></span></div></div>
+      <div class="safety-row"><span class="safety-score ss-yellow" id="mus-score-badge">Score: --</span><span class="best-window" id="mus-best-window">Best window: calculating...</span></div>
       <div class="ws">
         <div class="wl">🗺 Live Windy Map</div>
         <div class="ww">
-          <iframe width="100%" height="450" src="https://embed.windy.com/embed2.html?lat=37.674&lon=-122.4887&zoom=11&level=surface&overlay=wind&menu=&message=true&marker=true&forecast=12&detailLat=37.674&detailLon=-122.4887&detail=true&metricWind=m%2Fs&metricTemp=%C2%B0F&radarRange=-1" loading="lazy" frameborder="0"></iframe>
+          <iframe width="100%" height="450" src="https://embed.windy.com/embed2.html?lat=37.674&lon=-122.4887&zoom=11&level=surface&overlay=wind&product=ecmwf&menu=&message=true&marker=true&calendar=now&type=map&location=coordinates&forecast=12&detailLat=37.674&detailLon=-122.4887&detail=true&metricWind=m%2Fs&metricTemp=%C2%B0F&radarRange=-1" loading="lazy" frameborder="0"></iframe>
         </div>
       </div>
       <div style="padding:0 24px 24px">
@@ -592,10 +616,13 @@ footer a:hover{text-decoration:underline}
           <a class="nws-link" href="https://forecast.weather.gov/MapClick.php?lat=37.4297&lon=-122.0766&FcstType=graphical" target="_blank">Hourly Chart</a>
         </div>
       </div>
+      <div class="gust-alert" id="kite-gust-alert">GUST ALERT: Gusts exceed safe threshold at Shoreline!</div>
+      <div class="ai-brief"><div class="ai-label">AI Flying Briefing</div><div class="ai-text" id="kite-ai-text"><span class="skel" style="width:85%"></span><span class="skel" style="width:60%"></span></div></div>
+      <div class="safety-row"><span class="safety-score ss-yellow" id="kite-score-badge">Score: --</span><span class="best-window" id="kite-best-window">Best window: calculating...</span></div>
       <div class="ws">
         <div class="wl">🗺 Live Windy Map</div>
         <div class="ww">
-          <iframe width="100%" height="450" src="https://embed.windy.com/embed2.html?lat=37.4297&lon=-122.0766&zoom=11&level=surface&overlay=wind&menu=&message=true&marker=true&forecast=12&detailLat=37.4297&detailLon=-122.0766&detail=true&metricWind=m%2Fs&metricTemp=%C2%B0F&radarRange=-1" loading="lazy" frameborder="0"></iframe>
+          <iframe width="100%" height="450" src="https://embed.windy.com/embed2.html?lat=37.4297&lon=-122.0766&zoom=11&level=surface&overlay=wind&product=ecmwf&menu=&message=true&marker=true&calendar=now&type=map&location=coordinates&forecast=12&detailLat=37.4297&detailLon=-122.0766&detail=true&metricWind=m%2Fs&metricTemp=%C2%B0F&radarRange=-1" loading="lazy" frameborder="0"></iframe>
         </div>
       </div>
     </div>
@@ -673,10 +700,13 @@ footer a:hover{text-decoration:underline}
           <a class="nws-link" href="https://forecast.weather.gov/MapClick.php?lat=37.5131&lon=-121.8803&FcstType=graphical" target="_blank">Hourly Chart</a>
         </div>
       </div>
+      <div class="gust-alert" id="mpeak-gust-alert">GUST ALERT: Gusts exceed safe threshold at Mission Peak!</div>
+      <div class="ai-brief"><div class="ai-label">AI Flying Briefing</div><div class="ai-text" id="mpeak-ai-text"><span class="skel" style="width:85%"></span><span class="skel" style="width:60%"></span></div></div>
+      <div class="safety-row"><span class="safety-score ss-yellow" id="mpeak-score-badge">Score: --</span><span class="best-window" id="mpeak-best-window">Best window: calculating...</span></div>
       <div class="ws">
         <div class="wl">🗺 Live Windy Map</div>
         <div class="ww">
-          <iframe width="100%" height="450" src="https://embed.windy.com/embed2.html?lat=37.5131&lon=-121.8803&zoom=11&level=surface&overlay=wind&menu=&message=true&marker=true&forecast=12&detailLat=37.5131&detailLon=-121.8803&detail=true&metricWind=m%2Fs&metricTemp=%C2%B0F&radarRange=-1" loading="lazy" frameborder="0"></iframe>
+          <iframe width="100%" height="450" src="https://embed.windy.com/embed2.html?lat=37.5131&lon=-121.8803&zoom=11&level=surface&overlay=wind&product=ecmwf&menu=&message=true&marker=true&calendar=now&type=map&location=coordinates&forecast=12&detailLat=37.5131&detailLon=-121.8803&detail=true&metricWind=m%2Fs&metricTemp=%C2%B0F&radarRange=-1" loading="lazy" frameborder="0"></iframe>
         </div>
       </div>
     </div>
@@ -762,9 +792,7 @@ function sw(site,tab,btn){
   c.querySelectorAll('.tb').forEach(function(b){b.classList.remove('on')});
   document.getElementById(site+'-'+tab).classList.add('on');
   btn.classList.add('on');
-  var ws=c.querySelector('.ws');
   var isNwsTab=(tab==='nws'||tab==='t4');
-  if(ws)ws.style.display=isNwsTab?'none':'';
   if(isNwsTab)fetchNWSForSite(site);
 }
 
@@ -948,7 +976,25 @@ function fetchOpenMeteo(cfg){
     +'&timezone=America%2FLos_Angeles&forecast_days=7';
   fetch(url)
     .then(function(r){return r.json();})
-    .then(function(data){try{populateSite(cfg,data);}catch(e){console.error('populateSite err '+cfg.pfx,e);}})
+    .then(function(data){
+      try{populateSite(cfg,data);}catch(e){console.error('populateSite err '+cfg.pfx,e);}
+      try{
+        var _n=new Date(),_ts=_n.getFullYear()+'-'+String(_n.getMonth()+1).padStart(2,'0')+'-'+String(_n.getDate()).padStart(2,'0');
+        var _map={levin:'lev',mussel:'mus',kite:'kite',mpeak:'mpeak'};
+        var _sid=_map[cfg.pfx]||cfg.pfx;
+        var _hr=data&&data.hourly?data.hourly:null;
+        var _ws=[],_gs=[],_pp=0,_wds=[];
+        if(_hr){for(var _i=0;_i<_hr.time.length;_i++){if(_hr.time[_i].startsWith(_ts)){
+          _ws.push(_hr.windspeed_10m[_i]);_gs.push(_hr.windgusts_10m[_i]);_pp+=_hr.precipitation[_i];
+          if(_hr.winddirection_10m)_wds.push(_hr.winddirection_10m[_i]);}}}
+        var _avg=function(a){return a.length?a.reduce(function(s,v){return s+v},0)/a.length:0;};
+        var _w=(_avg(_ws)/3.6).toFixed(1);
+        var _g=(_gs.length?Math.max.apply(null,_gs)/3.6:0).toFixed(1);
+        var _p=_pp.toFixed(1);
+        var _wd=_wds.length?degToCard(Math.round(_wds.reduce(function(a,b){return a+b},0)/_wds.length)):'--';
+        updateAIPanel(_sid,cfg.pfx,_w,_g,_p,65,_wd,_hr,_ts,cfg.type||'para');
+      }catch(_e){console.error('AI err',_e);}
+    })
     .catch(function(e){
       console.error('Open-Meteo error for '+cfg.pfx,e);
       var statusEl=document.getElementById(cfg.pfx+'-status');
@@ -1155,8 +1201,6 @@ function swForecast(site, tab, label, itemBtn){
   document.getElementById(site+'-'+tab).classList.add('on');
   // NWS/ws handling
   var isNwsTab=(tab==='nws'||tab==='t4');
-  var ws=card.querySelector('.ws');
-  if(ws)ws.style.display=isNwsTab?'none':'';
   if(isNwsTab)fetchNWSForSite(site);
   // keep fcast-btn in "on" state
   var fcastBtn=document.getElementById(site+'-fcast-btn');
@@ -1217,7 +1261,6 @@ function swNws(site,tabKey,section,itemBtn){
     card.querySelectorAll('.tc').forEach(function(t){t.classList.remove('on');});
     card.querySelectorAll('.tb').forEach(function(b){b.classList.remove('on');});
     panel.classList.add('on');
-    var ws=card.querySelector('.ws');if(ws)ws.style.display='none';
     fetchNWSForSite(site);
   }
   var dd=document.getElementById(site+'-nws-dd');
@@ -1294,7 +1337,73 @@ document.addEventListener('click',function(e){
 });
 document.addEventListener('keydown',function(e){if(e.key==='Escape')closeFab();});
 // ─────────────────────────────────────────────────────────────────────────────
+
+// AI Briefing + Safety Score (rule-based)
+var GUST_ALERT_MPH=25;
+function safetyScore(w,g,p){
+  w=parseFloat(w)||0;g=parseFloat(g)||0;p=parseFloat(p)||0;
+  var s=100;
+  if(p>1)s-=55;else if(p>0.2)s-=20;
+  if(w<1.5)s-=30;else if(w<3)s-=15;else if(w>12)s-=40;else if(w>9)s-=20;
+  if(g>15)s-=25;else if(g>10)s-=12;
+  return Math.max(0,Math.min(100,Math.round(s)));
+}
+function calcBestWindow(hourly,dateStr){
+  if(!hourly||!hourly.time)return null;
+  var runs=[],cur=null;
+  for(var i=0;i<hourly.time.length;i++){
+    if(!hourly.time[i].startsWith(dateStr)){if(cur){runs.push(cur);cur=null;}continue;}
+    var w=(hourly.windspeed_10m[i]||0)/3.6,g=(hourly.windgusts_10m[i]||0)/3.6,p=hourly.precipitation[i]||0;
+    var sc=safetyScore(w,g,p);
+    if(sc>=55){if(!cur)cur={start:hourly.time[i],end:hourly.time[i],score:sc};else{cur.end=hourly.time[i];if(sc>cur.score)cur.score=sc;}}
+    else{if(cur){runs.push(cur);cur=null;}}
+  }
+  if(cur)runs.push(cur);
+  if(!runs.length)return null;
+  runs.sort(function(a,b){return b.score-a.score;});
+  var best=runs[0];
+  var fmt=function(t){return new Date(t).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',hour12:true});};
+  return best.start===best.end?fmt(best.start):fmt(best.start)+'\u2013'+fmt(best.end);
+}
+function updateAIPanel(sid,name,wMs,gMs,pMm,tempF,wdir,hourly,todayStr,stype){
+  var w=parseFloat(wMs)||0,g=parseFloat(gMs)||0,p=parseFloat(pMm)||0;
+  var wMph=(w*2.237).toFixed(0),gMph=(g*2.237).toFixed(0);
+  var score=safetyScore(w,g,p);
+  var bestWin=hourly?calcBestWindow(hourly,todayStr):null;
+  var verdict,advice;
+  if(p>1){verdict='Do not fly';advice='Rain present ('+p.toFixed(1)+'mm). Wet conditions unsafe for launch.';}
+  else if(w>12||g>15){verdict='Too strong \u2014 stay grounded';advice='Wind '+wMph+'mph, gusting '+gMph+'mph. Exceeds safe limits.';}
+  else if(w<1.5){verdict='Too light';advice='Wind only '+wMph+'mph. Sled rides only, no thermal activity.';}
+  else if(score>=70){verdict='Flyable \u2014 go for it';advice='Wind '+wMph+'mph'+(wdir?' '+wdir:'')+(g>0?', gusts '+gMph+'mph':'')+'. Good conditions for '+(stype==='kite'?'kite flying':'paragliding')+'.';}
+  else{verdict='Marginal \u2014 use caution';advice='Wind '+wMph+'mph'+(wdir?' '+wdir:'')+(g>0?', gusts '+gMph+'mph':'')+'. '+(stype==='kite'?'Check on-site.':'P3+ pilots exercise judgment.');}
+  if(bestWin)advice+=' <strong>Best window: '+bestWin+'.</strong>';
+  var aiEl=document.getElementById(sid+'-ai-text');
+  if(aiEl)aiEl.innerHTML='<strong>'+verdict+'.</strong> '+advice;
+  var cls=score>=70?'ss-green':score>=40?'ss-yellow':'ss-red';
+  var emo=score>=70?'[G]':score>=40?'[Y]':'[R]';
+  var badgeEl=document.getElementById(sid+'-score-badge');
+  if(badgeEl){badgeEl.className='safety-score '+cls;badgeEl.textContent=emo+' Safety: '+score+'/100';}
+  var bwEl=document.getElementById(sid+'-best-window');
+  if(bwEl)bwEl.innerHTML=bestWin?'Best window: <strong>'+bestWin+'</strong>':'Best window: <span style="color:var(--muted)">insufficient data</span>';
+  var alertEl=document.getElementById(sid+'-gust-alert');
+  if(alertEl)alertEl.style.display=(g*2.237>GUST_ALERT_MPH)?'block':'none';
+}
+function mobNavGo(cardId,btn){
+  document.querySelectorAll('.mob-nav-btn').forEach(function(b){b.classList.remove('on');});
+  if(btn)btn.classList.add('on');
+  var card=document.getElementById(cardId);
+  if(card)card.scrollIntoView({behavior:'smooth',block:'start'});
+}
 </script>
+
+<nav class="mob-nav" aria-label="Flying Sites">
+  <div class="mob-nav-inner">
+    <button class="mob-nav-btn on" onclick="mobNavGo('levin',this)"><span class="mn-icon">&#x1FA82;</span><span>Levin</span></button>
+    <button class="mob-nav-btn" onclick="mobNavGo('mussel',this)"><span class="mn-icon">&#127754;</span><span>Mussel</span></button>
+    <button class="mob-nav-btn" onclick="mobNavGo('shoreline',this)"><span class="mn-icon">&#x1FA81;</span><span>Shoreline</span></button>
+    <button class="mob-nav-btn" onclick="mobNavGo('mpeak',this)"><span class="mn-icon">&#9968;&#65039;</span><span>Mission</span></button>
+  </div>
+</nav>
 
 <script>
 if('serviceWorker' in navigator){
