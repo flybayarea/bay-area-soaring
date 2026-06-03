@@ -119,6 +119,17 @@ main{flex:1;max-width:100%;padding:28px 20px 60px;display:flex;flex-direction:co
 .tb{padding:12px 18px;font-size:13px;font-weight:500;color:var(--muted);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;transition:all 0.2s;white-space:nowrap}
 .tb:hover{color:var(--text)}
 .tb.on{color:var(--accent);border-bottom-color:var(--accent)}
+.fcast-wrap{position:relative;display:flex;align-items:stretch;}
+.fcast-btn{padding:12px 16px;font-size:13px;font-weight:500;color:var(--muted);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;transition:all 0.2s;white-space:nowrap;display:flex;align-items:center;gap:5px;}
+.fcast-btn:hover{color:var(--text)}
+.fcast-btn.on{color:var(--accent);border-bottom-color:var(--accent)}
+.fcast-btn .fa{font-size:9px;transition:transform 0.18s;}
+.fcast-btn.open .fa{transform:rotate(180deg);}
+.fcast-dd{position:absolute;top:100%;left:0;min-width:170px;background:var(--card);border:1px solid var(--border);border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,0.45);z-index:400;opacity:0;transform:translateY(-6px);pointer-events:none;transition:opacity 0.15s,transform 0.15s;overflow:hidden;}
+.fcast-dd.open{opacity:1;transform:translateY(0);pointer-events:all;}
+.fcast-dd-item{display:block;width:100%;padding:10px 16px;font-size:13px;font-weight:500;color:var(--muted);background:none;border:none;cursor:pointer;text-align:left;transition:background 0.12s,color 0.12s;white-space:nowrap;}
+.fcast-dd-item:hover{background:rgba(88,166,255,0.1);color:var(--accent);}
+.fcast-dd-item.on{color:var(--accent);font-weight:600;background:rgba(88,166,255,0.07);}
 .tc{display:none;padding:24px}
 .tc.on{display:block}
 .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:20px}
@@ -281,9 +292,16 @@ footer a:hover{text-decoration:underline}
         <span class="sb sl" id="levin-status">&bull; Loading...</span>
       </div>
       <div class="tabs">
-        <button class="tb on" onclick="sw('lev','t1',this)">Today (Mon)</button>
-        <button class="tb" onclick="sw('lev','t2',this)">Tomorrow (Tue)</button>
-        <button class="tb" onclick="sw('lev','t3',this)">6-Day Outlook</button>
+        <div class="fcast-wrap">
+          <button class="fcast-btn on" id="lev-fcast-btn" onclick="toggleFcastDd('lev',event)">
+            <span id="lev-fcast-label">Today</span><span class="fa">▼</span>
+          </button>
+          <div class="fcast-dd" id="lev-fcast-dd">
+            <button class="fcast-dd-item on" id="lev-dd-t1" onclick="swForecast('lev','t1','Today',this)">Today</button>
+            <button class="fcast-dd-item" id="lev-dd-t2" onclick="swForecast('lev','t2','',this)"><span id="lev-tmrw-label">Tomorrow</span></button>
+            <button class="fcast-dd-item" id="lev-dd-t3" onclick="swForecast('lev','t3','6-Day Outlook',this)">6-Day Outlook</button>
+          </div>
+        </div>
         <button class="tb" onclick="sw('lev','t4',this)">NWS Forecast</button>
       </div>
       <div id="lev-t1" class="tc on">
@@ -349,9 +367,16 @@ footer a:hover{text-decoration:underline}
         <span class="sb sl" id="mussel-status">&bull; Loading...</span>
       </div>
       <div class="tabs">
-        <button class="tb on" onclick="sw('mus','t1',this)">Today (Mon)</button>
-        <button class="tb" onclick="sw('mus','t2',this)">Tomorrow (Tue)</button>
-        <button class="tb" onclick="sw('mus','t3',this)">6-Day Outlook</button>
+        <div class="fcast-wrap">
+          <button class="fcast-btn on" id="mus-fcast-btn" onclick="toggleFcastDd('mus',event)">
+            <span id="mus-fcast-label">Today</span><span class="fa">▼</span>
+          </button>
+          <div class="fcast-dd" id="mus-fcast-dd">
+            <button class="fcast-dd-item on" id="mus-dd-t1" onclick="swForecast('mus','t1','Today',this)">Today</button>
+            <button class="fcast-dd-item" id="mus-dd-t2" onclick="swForecast('mus','t2','',this)"><span id="mus-tmrw-label">Tomorrow</span></button>
+            <button class="fcast-dd-item" id="mus-dd-t3" onclick="swForecast('mus','t3','6-Day Outlook',this)">6-Day Outlook</button>
+          </div>
+        </div>
         <button class="tb" onclick="sw('mus','t4',this)">NWS Forecast</button>
       </div>
       <div id="mus-t1" class="tc on">
@@ -415,9 +440,16 @@ footer a:hover{text-decoration:underline}
         <span class="sb sl" id="kite-status">&bull; Loading...</span>
       </div>
       <div class="tabs">
-        <button class="tb on" onclick="sw('kite','today',this)">Today (Mon)</button>
-        <button class="tb" onclick="sw('kite','tomorrow',this)">Tomorrow (Tue)</button>
-        <button class="tb" onclick="sw('kite','outlook',this)">6-Day Outlook</button>
+        <div class="fcast-wrap">
+          <button class="fcast-btn on" id="kite-fcast-btn" onclick="toggleFcastDd('kite',event)">
+            <span id="kite-fcast-label">Today</span><span class="fa">▼</span>
+          </button>
+          <div class="fcast-dd" id="kite-fcast-dd">
+            <button class="fcast-dd-item on" id="kite-dd-t1" onclick="swForecast('kite','today','Today',this)">Today</button>
+            <button class="fcast-dd-item" id="kite-dd-t2" onclick="swForecast('kite','tomorrow','',this)"><span id="kite-tmrw-label">Tomorrow</span></button>
+            <button class="fcast-dd-item" id="kite-dd-t3" onclick="swForecast('kite','outlook','6-Day Outlook',this)">6-Day Outlook</button>
+          </div>
+        </div>
         <button class="tb" onclick="sw('kite','nws',this)">NWS Forecast</button>
       </div>
       <div id="kite-today" class="tc on">
@@ -475,9 +507,16 @@ footer a:hover{text-decoration:underline}
         <span class="sb sl" id="mpeak-status">&bull; Loading...</span>
       </div>
       <div class="tabs">
-        <button class="tb on" onclick="sw('mpeak','today',this)">Today (Mon)</button>
-        <button class="tb" onclick="sw('mpeak','tomorrow',this)">Tomorrow (Tue)</button>
-        <button class="tb" onclick="sw('mpeak','outlook',this)">6-Day Outlook</button>
+        <div class="fcast-wrap">
+          <button class="fcast-btn on" id="mpeak-fcast-btn" onclick="toggleFcastDd('mpeak',event)">
+            <span id="mpeak-fcast-label">Today</span><span class="fa">▼</span>
+          </button>
+          <div class="fcast-dd" id="mpeak-fcast-dd">
+            <button class="fcast-dd-item on" id="mpeak-dd-t1" onclick="swForecast('mpeak','today','Today',this)">Today</button>
+            <button class="fcast-dd-item" id="mpeak-dd-t2" onclick="swForecast('mpeak','tomorrow','',this)"><span id="mpeak-tmrw-label">Tomorrow</span></button>
+            <button class="fcast-dd-item" id="mpeak-dd-t3" onclick="swForecast('mpeak','outlook','6-Day Outlook',this)">6-Day Outlook</button>
+          </div>
+        </div>
         <button class="tb" onclick="sw('mpeak','nws',this)">NWS Forecast</button>
       </div>
       <div id="mpeak-today" class="tc on">
@@ -989,6 +1028,68 @@ setInterval(_tick,1000);function updateBestWindow(){
 }
 updateBestWindow();
 
+// ── Forecast dropdown ────────────────────────────────────────────────────────
+function swForecast(site, tab, label, itemBtn){
+  var card = itemBtn.closest('.card');
+  // deactivate all tc panels and tb buttons
+  card.querySelectorAll('.tc').forEach(function(t){t.classList.remove('on');});
+  card.querySelectorAll('.tb').forEach(function(b){b.classList.remove('on');});
+  // activate selected panel
+  document.getElementById(site+'-'+tab).classList.add('on');
+  // NWS/ws handling
+  var isNwsTab=(tab==='nws'||tab==='t4');
+  var ws=card.querySelector('.ws');
+  if(ws)ws.style.display=isNwsTab?'none':'';
+  if(isNwsTab)fetchNWSForSite(site);
+  // keep fcast-btn in "on" state
+  var fcastBtn=document.getElementById(site+'-fcast-btn');
+  if(fcastBtn)fcastBtn.classList.add('on');
+  // update dropdown item highlighting
+  var dd=document.getElementById(site+'-fcast-dd');
+  if(dd)dd.querySelectorAll('.fcast-dd-item').forEach(function(b){b.classList.remove('on');});
+  itemBtn.classList.add('on');
+  // update button label
+  var lbl=label||(itemBtn.querySelector('span')?itemBtn.querySelector('span').textContent:itemBtn.textContent.trim());
+  var lblEl=document.getElementById(site+'-fcast-label');
+  if(lblEl)lblEl.textContent=lbl;
+  closeFcastDd(site);
+}
+function toggleFcastDd(site,e){
+  if(e)e.stopPropagation();
+  var btn=document.getElementById(site+'-fcast-btn');
+  var dd=document.getElementById(site+'-fcast-dd');
+  var isOpen=dd.classList.contains('open');
+  // close all other open dropdowns
+  document.querySelectorAll('.fcast-dd.open').forEach(function(d){
+    d.classList.remove('open');
+    var b=document.getElementById(d.id.replace('-fcast-dd','-fcast-btn'));
+    if(b)b.classList.remove('open');
+  });
+  if(!isOpen){dd.classList.add('open');btn.classList.add('open');}
+}
+function closeFcastDd(site){
+  var btn=document.getElementById(site+'-fcast-btn');
+  var dd=document.getElementById(site+'-fcast-dd');
+  if(btn)btn.classList.remove('open');
+  if(dd)dd.classList.remove('open');
+}
+document.addEventListener('click',function(){
+  document.querySelectorAll('.fcast-dd.open').forEach(function(d){
+    d.classList.remove('open');
+    var b=document.getElementById(d.id.replace('-fcast-dd','-fcast-btn'));
+    if(b)b.classList.remove('open');
+  });
+});
+// Set dynamic tomorrow label in all forecast dropdowns
+(function(){
+  var days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  var tmrw=new Date();tmrw.setDate(tmrw.getDate()+1);
+  var dayName=days[tmrw.getDay()];
+  ['lev','mus','kite','mpeak'].forEach(function(sid){
+    var el=document.getElementById(sid+'-tmrw-label');
+    if(el)el.textContent='Tomorrow ('+dayName+')';
+  });
+})();
 // ── Flying Sites FAB ──────────────────────────────────────────────────────────
 function toggleFab(){
   var btn=document.getElementById('fab-btn');
