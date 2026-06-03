@@ -399,7 +399,7 @@ footer a:hover{text-decoration:underline}
       <div class="ws">
         <div class="wl">🗺 Live Windy Map</div>
         <div class="ww">
-          <iframe width="100%" height="450" src="https://embed.windy.com/embed2.html?lat=37.4619&lon=-121.861&zoom=11&level=surface&overlay=wind&menu=&message=true&marker=true&forecast=12&detailLat=37.4619&detailLon=-121.861&detail=true&metricWind=m%2Fs&metricTemp=%C2%B0F&radarRange=-1" loading="lazy" frameborder="0"></iframe>
+          <iframe width="100%" height="450" src="https://embed.windy.com/embed2.html?lat=37.4619&lon=-121.861&zoom=11&level=surface&overlay=wind&product=ecmwf&menu=&message=true&marker=true&calendar=now&type=map&location=coordinates&forecast=12&detailLat=37.4619&detailLon=-121.861&detail=true&metricWind=m%2Fs&metricTemp=%C2%B0F&radarRange=-1" loading="lazy" frameborder="0"></iframe>
         </div>
       </div>
       <div style="padding:0 24px 24px">
@@ -488,7 +488,7 @@ footer a:hover{text-decoration:underline}
       <div class="ws">
         <div class="wl">🗺 Live Windy Map</div>
         <div class="ww">
-          <iframe width="100%" height="450" src="https://embed.windy.com/embed2.html?lat=37.674&lon=-122.4887&zoom=11&level=surface&overlay=wind&menu=&message=true&marker=true&forecast=12&detailLat=37.674&detailLon=-122.4887&detail=true&metricWind=m%2Fs&metricTemp=%C2%B0F&radarRange=-1" loading="lazy" frameborder="0"></iframe>
+          <iframe width="100%" height="450" src="https://embed.windy.com/embed2.html?lat=37.674&lon=-122.4887&zoom=11&level=surface&overlay=wind&product=ecmwf&menu=&message=true&marker=true&calendar=now&type=map&location=coordinates&forecast=12&detailLat=37.674&detailLon=-122.4887&detail=true&metricWind=m%2Fs&metricTemp=%C2%B0F&radarRange=-1" loading="lazy" frameborder="0"></iframe>
         </div>
       </div>
       <div style="padding:0 24px 24px">
@@ -575,7 +575,7 @@ footer a:hover{text-decoration:underline}
       <div class="ws">
         <div class="wl">🗺 Live Windy Map</div>
         <div class="ww">
-          <iframe width="100%" height="450" src="https://embed.windy.com/embed2.html?lat=37.4297&lon=-122.0766&zoom=11&level=surface&overlay=wind&menu=&message=true&marker=true&forecast=12&detailLat=37.4297&detailLon=-122.0766&detail=true&metricWind=m%2Fs&metricTemp=%C2%B0F&radarRange=-1" loading="lazy" frameborder="0"></iframe>
+          <iframe width="100%" height="450" src="https://embed.windy.com/embed2.html?lat=37.4297&lon=-122.0766&zoom=11&level=surface&overlay=wind&product=ecmwf&menu=&message=true&marker=true&calendar=now&type=map&location=coordinates&forecast=12&detailLat=37.4297&detailLon=-122.0766&detail=true&metricWind=m%2Fs&metricTemp=%C2%B0F&radarRange=-1" loading="lazy" frameborder="0"></iframe>
         </div>
       </div>
     </div>
@@ -656,7 +656,7 @@ footer a:hover{text-decoration:underline}
       <div class="ws">
         <div class="wl">🗺 Live Windy Map</div>
         <div class="ww">
-          <iframe width="100%" height="450" src="https://embed.windy.com/embed2.html?lat=37.5131&lon=-121.8803&zoom=11&level=surface&overlay=wind&menu=&message=true&marker=true&forecast=12&detailLat=37.5131&detailLon=-121.8803&detail=true&metricWind=m%2Fs&metricTemp=%C2%B0F&radarRange=-1" loading="lazy" frameborder="0"></iframe>
+          <iframe width="100%" height="450" src="https://embed.windy.com/embed2.html?lat=37.5131&lon=-121.8803&zoom=11&level=surface&overlay=wind&product=ecmwf&menu=&message=true&marker=true&calendar=now&type=map&location=coordinates&forecast=12&detailLat=37.5131&detailLon=-121.8803&detail=true&metricWind=m%2Fs&metricTemp=%C2%B0F&radarRange=-1" loading="lazy" frameborder="0"></iframe>
         </div>
       </div>
     </div>
@@ -742,9 +742,7 @@ function sw(site,tab,btn){
   c.querySelectorAll('.tb').forEach(function(b){b.classList.remove('on')});
   document.getElementById(site+'-'+tab).classList.add('on');
   btn.classList.add('on');
-  var ws=c.querySelector('.ws');
   var isNwsTab=(tab==='nws'||tab==='t4');
-  if(ws)ws.style.display=isNwsTab?'none':'';
   if(isNwsTab)fetchNWSForSite(site);
 }
 
@@ -1197,7 +1195,6 @@ function swNws(site,tabKey,section,itemBtn){
     card.querySelectorAll('.tc').forEach(function(t){t.classList.remove('on');});
     card.querySelectorAll('.tb').forEach(function(b){b.classList.remove('on');});
     panel.classList.add('on');
-    var ws=card.querySelector('.ws');if(ws)ws.style.display='none';
     fetchNWSForSite(site);
   }
   var dd=document.getElementById(site+'-nws-dd');
