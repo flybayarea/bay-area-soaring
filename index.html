@@ -762,7 +762,11 @@ function buildHourly(periods){
 }
 
 function buildNWS(wrap,forecast,hourly,obs,obsStation,siteName,siteType){
-  if(!forecast||!forecast.properties||!forecast.properties.periods){wrap.innerHTML='<div class="nws-loading">&#9888; NWS data unavailable. <a href="https://www.weather.gov" target="_blank" style="color:var(--accent)">Visit weather.gov</a></div>';return;}
+  if(!forecast||!forecast.properties||!forecast.properties.periods){
+    wrap.innerHTML='<div class="nws-loading">&#9888; NWS data unavailable. '
+      +'<a href="https://www.weather.gov" target="_blank" style="color:var(--accent)">Visit weather.gov</a></div>';
+    return;
+  }
   var periods=forecast.properties.periods;
   var html='';
   var p=obs&&obs.properties?obs.properties:{};
