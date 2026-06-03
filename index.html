@@ -2,341 +2,1308 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<meta name="theme-color" content="#0a0e1a"/>
-<meta name="description" content="Bay Area Soaring — Real-time paragliding & hang gliding weather dashboard for Bay Area flying sites."/>
-<title>Bay Area Soaring</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
 <link rel="manifest" href="manifest.json"/>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+<meta name="theme-color" content="#0d1117"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="Bay Area Soaring"/>
+<link rel="apple-touch-icon" href="icon-192.png"/>
+<meta name="description" content="Live flight condition dashboard for Bay Area paragliding and hang gliding sites"/>
+<title>Bay Area Soaring</title>
 <style>
-/* ═══════════════════════════════════════════════════
-   DESIGN TOKENS
-═══════════════════════════════════════════════════ */
-:root{
-  --bg:#0a0e1a;
-  --surface:#111827;
-  --surface2:#1a2235;
-  --surface3:#1e2a40;
-  --border:#1f2d45;
-  --border2:#2a3a55;
-  --accent:#3b82f6;
-  --accent2:#60a5fa;
-  --green:#22c55e;
-  --yellow:#eab308;
-  --red:#ef4444;
-  --orange:#f97316;
-  --text:#f1f5f9;
-  --text2:#94a3b8;
-  --text3:#64748b;
-  --glass:rgba(255,255,255,0.04);
-  --glass-border:rgba(255,255,255,0.08);
-  --radius:16px;
-  --radius-sm:10px;
-  --shadow:0 4px 24px rgba(0,0,0,0.4);
-  --transition:0.25s cubic-bezier(0.4,0,0.2,1);
-}
-
-/* ═══════════════════════════════════════════════════
-   RESET & BASE
-═══════════════════════════════════════════════════ */
+:root{--bg:#0d1117;--card:#161b22;--border:#30363d;--accent:#58a6ff;--green:#3fb950;--yellow:#d29922;--red:#f85149;--text:#e6edf3;--muted:#8b949e;--sidebar-w:220px}
 *{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{
-  font-family:'Inter',sans-serif;
-  background:var(--bg);
-  color:var(--text);
-  min-height:100vh;
-  overflow-x:hidden;
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;display:flex;flex-direction:column;min-height:100vh}
+/* PWA / iOS safe area & touch */
+body{padding-bottom:env(safe-area-inset-bottom);}
+.card,.bar,.fab-wrap{padding-left:max(0px,env(safe-area-inset-left));}
+button,.tb,.fab-btn,.fcast-dd-btn,.nws-dd-btn,.fcast-dd-item,.nws-dd-item,.fab-item{min-height:44px;min-width:44px;-webkit-tap-highlight-color:transparent;}
+.logo,.card-title,.ft-safety,.ft-attr,.pill-text,header h1,header p{-webkit-user-select:none;user-select:none;}
+.tb{touch-action:manipulation;}
+@media(max-width:600px){
+  header{padding:max(28px,calc(14px + env(safe-area-inset-top))) 16px 16px;}
+  .card{margin:0 0 12px;border-radius:0;}
+  .tabs-badges{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+  .bar{padding:12px 16px;}
+  .fab-wrap{top:max(12px,calc(4px + env(safe-area-inset-top)));left:max(12px,env(safe-area-inset-left));}
 }
-a{color:var(--accent2);text-decoration:none}
-a:hover{text-decoration:underline}
-button{cursor:pointer;font-family:inherit}
-iframe{border:none;border-radius:var(--radius-sm);overflow:hidden}
+header{background:linear-gradient(135deg,#0d1117,#161b22);border-bottom:1px solid var(--border);padding:28px 24px 20px;text-align:center}
+.logo{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
+header h1{font-size:clamp(22px,5vw,36px);font-weight:700}
+header p{color:var(--muted);font-size:14px;margin-top:6px}
+.badge{display:inline-block;margin-top:12px;padding:4px 12px;border-radius:20px;background:rgba(88,166,255,0.1);border:1px solid rgba(88,166,255,0.25);font-size:12px;color:var(--accent)}
+.bar{display:flex;gap:12px;padding:16px 20px;overflow-x:auto;border-bottom:1px solid var(--border);background:var(--card)}
+.pill{display:flex;align-items:center;gap:8px;padding:8px 16px;border-radius:30px;border:1px solid var(--border);white-space:nowrap;font-size:13px;background:var(--bg)}
+.dot{width:9px;height:9px;border-radius:50%}
+.dr{background:var(--red);box-shadow:0 0 6px var(--red)}
+.dy{background:var(--yellow);box-shadow:0 0 6px var(--yellow)}
+.dg{background:var(--green);box-shadow:0 0 6px var(--green)}
 
-/* ═══════════════════════════════════════════════════
-   OFFLINE BANNER
-═══════════════════════════════════════════════════ */
-#offline-banner{
-  display:none;
-  position:fixed;top:0;left:0;right:0;z-index:9999;
-  background:#7c2d12;
-  color:#fed7aa;
-  text-align:center;
-  padding:10px 20px;
-  font-size:14px;
-  font-weight:600;
-}
+/* LAYOUT */
+.layout{display:flex;flex:1}
 
-/* ═══════════════════════════════════════════════════
-   GUST ALERT TOAST
-═══════════════════════════════════════════════════ */
-#gust-toast{
-  display:none;
-  position:fixed;top:60px;right:20px;z-index:9998;
-  background:#7f1d1d;
-  border:1px solid #ef4444;
-  border-radius:var(--radius-sm);
-  padding:12px 18px;
-  color:#fca5a5;
-  font-size:13px;
-  font-weight:600;
-  max-width:320px;
-  box-shadow:var(--shadow);
-  animation:slideIn 0.3s ease;
+/* SITES FAB — floating action button + dropdown */
+.fab-wrap{
+  position:fixed;
+  top:16px;
+  left:16px;
+  z-index:300;
 }
-@keyframes slideIn{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:translateX(0)}}
-
-/* ═══════════════════════════════════════════════════
-   HEADER
-═══════════════════════════════════════════════════ */
-header{
-  position:sticky;top:0;z-index:100;
-  background:rgba(10,14,26,0.92);
-  backdrop-filter:blur(16px);
-  border-bottom:1px solid var(--border);
-  padding:0 24px;
-  height:60px;
-  display:flex;align-items:center;justify-content:space-between;
-}
-.logo{
-  display:flex;align-items:center;gap:10px;
-  font-size:18px;font-weight:800;letter-spacing:-0.5px;
-}
-.logo span{font-size:22px}
-.header-right{display:flex;align-items:center;gap:12px}
-#global-time{
-  font-family:'JetBrains Mono',monospace;
-  font-size:12px;color:var(--text3);
-}
-#refresh-btn{
-  background:var(--surface2);
-  border:1px solid var(--border2);
-  color:var(--text2);
-  padding:6px 14px;
-  border-radius:8px;
-  font-size:13px;
-  transition:all var(--transition);
-}
-#refresh-btn:hover{background:var(--surface3);color:var(--text)}
-#next-update{
-  font-family:'JetBrains Mono',monospace;
-  font-size:11px;color:var(--text3);
-}
-
-/* ═══════════════════════════════════════════════════
-   SPLIT DASHBOARD LAYOUT (Option D)
-═══════════════════════════════════════════════════ */
-#app{
+.fab-btn{
   display:flex;
-  height:calc(100vh - 60px);
-  overflow:hidden;
-}
-
-/* LEFT SIDEBAR */
-#sidebar{
-  width:300px;min-width:260px;
-  background:var(--surface);
-  border-right:1px solid var(--border);
-  overflow-y:auto;
-  flex-shrink:0;
-  display:flex;flex-direction:column;
-}
-#sidebar-header{
-  padding:16px 16px 8px;
-  border-bottom:1px solid var(--border);
-}
-#sidebar-header h2{font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3)}
-.site-card{
-  padding:14px 16px;
-  border-bottom:1px solid var(--border);
-  cursor:pointer;
-  transition:background var(--transition);
-  position:relative;
-}
-.site-card:hover{background:var(--surface2)}
-.site-card.active{
-  background:var(--surface3);
-  border-left:3px solid var(--accent);
-}
-.site-card-name{font-size:14px;font-weight:600;color:var(--text);margin-bottom:3px}
-.site-card-sub{font-size:12px;color:var(--text3);margin-bottom:8px}
-.site-card-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.condition-badge{
-  font-size:11px;font-weight:700;letter-spacing:0.5px;
-  padding:3px 9px;border-radius:6px;text-transform:uppercase;
-}
-.badge-flyable{background:rgba(34,197,94,0.15);color:var(--green);border:1px solid rgba(34,197,94,0.3)}
-.badge-marginal{background:rgba(234,179,8,0.15);color:var(--yellow);border:1px solid rgba(234,179,8,0.3)}
-.badge-dangerous{background:rgba(239,68,68,0.15);color:var(--red);border:1px solid rgba(239,68,68,0.3)}
-.badge-loading{background:rgba(100,116,139,0.15);color:var(--text3);border:1px solid var(--border)}
-.safety-ring{
-  font-size:11px;font-weight:700;
-  font-family:'JetBrains Mono',monospace;
-  color:var(--text2);
-}
-.gust-alert-dot{
-  width:8px;height:8px;border-radius:50%;
-  background:var(--red);
-  box-shadow:0 0 6px var(--red);
-  animation:pulse 1.2s infinite;
-}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
-.wind-mini{font-size:12px;color:var(--text3);font-family:'JetBrains Mono',monospace}
-
-/* RIGHT DETAIL PANEL */
-#detail-panel{
-  flex:1;
-  overflow-y:auto;
-  background:var(--bg);
-  padding:24px;
-  display:flex;flex-direction:column;gap:20px;
-}
-.detail-placeholder{
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  height:100%;color:var(--text3);gap:12px;
-  font-size:15px;
-}
-.detail-placeholder span{font-size:48px}
-
-/* ═══════════════════════════════════════════════════
-   SITE DETAIL SECTIONS
-═══════════════════════════════════════════════════ */
-.site-detail-header{
-  display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;
-  padding-bottom:16px;
-  border-bottom:1px solid var(--border);
-}
-.site-detail-title h1{font-size:24px;font-weight:800;margin-bottom:4px}
-.site-detail-title p{font-size:14px;color:var(--text3)}
-.detail-badges{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.safety-score-big{
-  font-size:28px;font-weight:800;
-  font-family:'JetBrains Mono',monospace;
-}
-.last-updated{font-size:12px;color:var(--text3);font-family:'JetBrains Mono',monospace}
-
-/* AI BRIEFING BOX */
-.ai-briefing{
-  background:linear-gradient(135deg,rgba(59,130,246,0.08) 0%,rgba(139,92,246,0.08) 100%);
-  border:1px solid rgba(59,130,246,0.25);
-  border-radius:var(--radius);
-  padding:18px 20px;
-  position:relative;
-  overflow:hidden;
-}
-.ai-briefing::before{
-  content:'';position:absolute;top:0;left:0;right:0;height:2px;
-  background:linear-gradient(90deg,var(--accent),#8b5cf6,var(--accent));
-  background-size:200% 100%;
-  animation:shimmer 2s linear infinite;
-}
-@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
-.ai-briefing-header{
-  display:flex;align-items:center;gap:8px;margin-bottom:10px;
-  font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--accent2);
-}
-.ai-briefing-text{font-size:14px;line-height:1.7;color:var(--text)}
-.best-window-highlight{
-  display:inline-flex;align-items:center;gap:6px;
-  background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.25);
-  border-radius:6px;padding:3px 10px;
-  font-weight:700;color:var(--green);font-size:13px;margin-top:8px;
-}
-
-/* METRICS GRID */
-.metrics-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(140px,1fr));
-  gap:12px;
-}
-.metric-card{
-  background:var(--glass);
-  border:1px solid var(--glass-border);
-  backdrop-filter:blur(8px);
-  border-radius:var(--radius-sm);
-  padding:14px 16px;
-  transition:transform var(--transition),border-color var(--transition);
-  position:relative;
-  overflow:hidden;
-}
-.metric-card:hover{transform:translateY(-2px);border-color:var(--border2)}
-.metric-card.alert{
-  border-color:rgba(239,68,68,0.5);
-  background:rgba(239,68,68,0.06);
-}
-.metric-card.alert::after{
-  content:'⚠';position:absolute;top:8px;right:10px;font-size:14px;color:var(--red);
-}
-.metric-label{
-  font-size:10px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;
-  color:var(--text3);margin-bottom:6px;
-}
-.metric-value{
-  font-size:28px;font-weight:800;
-  font-family:'JetBrains Mono',monospace;
-  color:var(--text);line-height:1;
-}
-.metric-unit{font-size:13px;font-weight:400;color:var(--text3);margin-left:2px}
-.metric-sub{font-size:11px;color:var(--text3);margin-top:4px}
-
-/* SKELETON */
-.skeleton{
-  background:linear-gradient(90deg,var(--surface2) 25%,var(--surface3) 50%,var(--surface2) 75%);
-  background-size:200% 100%;
-  animation:skeleton-anim 1.4s infinite;
-  border-radius:6px;
-}
-@keyframes skeleton-anim{0%{background-position:200% 0}100%{background-position:-200% 0}}
-.skeleton-text{height:14px;margin:6px 0}
-.skeleton-block{height:80px;margin:8px 0}
-
-/* SECTION CARD */
-.section-card{
-  background:var(--surface);
+  align-items:center;
+  gap:7px;
+  padding:8px 14px 8px 10px;
+  background:var(--card);
   border:1px solid var(--border);
-  border-radius:var(--radius);
-  overflow:hidden;
-}
-.section-card-header{
-  padding:14px 18px;
-  border-bottom:1px solid var(--border);
-  display:flex;align-items:center;justify-content:space-between;
+  border-radius:24px;
   cursor:pointer;
+  font-size:13px;
+  font-weight:600;
+  color:var(--text);
+  box-shadow:0 2px 12px rgba(0,0,0,0.45);
+  transition:background 0.15s, border-color 0.15s;
   user-select:none;
-  transition:background var(--transition);
+  white-space:nowrap;
 }
-.section-card-header:hover{background:var(--surface2)}
-.section-card-header h3{
-  font-size:13px;font-weight:600;letter-spacing:0.3px;
-  display:flex;align-items:center;gap:8px;
-}
-.section-card-header .chevron{
-  font-size:12px;color:var(--text3);
-  transition:transform var(--transition);
-}
-.section-card-header.open .chevron{transform:rotate(180deg)}
-.section-card-body{padding:16px 18px;display:none}
-.section-card-body.open{display:block}
+.fab-btn:hover{background:rgba(88,166,255,0.12);border-color:var(--accent);}
+.fab-btn.open{background:rgba(88,166,255,0.12);border-color:var(--accent);}
+.fab-icon{font-size:15px;line-height:1;}
+.fab-arrow{font-size:10px;color:var(--muted);transition:transform 0.2s;margin-left:2px;}
+.fab-btn.open .fab-arrow{transform:rotate(180deg);}
 
-/* NWS FORECAST */
-.forecast-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
-.forecast-item{
-  background:var(--surface2);border:1px solid var(--border);
-  border-radius:var(--radius-sm);padding:12px;
+.fab-dropdown{
+  position:absolute;
+  top:calc(100% + 8px);
+  left:0;
+  width:200px;
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:10px;
+  box-shadow:0 8px 32px rgba(0,0,0,0.5);
+  overflow:hidden;
+  opacity:0;
+  transform:translateY(-6px);
+  pointer-events:none;
+  transition:opacity 0.18s, transform 0.18s;
 }
-.forecast-item-name{font-size:12px;font-weight:700;color:var(--accent2);margin-bottom:6px}
-.forecast-item-text{font-size:12px;color:var(--text2);line-height:1.5}
-.forecast-item-temp{font-size:16px;font-weight:700;font-family:'JetBrains Mono',monospace;margin-top:6px}
+.fab-dropdown.open{
+  opacity:1;
+  transform:translateY(0);
+  pointer-events:all;
+}
+.fab-dropdown-title{
+  font-size:9px;
+  text-transform:uppercase;
+  letter-spacing:2px;
+  color:var(--muted);
+  padding:10px 14px 8px;
+  border-bottom:1px solid var(--border);
+}
+.fab-nav-item{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  padding:10px 14px;
+  text-decoration:none;
+  color:var(--text);
+  font-size:13px;
+  font-weight:500;
+  transition:background 0.12s, color 0.12s;
+  border-left:3px solid transparent;
+}
+.fab-nav-item:hover{background:rgba(88,166,255,0.1);color:var(--accent);border-left-color:var(--accent);}
+.fab-nav-item .nav-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.fab-nav-inner{display:flex;flex-direction:column;}
+.fab-nav-sub{font-size:10px;color:var(--muted);margin-top:1px;}
 
-/* PILOT REPORTS */
-.pilot-report{
-  background:var(--surface2);border:1px solid var(--border);
-  border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:10px;
+@media(max-width:600px){
+  .fab-wrap{top:10px;left:10px;}
+  .fab-btn{padding:7px 12px 7px 9px;font-size:12px;}
+  .fab-dropdown{width:185px;}
 }
-.pilot-report-meta{font-size:11px;color:var(--text3);margin-bottom:4px;font-family:'JetBrains Mono',monospace}
-.pilot-report-text{font-size:13px;color:var(--text);line-height:1.5}
-.pilot-report-form{margin-top:12px;display:flex;flex-direction:column;gap:8px}
-.pilot-report-form textarea{
-  background:var(--surface3);border:1px solid var(--border2);
-  border-ra
+/* MAIN */
+main{flex:1;max-width:100%;padding:28px 20px 60px;display:flex;flex-direction:column;gap:32px}
+
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.ch{display:flex;align-items:flex-start;justify-content:space-between;padding:20px 24px 16px;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:12px}
+.ch h2{font-size:20px;font-weight:700}
+.ch .sub{font-size:12px;color:var(--muted);margin-top:3px}
+.sb{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;white-space:nowrap}
+.sr{background:rgba(248,81,73,0.15);border:1px solid rgba(248,81,73,0.4);color:#ff7b72}
+.sy{background:rgba(210,153,34,0.15);border:1px solid rgba(210,153,34,0.4);color:#e3b341}
+.sg{background:rgba(63,185,80,0.15);border:1px solid rgba(63,185,80,0.4);color:#56d364}
+.sl{background:rgba(139,148,158,0.15);border:1px solid rgba(139,148,158,0.4);color:#8b949e}
+.tabs{display:flex;border-bottom:1px solid var(--border);padding:0 24px;background:rgba(255,255,255,0.02);flex-wrap:wrap}
+.tb{padding:12px 18px;font-size:13px;font-weight:500;color:var(--muted);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;transition:all 0.2s;white-space:nowrap}
+.tb:hover{color:var(--text)}
+.tb.on{color:var(--accent);border-bottom-color:var(--accent)}
+.fcast-wrap{position:relative;display:flex;align-items:stretch;}
+.fcast-btn{padding:12px 16px;font-size:13px;font-weight:500;color:var(--muted);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;transition:all 0.2s;white-space:nowrap;display:flex;align-items:center;gap:5px;}
+.fcast-btn:hover{color:var(--text)}
+.fcast-btn.on{color:var(--accent);border-bottom-color:var(--accent)}
+.fcast-btn .fa{font-size:9px;transition:transform 0.18s;}
+.fcast-btn.open .fa{transform:rotate(180deg);}
+.fcast-dd{position:absolute;top:100%;left:0;min-width:170px;background:var(--card);border:1px solid var(--border);border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,0.45);z-index:400;opacity:0;transform:translateY(-6px);pointer-events:none;transition:opacity 0.15s,transform 0.15s;overflow:hidden;}
+.fcast-dd.open{opacity:1;transform:translateY(0);pointer-events:all;}
+.fcast-dd-item{display:block;width:100%;padding:10px 16px;font-size:13px;font-weight:500;color:var(--muted);background:none;border:none;cursor:pointer;text-align:left;transition:background 0.12s,color 0.12s;white-space:nowrap;}
+.fcast-dd-item:hover{background:rgba(88,166,255,0.1);color:var(--accent);}
+.fcast-dd-item.on{color:var(--accent);font-weight:600;background:rgba(88,166,255,0.07);}
+/* Live Conditions — green accent to distinguish from NWS blue */
+.fcast-btn.on{color:#4ade80 !important;border-bottom-color:#4ade80 !important;}
+.fcast-btn:hover{color:#86efac !important;}
+.fcast-dd-item.on{color:#4ade80 !important;background:rgba(74,222,128,0.07) !important;}
+.fcast-dd-item:hover{background:rgba(74,222,128,0.09) !important;color:#4ade80 !important;}
+.nws-wrap-dd{position:relative;display:flex;align-items:stretch;}
+.nws-dd-btn{padding:10px 16px;font-size:13px;font-weight:500;color:var(--muted);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;transition:all 0.2s;display:flex;flex-direction:column;align-items:flex-start;gap:1px;}
+.nws-dd-btn:hover .nws-dd-main{color:var(--text);}
+.nws-dd-btn .nws-dd-main{font-size:13px;font-weight:500;color:var(--muted);display:flex;align-items:center;gap:5px;transition:color 0.2s;white-space:nowrap;}
+.nws-dd-btn .nws-dd-sub{font-size:9px;color:var(--muted);letter-spacing:0.4px;opacity:0.7;white-space:nowrap;}
+.nws-dd-btn .fa2{font-size:9px;transition:transform 0.18s;}
+.nws-dd-btn.open .fa2{transform:rotate(180deg);}
+.nws-dd-btn.on{border-bottom-color:var(--accent);}
+.nws-dd-btn.on .nws-dd-main{color:var(--accent);}
+.nws-dd-btn.on .nws-dd-sub{color:rgba(88,166,255,0.65);}
+.nws-dd{position:absolute;top:100%;left:0;min-width:180px;background:var(--card);border:1px solid var(--border);border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,0.45);z-index:400;opacity:0;transform:translateY(-6px);pointer-events:none;transition:opacity 0.15s,transform 0.15s;overflow:hidden;}
+.nws-dd.open{opacity:1;transform:translateY(0);pointer-events:all;}
+.nws-dd-item{display:block;width:100%;padding:10px 16px;font-size:13px;font-weight:500;color:var(--muted);background:none;border:none;cursor:pointer;text-align:left;transition:background 0.12s,color 0.12s;white-space:nowrap;}
+.nws-dd-item:hover{background:rgba(88,166,255,0.1);color:var(--accent);}
+.nws-dd-item.on{color:var(--accent);font-weight:600;background:rgba(88,166,255,0.07);}
+.nws-section-anchor{scroll-margin-top:8px;}
+/* NWS tab — two-line label */
+.tb-nws{display:inline-flex;flex-direction:column;align-items:center;gap:1px;padding:8px 18px;background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;transition:all 0.2s;}
+.tb-nws:hover .tb-main{color:var(--text);}
+.tb-nws .tb-main{font-size:13px;font-weight:500;color:var(--muted);transition:color 0.2s;white-space:nowrap;}
+.tb-nws .tb-sub{font-size:9px;color:var(--muted);letter-spacing:0.4px;opacity:0.7;white-space:nowrap;}
+.tb-nws.on{border-bottom-color:var(--accent);}
+.tb-nws.on .tb-main{color:var(--accent);}
+.tb-nws.on .tb-sub{color:rgba(88,166,255,0.65);}
+/* Always-visible source badge row under tabs */
+.tabs-badges{display:flex;align-items:center;gap:10px;padding:5px 24px 7px;background:rgba(255,255,255,0.015);border-bottom:1px solid var(--border);flex-wrap:wrap;}
+.src-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:20px;font-size:10px;font-weight:500;background:rgba(255,255,255,0.06);border:1px solid var(--border);color:var(--muted);white-space:nowrap;}
+.src-badge a{color:inherit;text-decoration:none;}
+.src-badge a:hover{color:var(--accent);}
+.src-badge-green{border-color:rgba(74,222,128,0.3);background:rgba(74,222,128,0.07);color:#86efac;}
+.src-badge-blue{border-color:rgba(88,166,255,0.3);background:rgba(88,166,255,0.07);color:#93c5fd;}
+.tc{display:none;padding:24px}
+.tc.on{display:block}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:20px}
+.stat{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:14px 16px}
+.stat .lbl{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:6px}
+.stat .val{font-size:20px;font-weight:700}
+.stat .u{font-size:12px;color:var(--muted);margin-left:2px}
+.desc{background:var(--bg);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:8px;padding:16px 18px;font-size:14px;line-height:1.7;color:var(--muted);margin-bottom:16px}
+.desc strong{color:var(--text)}
+.tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
+.tag{padding:4px 10px;border-radius:6px;font-size:11px;font-weight:600}
+.tr{background:rgba(248,81,73,0.12);color:#ff7b72;border:1px solid rgba(248,81,73,0.3)}
+.ty{background:rgba(210,153,34,0.12);color:#e3b341;border:1px solid rgba(210,153,34,0.3)}
+.tb2{background:rgba(88,166,255,0.12);color:#79c0ff;border:1px solid rgba(88,166,255,0.3)}
+.tg{background:rgba(63,185,80,0.12);color:#56d364;border:1px solid rgba(63,185,80,0.3)}
+table{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:20px}
+th{text-align:left;padding:10px 12px;font-size:11px;text-transform:uppercase;letter-spacing:0.8px;color:var(--muted);border-bottom:1px solid var(--border);background:rgba(255,255,255,0.02)}
+td{padding:11px 12px;border-bottom:1px solid rgba(48,54,61,0.5);vertical-align:top}
+.dl{font-weight:600;color:var(--text)}
+.ws{padding:0 24px 24px;border-top:1px solid var(--border)}
+.ws iframe{height:450px;display:block;}
+@media(max-width:600px){.ws iframe{height:300px;}}
+.wl{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);padding:16px 0 12px}
+.ww{border-radius:8px;overflow:hidden;border:1px solid var(--border)}
+footer{padding:40px 24px 28px;border-top:1px solid var(--border);margin-top:40px;background:var(--bg)}
+footer a{color:var(--accent);text-decoration:none}
+footer a:hover{text-decoration:underline}
+.ft-inner{max-width:860px;margin:0 auto;}
+.ft-sources{display:flex;flex-wrap:wrap;gap:24px;justify-content:center;margin-bottom:24px;}
+.ft-source{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:130px;}
+.ft-source-icon{font-size:22px;line-height:1;}
+.ft-source-name{font-size:13px;font-weight:600;color:var(--text);}
+.ft-source-desc{font-size:11px;color:var(--muted);text-align:center;max-width:140px;}
+.ft-divider{border:none;border-top:1px solid var(--border);margin:0 0 20px;}
+.ft-safety{background:rgba(255,200,50,0.07);border:1px solid rgba(255,200,50,0.2);border-radius:8px;padding:14px 18px;margin-bottom:18px;font-size:12px;color:#d4b54a;line-height:1.6;text-align:center;}
+.ft-safety strong{color:#e8c84a;}
+.ft-refresh-note{font-size:11px;color:var(--muted);text-align:center;margin-bottom:18px;line-height:1.5;}
+.ft-copyright{font-size:11px;color:var(--muted);text-align:center;opacity:0.6;}
+@media(max-width:600px){
+  .ft-sources{gap:16px;}
+  .ft-source{min-width:110px;}
+  footer{padding:28px 16px 20px;}
+}
+.nws-wrap{font-size:13px}
+.nws-obs-station{font-size:11px;color:var(--muted);margin-bottom:12px}
+.nws-cur{display:flex;gap:20px;align-items:flex-start;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:20px;margin-bottom:20px;flex-wrap:wrap}
+.nws-cur-left{display:flex;align-items:center;gap:16px;min-width:220px}
+.nws-cur-icon{width:86px;height:86px;object-fit:contain;filter:drop-shadow(0 2px 8px rgba(0,0,0,0.4))}
+.nws-cur-temp{font-size:52px;font-weight:700;line-height:1}
+.nws-cur-cond{font-size:16px;color:var(--muted);margin-top:4px}
+.nws-cur-right{display:grid;grid-template-columns:1fr 1fr;gap:6px 24px;font-size:13px;flex:1}
+.nws-cur-row{display:flex;justify-content:space-between;gap:8px;padding:5px 0;border-bottom:1px solid rgba(48,54,61,0.4)}
+.nws-cur-label{color:var(--muted)}
+.nws-cur-val{color:var(--text);font-weight:600}
+.nws-cur-meta{font-size:11px;color:var(--muted);margin-top:10px;grid-column:1/-1}
+.nws-section-title{font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:var(--accent);margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.nws-7day-strip{display:flex;gap:8px;overflow-x:auto;padding-bottom:8px;margin-bottom:20px}
+.nws-day{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px 10px;text-align:center;min-width:90px;flex-shrink:0}
+.nws-day.tonight{border-color:var(--accent);background:rgba(88,166,255,0.06)}
+.nws-day-name{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted);margin-bottom:8px}
+.nws-day-icon{width:60px;height:60px;object-fit:contain;margin:0 auto 8px;display:block}
+.nws-day-temp{font-size:15px;font-weight:700;margin-bottom:4px}
+.hi{color:#f9826c}.lo{color:#79c0ff}
+.nws-day-cond{font-size:10px;color:var(--muted);line-height:1.3}
+.nws-detail-row{padding:10px 0;border-bottom:1px solid rgba(48,54,61,0.4)}
+.nws-detail-row:last-child{border-bottom:none}
+.nws-detail-period{font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px}
+.nws-detail-text{font-size:13px;color:var(--muted);line-height:1.6}
+.nws-link-bar{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.nws-link{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--accent);text-decoration:none;padding:6px 12px;border:1px solid rgba(88,166,255,0.3);border-radius:6px}
+.nws-link:hover{background:rgba(88,166,255,0.1)}
+.nws-loading{color:var(--muted);font-size:13px;padding:20px 0;text-align:center}
+.hr-table{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:8px}
+.hr-table th{text-align:left;padding:9px 10px;font-size:10px;text-transform:uppercase;letter-spacing:0.8px;color:var(--muted);border-bottom:2px solid var(--border);background:rgba(255,255,255,0.02);white-space:nowrap}
+.hr-table td{padding:9px 10px;border-bottom:1px solid rgba(48,54,61,0.4);vertical-align:middle;white-space:nowrap}
+.hr-table tr:last-child td{border-bottom:none}
+.hr-table tr:hover td{background:rgba(255,255,255,0.02)}
+.hr-time{font-weight:700;color:var(--text);min-width:70px}
+.hr-temp{font-weight:700;color:#f9826c}
+.hr-wind{color:var(--text)}
+.hr-gust{color:var(--muted);font-size:11px}
+.hr-sky{color:var(--muted);max-width:160px;white-space:normal;line-height:1.3}
+.fly-go{display:inline-block;padding:3px 9px;border-radius:12px;font-size:10px;font-weight:700;background:rgba(63,185,80,0.15);color:#56d364;border:1px solid rgba(63,185,80,0.3)}
+.fly-marg{display:inline-block;padding:3px 9px;border-radius:12px;font-size:10px;font-weight:700;background:rgba(210,153,34,0.15);color:#e3b341;border:1px solid rgba(210,153,34,0.3)}
+.fly-no{display:inline-block;padding:3px 9px;border-radius:12px;font-size:10px;font-weight:700;background:rgba(248,81,73,0.15);color:#ff7b72;border:1px solid rgba(248,81,73,0.3)}
+.hr-day-header td{background:rgba(88,166,255,0.06);color:var(--accent);font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:1px;padding:6px 10px;border-bottom:1px solid var(--border)}
+.hr-scroll{max-height:480px;overflow-y:auto;border-radius:8px;border:1px solid var(--border)}
+
+@media(max-width:700px){
+  .layout{flex-direction:column}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">&#9650; Bay Area Soaring</div>
+  <h1>Flight Conditions Dashboard</h1>
+  <p>Live weather briefings for Bay Area flying sites</p>
+  <div class="badge">Updated: <span id="dt"></span> &middot; NOAA / NWS Live Data</div>
+</header>
+<div style="display:flex;align-items:center;justify-content:center;gap:8px;padding:7px 16px;background:rgba(88,166,255,0.07);border-bottom:1px solid #30363d;font-size:12px;color:#8b949e">&#8635; Auto-refresh every 3 min &mdash; Next update in: <span id="refresh-countdown" style="color:#58a6ff;font-weight:700">20:00</span></div>
+
+<!-- STATUS BAR -->
+<div class="bar">
+  <div class="pill"><span class="dot dr" id="pill-dot-levin-today"></span><span id="pill-text-levin-today">Ed R. Levin — Loading...</span></div>
+  <div class="pill"><span class="dot dr" id="pill-dot-mussel-today"></span><span id="pill-text-mussel-today">Mussel Rock — Loading...</span></div>
+  <div class="pill"><span class="dot dy" id="pill-dot-levin-tmrw"></span><span id="pill-text-levin-tmrw">Ed R. Levin Tomorrow — Loading...</span></div>
+  <div class="pill"><span class="dot dy" id="pill-dot-mussel-tmrw"></span><span id="pill-text-mussel-tmrw">Mussel Rock Tomorrow — Loading...</span></div>
+  <div class="pill"><span class="dot dg"></span><span id="best-window-label">Best Window: calculating...</span></div>
+</div>
+
+<div class="layout">
+
+  <!-- SITES FAB — floating button + dropdown -->
+  <div class="fab-wrap" id="fab-wrap">
+    <div class="fab-btn" id="fab-btn" role="button" aria-expanded="false" aria-haspopup="true" onclick="toggleFab()">
+      <span class="fab-icon">🪂</span>
+      <span>Flying Sites</span>
+      <span class="fab-arrow">▼</span>
+    </div>
+    <div class="fab-dropdown" id="fab-dropdown" role="menu">
+      <div class="fab-dropdown-title">Select a site</div>
+      <a class="fab-nav-item" href="#levin" role="menuitem" onclick="closeFab()">
+        <span class="nav-dot dr"></span>
+        <div class="fab-nav-inner">
+          <span>Ed R. Levin Park</span>
+          <span class="fab-nav-sub">Milpitas · Paragliding</span>
+        </div>
+      </a>
+      <a class="fab-nav-item" href="#mussel" role="menuitem" onclick="closeFab()">
+        <span class="nav-dot dr"></span>
+        <div class="fab-nav-inner">
+          <span>Mussel Rock Park</span>
+          <span class="fab-nav-sub">Daly City · Hang Gliding</span>
+        </div>
+      </a>
+      <a class="fab-nav-item" href="#shoreline" role="menuitem" onclick="closeFab()">
+        <span class="nav-dot" id="nav-dot-kite" style="background:var(--muted)"></span>
+        <div class="fab-nav-inner">
+          <span>Shoreline Kite Area</span>
+          <span class="fab-nav-sub">Mountain View · Kites</span>
+        </div>
+      </a>
+      <a class="fab-nav-item" href="#mpeak" role="menuitem" onclick="closeFab()">
+        <span class="nav-dot" id="nav-dot-mpeak" style="background:var(--muted)"></span>
+        <div class="fab-nav-inner">
+          <span>Mission Peak</span>
+          <span class="fab-nav-sub">Fremont · Paragliding</span>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <main>
+
+    <!-- ED R. LEVIN -->
+    <div class="card" id="levin">
+      <div class="ch">
+        <div><h2>Ed R. Levin Park</h2><div class="sub">Milpitas, CA &middot; Paragliding &middot; 37.4619 N, 121.861 W</div></div>
+        <span class="sb sl" id="levin-status">&bull; Loading...</span>
+      </div>
+      <div class="tabs">
+        <div class="fcast-wrap">
+          <button class="fcast-btn on" id="lev-fcast-btn" onclick="toggleFcastDd('lev',event)">
+            <span id="lev-fcast-label">🌤 Open-Meteo Forecast</span><span class="fa">▼</span>
+          </button>
+          <div class="fcast-dd" id="lev-fcast-dd">
+            <button class="fcast-dd-item on" id="lev-dd-t1" onclick="swForecast('lev','t1','🌤 Now (Today)',this)">🌤 Now (Today)</button>
+            <button class="fcast-dd-item" id="lev-dd-t2" onclick="swForecast('lev','t2','',this)"><span id="lev-tmrw-label">Tomorrow</span></button>
+            <button class="fcast-dd-item" id="lev-dd-t3" onclick="swForecast('lev','t3','📅 6-Day Outlook',this)">📅 6-Day Outlook</button>
+          </div>
+        </div>
+        <div class="nws-wrap-dd">
+          <button class="nws-dd-btn" id="lev-nws-dd-btn" onclick="toggleNwsDd('lev',event)">
+            <span class="nws-dd-main">📋 NWS Forecast <span class="fa2">▾</span></span>
+            <span class="nws-dd-sub">via weather.gov</span>
+          </button>
+          <div class="nws-dd" id="lev-nws-dd">
+            <button class="nws-dd-item on" id="lev-nws-dd-now" onclick="swNws('lev','t4','today',this)"><span id="lev-nws-today-lbl">📋 Today</span></button>
+            <button class="nws-dd-item" id="lev-nws-dd-tmrw" onclick="swNws('lev','t4','tomorrow',this)"><span id="lev-nws-tmrw-lbl">📋 Tomorrow</span></button>
+            <button class="nws-dd-item" id="lev-nws-dd-out" onclick="swNws('lev','t4','outlook',this)">📋 6-Day Outlook</button>
+          </div>
+        </div>
+      </div>
+      <div class="tabs-badges">
+        <span class="src-badge src-badge-green">📡 <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a></span>
+        <span class="src-badge src-badge-blue">🏛️ <a href="https://www.weather.gov/" target="_blank" rel="noopener">weather.gov</a></span>
+      </div>
+      <div id="lev-t1" class="tc on">
+        <div class="stats">
+          <div class="stat"><div class="lbl">Wind Speed</div><div class="val"><span id="levin-wind-today">--</span><span class="u">m/s</span></div></div>
+          <div class="stat"><div class="lbl">Gusts</div><div class="val"	><span id="levin-gust-today">--</span><span class="u">m/s</span></div></div>
+          <div class="stat"><div class="lbl">Wind Dir</div><div class="val"><span id="levin-wdir-today">--</span></div></div>
+          <div class="stat"><div class="lbl">Temperature</div><div class="val"><span id="levin-temp-today">--</span><span class="u">F</span></div></div>
+          <div class="stat"><div class="lbl">Precipitation</div><div class="val"><span id="levin-precip-today">--</span><span class="u">mm</span></div></div>
+        </div>
+        <div class="desc" id="levin-desc-today">Loading curren...</div>
+        <div class="tags" id="levin-tags-today"></div>
+      </div>
+      <div id="lev-t2" class="tc">
+        <div class="stats">
+          <div class="stat"><div class="lbl">Wind Speed</div><div class="val"><span id="levin-wind-tmrw">--</span><span class="u">m/s</span></div></div>
+          <div class="stat"><div class="lbl">Gusts</div><div class="val"><span id="levin-gust-tmrw">--</span><span class="u">m/s</span></div></div>
+          <div class="stat"><div class="lbl">Wind Dir</div><div class="val"><span id="levin-wdir-tmrw">--</span></div></div>
+          <div class="stat"><div class="lbl">Temperature</div><div class="val"><span id="levin-temp-tmrw">--</span><span class="u">°F</span></div></div>
+          <div class="stat"><div class="lbl">Precipitation</div><div class="val"><span id="levin-precip-tmrw">--</span><span class="u">mm</span></div></div>
+        </div>
+        <div class="desc" id="levin-desc-tmrw">Loading tomorrow conditions...</div>
+        <div class="tags" id="levin-tags-tmrw"></div>
+      </div>
+      <div id="lev-t3" class="tc">
+        <table><thead><tr><th>Day</th><th>Wind / Gusts</th><th>Precip</th><th>NWS Condition</th><th>Assessment</th></tr></thead>
+        <tbody id="levin-outlook-body">
+          <tr><td class="dl"></td><td>--</td><td>--</td><td>--</td><td>--</td></tr>
+          <tr><td class="dl"></td><td>4.1 / 3.5 m/s</td><td>0mm</td><td>Mostly Sunny, 68F, W 2-9mph</td><td>Marginal P3+</td></tr>
+          <tr><td class="dl"></td><td>4.7 / 4.7 m/s</td><td>0mm</td><td>Mostly Sunny, 73F, WSW 2-10mph</td><td>Marginal P3+</td></tr>
+          <tr><td class="dl"></td><td>3.5 / 3.0 m/s</td><td>0mm</td><td>Sunny, 81F, W 1-10mph</td><td>Light Sledders</td></tr>
+          <tr><td class="dl"></td><td>3.0 / 2.5 m/s</td><td>0mm</td><td>Sunny, 84F, W 1-9mph</td><td>Light Sledders</td></tr>
+          <tr><td class="dl"></td><td>3.8 / 3.2 m/s</td><td>0mm</td><td>Sunny, 81F, W 1-9mph</td><td>Marginal P3+</td></tr>
+        </tbody></table>
+      </div>
+      <div id="lev-t4" class="tc">
+        <div id="lev-nws-wrap" class="nws-wrap"><div class="nws-loading">Loading NWS data...</div></div>
+        <div class="nws-link-bar">
+          <a class="nws-link" href="https://forecast.weather.gov/MapClick.php?lat=37.4619&lon=-121.861" target="_blank">&#127777; weather.gov</a>
+          <a class="nws-link" href="https://forecast.weather.gov/MapClick.php?lat=37.4619&lon=-121.861&FcstType=graphical" target="_blank">Hourly Chart</a>
+        </div>
+      </div>
+      <div class="ws">
+        <div class="wl">🗺 Live Windy Map</div>
+        <div class="ww">
+          <iframe width="100%" height="450" src="https://embed.windy.com/embed2.html?lat=37.4619&lon=-121.861&zoom=11&level=surface&overlay=wind&menu=&message=true&marker=true&forecast=12&detailLat=37.4619&detailLon=-121.861&detail=true&metricWind=m%2Fs&metricTemp=%C2%B0F&radarRange=-1" loading="lazy" frameborder="0"></iframe>
+        </div>
+      </div>
+      <div style="padding:0 24px 24px">
+        <div class="wl">&#128249; Site Video</div>
+     <a href="http://windslammer.net/WindSlammer/" target="_blank" rel="noopener"
+   style="display:inline-flex;align-items:center;gap:8px;padding:10px 18px;background:var(--accent);color:#fff;border-radius:8px;text-decoration:none;font-size:13px;font-weight:600">
+  🎥 WindSlammer Live Cam — Ed R. Levin
+</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- MUSSEL ROCK -->
+    <div class="card" id="mussel">
+      <div class="ch">
+        <div><h2>Mussel Rock Park</h2><div class="sub">Daly City, CA &middot; Kitesurfing / Hang Gliding &middot; 37.6740 N, 122.4887 W</div></div>
+        <span class="sb sl" id="mussel-status">&bull; Loading...</span>
+      </div>
+      <div class="tabs">
+        <div class="fcast-wrap">
+          <button class="fcast-btn on" id="mus-fcast-btn" onclick="toggleFcastDd('mus',event)">
+            <span id="mus-fcast-label">🌤 Open-Meteo Forecast</span><span class="fa">▼</span>
+          </button>
+          <div class="fcast-dd" id="mus-fcast-dd">
+            <button class="fcast-dd-item on" id="mus-dd-t1" onclick="swForecast('mus','t1','🌤 Now (Today)',this)">🌤 Now (Today)</button>
+            <button class="fcast-dd-item" id="mus-dd-t2" onclick="swForecast('mus','t2','',this)"><span id="mus-tmrw-label">Tomorrow</span></button>
+            <button class="fcast-dd-item" id="mus-dd-t3" onclick="swForecast('mus','t3','📅 6-Day Outlook',this)">📅 6-Day Outlook</button>
+          </div>
+        </div>
+        <div class="nws-wrap-dd">
+          <button class="nws-dd-btn" id="mus-nws-dd-btn" onclick="toggleNwsDd('mus',event)">
+            <span class="nws-dd-main">📋 NWS Forecast <span class="fa2">▾</span></span>
+            <span class="nws-dd-sub">via weather.gov</span>
+          </button>
+          <div class="nws-dd" id="mus-nws-dd">
+            <button class="nws-dd-item on" id="mus-nws-dd-now" onclick="swNws('mus','t4','today',this)"><span id="mus-nws-today-lbl">📋 Today</span></button>
+            <button class="nws-dd-item" id="mus-nws-dd-tmrw" onclick="swNws('mus','t4','tomorrow',this)"><span id="mus-nws-tmrw-lbl">📋 Tomorrow</span></button>
+            <button class="nws-dd-item" id="mus-nws-dd-out" onclick="swNws('mus','t4','outlook',this)">📋 6-Day Outlook</button>
+          </div>
+        </div>
+      </div>
+      <div class="tabs-badges">
+        <span class="src-badge src-badge-green">📡 <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a></span>
+        <span class="src-badge src-badge-blue">🏛️ <a href="https://www.weather.gov/" target="_blank" rel="noopener">weather.gov</a></span>
+      </div>
+      <div id="mus-t1" class="tc on">
+        <div class="stats">
+          <div class="stat"><div class="lbl">Wind Speed</div><div class="val"><span id="mussel-wind-today">--</span><span class="u">m/s</span></div></div>
+          <div class="stat"><div class="lbl">Gusts</div><div class="val"><span id="mussel-gust-today">--</span><span class="u">m/s</span></div></div>
+          <div class="stat"><div class="lbl">Wind Dir</div><div class="val"><span id="mussel-wdir-today">--</span></div></div>
+          <div class="stat"><div class="lbl">Temperature</div><div class="val"><span id="mussel-temp-today">--</span><span class="u">F</span></div></div>
+          <div class="stat"><div class="lbl">Precipitation</div><div class="val"><span id="mussel-precip-today">--</span><span class="u">mm</span></div></div>
+        </div>
+        <div class="desc" id="mussel-desc-today">Loading curren...</div>
+        <div class="tags" id="mussel-tags-today"></div>
+      </div>
+      <div id="mus-t2" class="tc">
+        <div class="stats">
+          <div class="stat"><div class="lbl">Wind Speed</div><div class="val"><span id="mussel-wind-tmrw">--</span><span class="u">m/s</span></div></div>
+          <div class="stat"><div class="lbl">Gusts</div><div class="val"><span id="mussel-gust-tmrw">--</span><span class="u">m/s</span></div></div>
+          <div class="stat"><div class="lbl">Wind Dir</div><div class="val"><span id="mussel-wdir-tmrw">--</span></div></div>
+          <div class="stat"><div class="lbl">Temperature</div><div class="val"><span id="mussel-temp-tmrw">--</span><span class="u">°F</span></div></div>
+          <div class="stat"><div class="lbl">Precipitation</div><div class="val"><span id="mussel-precip-tmrw">--</span><span class="u">mm</span></div></div>
+        </div>
+        <div class="desc" id="mussel-desc-tmrw">Loading tomorrow conditions...</div>
+        <div class="tags" id="mussel-tags-tmrw"></div>
+      </div>
+      <div id="mus-t3" class="tc">
+        <table><thead><tr><th>Day</th><th>Wind / Gusts</th><th>Precip</th><th>NWS Condition</th><th>Assessment</th></tr></thead>
+        <tbody id="mussel-outlook-body">
+          <tr><td class="dl"></td><td>--</td><td>--mm</td><td>--</td><td>--</td></tr>
+          <tr><td class="dl"></td><td>5.8 / 7.7 m/s</td><td>0mm</td><td>Mostly Cloudy, 57F, W 13mph</td><td>Flyable PM</td></tr>
+          <tr><td class="dl"></td><td>7.6 / 10.7 m/s</td><td>0mm</td><td>Mostly Sunny, 58F, WNW 13-17mph, G22</td><td>Best Day!</td></tr>
+          <tr><td class="dl"></td><td>5.5 / 7.0 m/s</td><td>0mm</td><td>Sunny, 61F, WNW 6-12mph</td><td>Good</td></tr>
+          <tr><td class="dl"></td><td>4.5 / 6.0 m/s</td><td>0mm</td><td>Mostly Sunny, 62F, W 5-10mph</td><td>Flyable</td></tr>
+          <tr><td class="dl"></td><td>5.5 / 7.5 m/s</td><td>0mm</td><td>Partly Sunny, 60F, W 6-13mph</td><td>Flyable</td></tr>
+        </tbody></table>
+      </div>
+      <div id="mus-t4" class="tc">
+        <div id="mus-nws-wrap" class="nws-wrap"><div class="nws-loading">Loading NWS data...</div></div>
+        <div class="nws-link-bar">
+          <a class="nws-link" href="https://forecast.weather.gov/MapClick.php?lat=37.6740&lon=-122.4887" target="_blank">&#127777; weather.gov</a>
+          <a class="nws-link" href="https://forecast.weather.gov/MapClick.php?lat=37.6740&lon=-122.4887&FcstType=graphical" target="_blank">Hourly Chart</a>
+        </div>
+      </div>
+      <div class="ws">
+        <div class="wl">🗺 Live Windy Map</div>
+        <div class="ww">
+          <iframe width="100%" height="450" src="https://embed.windy.com/embed2.html?lat=37.674&lon=-122.4887&zoom=11&level=surface&overlay=wind&menu=&message=true&marker=true&forecast=12&detailLat=37.674&detailLon=-122.4887&detail=true&metricWind=m%2Fs&metricTemp=%C2%B0F&radarRange=-1" loading="lazy" frameborder="0"></iframe>
+        </div>
+      </div>
+      <div style="padding:0 24px 24px">
+        <div class="wl">&#128249; Site Video</div>
+        <div style="border-radius:8px;overflow:hidden;border:1px solid var(--border)">
+          <iframe width="100%" height="300" src="https://www.youtube.com/embed/vZEINdmawdc?autoplay=1&mute=1&loop=1&playlist=vZEINdmawdc&controls=1&rel=0&playsinline=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen loading="lazy"></iframe>
+        </div>
+      </div>
+    </div>
+
+    <!-- SHORELINE KITE -->
+    <div class="card" id="shoreline">
+      <div class="ch">
+        <div><h2>Shoreline Kite Flying Area</h2><div class="sub">Mountain View, CA &middot; Kite Flying &middot; 37.4297 N, 122.0766 W</div></div>
+        <span class="sb sl" id="kite-status">&bull; Loading...</span>
+      </div>
+      <div class="tabs">
+        <div class="fcast-wrap">
+          <button class="fcast-btn on" id="kite-fcast-btn" onclick="toggleFcastDd('kite',event)">
+            <span id="kite-fcast-label">🌤 Open-Meteo Forecast</span><span class="fa">▼</span>
+          </button>
+          <div class="fcast-dd" id="kite-fcast-dd">
+            <button class="fcast-dd-item on" id="kite-dd-t1" onclick="swForecast('kite','today','🌤 Now (Today)',this)">🌤 Now (Today)</button>
+            <button class="fcast-dd-item" id="kite-dd-t2" onclick="swForecast('kite','tomorrow','',this)"><span id="kite-tmrw-label">Tomorrow</span></button>
+            <button class="fcast-dd-item" id="kite-dd-t3" onclick="swForecast('kite','outlook','📅 6-Day Outlook',this)">📅 6-Day Outlook</button>
+          </div>
+        </div>
+        <div class="nws-wrap-dd">
+          <button class="nws-dd-btn" id="kite-nws-dd-btn" onclick="toggleNwsDd('kite',event)">
+            <span class="nws-dd-main">📋 NWS Forecast <span class="fa2">▾</span></span>
+            <span class="nws-dd-sub">via weather.gov</span>
+          </button>
+          <div class="nws-dd" id="kite-nws-dd">
+            <button class="nws-dd-item on" id="kite-nws-dd-now" onclick="swNws('kite','nws','today',this)"><span id="kite-nws-today-lbl">📋 Today</span></button>
+            <button class="nws-dd-item" id="kite-nws-dd-tmrw" onclick="swNws('kite','nws','tomorrow',this)"><span id="kite-nws-tmrw-lbl">📋 Tomorrow</span></button>
+            <button class="nws-dd-item" id="kite-nws-dd-out" onclick="swNws('kite','nws','outlook',this)">📋 6-Day Outlook</button>
+          </div>
+        </div>
+      </div>
+      <div class="tabs-badges">
+        <span class="src-badge src-badge-green">📡 <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a></span>
+        <span class="src-badge src-badge-blue">🏛️ <a href="https://www.weather.gov/" target="_blank" rel="noopener">weather.gov</a></span>
+      </div>
+      <div id="kite-today" class="tc on">
+        <div class="stats">
+          <div class="stat"><div class="lbl">Wind Speed</div><div class="val"><span id="kite-wind-today">--</span><span class="u">m/s</span></div></div>
+          <div class="stat"><div class="lbl">Gusts</div><div class="val"><span id="kite-gust-today">--</span><span class="u">m/s</span></div></div>
+          <div class="stat"><div class="lbl">Wind Dir</div><div class="val"><span id="kite-wdir-today">--</span></div></div>
+          <div class="stat"><div class="lbl">Temperature</div><div class="val"><span id="kite-temp-today">--</span><span class="u">F</span></div></div>
+          <div class="stat"><div class="lbl">Precipitation</div><div class="val"><span id="kite-precip-today">--</span><span class="u">mm</span></div></div>
+        </div>
+        <div class="desc" id="kite-desc-today">Loading current conditions...</div>
+        <div class="tags" id="kite-tags-today"></div>
+      </div>
+      <div id="kite-tomorrow" class="tc">
+        <div class="stats">
+          <div class="stat"><div class="lbl">Wind Speed</div><div class="val"><span id="kite-wind-tmrw">--</span><span class="u">m/s</span></div></div>
+          <div class="stat"><div class="lbl">Gusts</div><div class="val"><span id="kite-gust-tmrw">--</span><span class="u">m/s</span></div></div>
+          <div class="stat"><div class="lbl">Wind Dir</div><div class="val"><span id="kite-wdir-tmrw">--</span></div></div>
+          <div class="stat"><div class="lbl">Temperature</div><div class="val"><span id="kite-temp-tmrw">--</span><span class="u">F</span></div></div>
+          <div class="stat"><div class="lbl">Precipitation</div><div class="val"><span id="kite-precip-tmrw">--</span><span class="u">mm</span></div></div>
+        </div>
+        <div class="desc" id="kite-desc-tmrw">Loading tomorrow conditions...</div>
+        <div class="tags" id="kite-tags-tmrw"></div>
+      </div>
+      <div id="kite-outlook" class="tc">
+        <table><thead><tr><th>Day</th><th>Wind / Gusts</th><th>Precip</th><th>Condition</th><th>Assessment</th></tr></thead>
+        <tbody id="kite-outlook-body">
+          <tr><td class="dl"></td><td>--</td><td>--</td><td>Loading...</td><td>--</td></tr>
+          <tr><td class="dl"></td><td>--</td><td>--</td><td>Loading...</td><td>--</td></tr>
+          <tr><td class="dl"></td><td>--</td><td>--</td><td>Loading...</td><td>--</td></tr>
+          <tr><td class="dl"></td><td>--</td><td>--</td><td>Loading...</td><td>--</td></tr>
+          <tr><td class="dl"></td><td>--</td><td>--</td><td>Loading...</td><td>--</td></tr>
+          <tr><td class="dl"></td><td>--</td><td>--</td><td>Loading...</td><td>--</td></tr>
+        </tbody></table>
+      </div>
+      <div id="kite-nws" class="tc">
+        <div id="kite-nws-wrap" class="nws-wrap"><div class="nws-loading">Loading NWS data...</div></div>
+        <div class="nws-link-bar">
+          <a class="nws-link" href="https://forecast.weather.gov/MapClick.php?lat=37.4297&lon=-122.0766" target="_blank">&#127777; weather.gov</a>
+          <a class="nws-link" href="https://forecast.weather.gov/MapClick.php?lat=37.4297&lon=-122.0766&FcstType=graphical" target="_blank">Hourly Chart</a>
+        </div>
+      </div>
+      <div class="ws">
+        <div class="wl">🗺 Live Windy Map</div>
+        <div class="ww">
+          <iframe width="100%" height="450" src="https://embed.windy.com/embed2.html?lat=37.4297&lon=-122.0766&zoom=11&level=surface&overlay=wind&menu=&message=true&marker=true&forecast=12&detailLat=37.4297&detailLon=-122.0766&detail=true&metricWind=m%2Fs&metricTemp=%C2%B0F&radarRange=-1" loading="lazy" frameborder="0"></iframe>
+        </div>
+      </div>
+    </div>
+
+    <!-- MISSION PEAK -->
+    <div class="card" id="mpeak">
+      <div class="ch">
+        <div><h2>Mission Peak</h2><div class="sub">Fremont, CA &middot; Paragliding / Hang Gliding &middot; 37.5131 N, 121.8803 W</div></div>
+        <span class="sb sl" id="mpeak-status">&bull; Loading...</span>
+      </div>
+      <div class="tabs">
+        <div class="fcast-wrap">
+          <button class="fcast-btn on" id="mpeak-fcast-btn" onclick="toggleFcastDd('mpeak',event)">
+            <span id="mpeak-fcast-label">🌤 Open-Meteo Forecast</span><span class="fa">▼</span>
+          </button>
+          <div class="fcast-dd" id="mpeak-fcast-dd">
+            <button class="fcast-dd-item on" id="mpeak-dd-t1" onclick="swForecast('mpeak','today','🌤 Now (Today)',this)">🌤 Now (Today)</button>
+            <button class="fcast-dd-item" id="mpeak-dd-t2" onclick="swForecast('mpeak','tomorrow','',this)"><span id="mpeak-tmrw-label">Tomorrow</span></button>
+            <button class="fcast-dd-item" id="mpeak-dd-t3" onclick="swForecast('mpeak','outlook','📅 6-Day Outlook',this)">📅 6-Day Outlook</button>
+          </div>
+        </div>
+        <div class="nws-wrap-dd">
+          <button class="nws-dd-btn" id="mpeak-nws-dd-btn" onclick="toggleNwsDd('mpeak',event)">
+            <span class="nws-dd-main">📋 NWS Forecast <span class="fa2">▾</span></span>
+            <span class="nws-dd-sub">via weather.gov</span>
+          </button>
+          <div class="nws-dd" id="mpeak-nws-dd">
+            <button class="nws-dd-item on" id="mpeak-nws-dd-now" onclick="swNws('mpeak','nws','today',this)"><span id="mpeak-nws-today-lbl">📋 Today</span></button>
+            <button class="nws-dd-item" id="mpeak-nws-dd-tmrw" onclick="swNws('mpeak','nws','tomorrow',this)"><span id="mpeak-nws-tmrw-lbl">📋 Tomorrow</span></button>
+            <button class="nws-dd-item" id="mpeak-nws-dd-out" onclick="swNws('mpeak','nws','outlook',this)">📋 6-Day Outlook</button>
+          </div>
+        </div>
+      </div>
+      <div class="tabs-badges">
+        <span class="src-badge src-badge-green">📡 <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a></span>
+        <span class="src-badge src-badge-blue">🏛️ <a href="https://www.weather.gov/" target="_blank" rel="noopener">weather.gov</a></span>
+      </div>
+      <div id="mpeak-today" class="tc on">
+        <div class="stats">
+          <div class="stat"><div class="lbl">Wind Speed</div><div class="val"><span id="mpeak-wind-today">--</span><span class="u">m/s</span></div></div>
+          <div class="stat"><div class="lbl">Gusts</div><div class="val"><span id="mpeak-gust-today">--</span><span class="u">m/s</span></div></div>
+          <div class="stat"><div class="lbl">Wind Dir</div><div class="val"><span id="mpeak-wdir-today">--</span></div></div>
+          <div class="stat"><div class="lbl">Temperature</div><div class="val"><span id="mpeak-temp-today">--</span><span class="u">F</span></div></div>
+          <div class="stat"><div class="lbl">Precipitation</div><div class="val"><span id="mpeak-precip-today">--</span><span class="u">mm</span></div></div>
+        </div>
+        <div class="desc" id="mpeak-desc-today">Loading current conditions...</div>
+        <div class="tags" id="mpeak-tags-today"></div>
+      </div>
+      <div id="mpeak-tomorrow" class="tc">
+        <div class="stats">
+          <div class="stat"><div class="lbl">Wind Speed</div><div class="val"><span id="mpeak-wind-tmrw">--</span><span class="u">m/s</span></div></div>
+          <div class="stat"><div class="lbl">Gusts</div><div class="val"><span id="mpeak-gust-tmrw">--</span><span class="u">m/s</span></div></div>
+          <div class="stat"><div class="lbl">Wind Dir</div><div class="val"><span id="mpeak-wdir-tmrw">--</span></div></div>
+          <div class="stat"><div class="lbl">Temperature</div><div class="val"><span id="mpeak-temp-tmrw">--</span><span class="u">F</span></div></div>
+          <div class="stat"><div class="lbl">Precipitation</div><div class="val"><span id="mpeak-precip-tmrw">--</span><span class="u">mm</span></div></div>
+        </div>
+        <div class="desc" id="mpeak-desc-tmrw">Loading tomorrow conditions...</div>
+        <div class="tags" id="mpeak-tags-tmrw"></div>
+      </div>
+      <div id="mpeak-outlook" class="tc">
+        <table><thead><tr><th>Day</th><th>Wind / Gusts</th><th>Precip</th><th>Condition</th><th>Assessment</th></tr></thead>
+        <tbody id="mpeak-outlook-body">
+          <tr><td class="dl"></td><td>--</td><td>--</td><td>Loading...</td><td>--</td></tr>
+          <tr><td class="dl"></td><td>--</td><td>--</td><td>Loading...</td><td>--</td></tr>
+          <tr><td class="dl"></td><td>--</td><td>--</td><td>Loading...</td><td>--</td></tr>
+          <tr><td class="dl"></td><td>--</td><td>--</td><td>Loading...</td><td>--</td></tr>
+          <tr><td class="dl"></td><td>--</td><td>--</td><td>Loading...</td><td>--</td></tr>
+          <tr><td class="dl"></td><td>--</td><td>--</td><td>Loading...</td><td>--</td></tr>
+        </tbody></table>
+      </div>
+      <div id="mpeak-nws" class="tc">
+        <div id="mpeak-nws-wrap" class="nws-wrap"><div class="nws-loading">Loading NWS data...</div></div>
+        <div class="nws-link-bar">
+          <a class="nws-link" href="https://forecast.weather.gov/MapClick.php?lat=37.5131&lon=-121.8803" target="_blank">&#127777; weather.gov</a>
+          <a class="nws-link" href="https://forecast.weather.gov/MapClick.php?lat=37.5131&lon=-121.8803&FcstType=graphical" target="_blank">Hourly Chart</a>
+        </div>
+      </div>
+      <div class="ws">
+        <div class="wl">🗺 Live Windy Map</div>
+        <div class="ww">
+          <iframe width="100%" height="450" src="https://embed.windy.com/embed2.html?lat=37.5131&lon=-121.8803&zoom=11&level=surface&overlay=wind&menu=&message=true&marker=true&forecast=12&detailLat=37.5131&detailLon=-121.8803&detail=true&metricWind=m%2Fs&metricTemp=%C2%B0F&radarRange=-1" loading="lazy" frameborder="0"></iframe>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<footer>
+  <div class="ft-inner">
+    <!-- Data Sources -->
+    <div class="ft-sources">
+      <div class="ft-source">
+        <span class="ft-source-icon">🌡️</span>
+        <span class="ft-source-name"><a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a></span>
+        <span class="ft-source-desc">Wind, gusts, temperature &amp; precipitation data</span>
+      </div>
+      <div class="ft-source">
+        <span class="ft-source-icon">🌀</span>
+        <span class="ft-source-name"><a href="https://www.windy.com/" target="_blank" rel="noopener">Windy</a></span>
+        <span class="ft-source-desc">Live wind overlays &amp; interactive weather maps</span>
+      </div>
+      <div class="ft-source">
+        <span class="ft-source-icon">🏛️</span>
+        <span class="ft-source-name"><a href="https://www.weather.gov/" target="_blank" rel="noopener">NOAA / NWS</a></span>
+        <span class="ft-source-desc">Extended hourly forecasts via weather.gov</span>
+      </div>
+    </div>
+
+    <hr class="ft-divider">
+
+    <!-- Refresh note -->
+    <p class="ft-refresh-note">
+      Weather data is fetched from Open-Meteo and refreshed every 3 minutes. NWS forecasts are loaded on demand.<br>
+      Data may not reflect real-time conditions at the exact flying site. Always check current on-site conditions.
+    </p>
+
+    <!-- Safety disclaimer -->
+    <div class="ft-safety">
+      <strong>⚠️ Safety Disclaimer:</strong> This site is intended for informational purposes only.
+      Always verify conditions with a certified instructor or local flying club before flying.
+      Weather conditions can change rapidly — <strong>fly at your own risk.</strong>
+    </div>
+
+    <!-- Copyright -->
+    <p class="ft-copyright">© 2026 Bay Area Soaring &nbsp;·&nbsp; For recreational use only &nbsp;·&nbsp; Not a substitute for professional weather briefings</p>
+  </div>
+</footer>
+
+<script>
+// Date display
+var d=new Date();
+document.getElementById('dt').textContent=d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'});
+
+// Update tab day labels
+(function(){
+  var days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  var now=new Date();
+  var todayDay=days[now.getDay()];
+  var tomorrowDay=days[(now.getDay()+1)%7];
+  document.querySelectorAll('.tabs').forEach(function(tabs){
+    var btns=tabs.querySelectorAll('.tb');
+    if(btns[0])btns[0].textContent='Today ('+todayDay+')';
+    if(btns[1])btns[1].textContent='Tomorrow ('+tomorrowDay+')';
+  });
+  // Update 6-day outlook date cells
+  var months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  document.querySelectorAll('tbody').forEach(function(tbody){
+    var rows=tbody.querySelectorAll('tr');
+    rows.forEach(function(row,i){
+      var cell=row.querySelector('td.dl');
+      if(cell&&cell.textContent===''){
+        var dd=new Date(now);dd.setDate(dd.getDate()+i);
+        cell.textContent=days[dd.getDay()]+' '+months[dd.getMonth()]+' '+dd.getDate();
+      }
+    });
+  });
+})();
+
+// Tab switcher
+function sw(site,tab,btn){
+  var c=btn.closest('.card');
+  c.querySelectorAll('.tc').forEach(function(t){t.classList.remove('on')});
+  c.querySelectorAll('.tb').forEach(function(b){b.classList.remove('on')});
+  document.getElementById(site+'-'+tab).classList.add('on');
+  btn.classList.add('on');
+  var ws=c.querySelector('.ws');
+  var isNwsTab=(tab==='nws'||tab==='t4');
+  if(ws)ws.style.display=isNwsTab?'none':'';
+  if(isNwsTab)fetchNWSForSite(site);
+}
+
+// Helper: wind m/s -> mph
+function msToMph(ms){return ms*2.237;}
+
+// Go/No-Go assessment for paragliding
+function paraAssess(windMs,gustMs,precipMm,tempF){
+  var wm=parseFloat(windMs)||0;
+  var gm=parseFloat(gustMs)||0;
+  var pp=parseFloat(precipMm)||0;
+  var badge,cls,desc,tags;
+  if(pp>1){
+    badge='DO NOT FLY';cls='sr';
+    desc='Rain present ('+pp.toFixed(1)+'mm precip). Wet conditions unsafe for launch. Do not fly.';
+    tags='<span class="tag tr">Rain/Wet</span><span class="tag tr">No Fly</span>';
+  } else if(wm<1.5){
+    badge='TOO LIGHT';cls='sy';
+    desc='Wind is too light at '+wm.toFixed(1)+' m/s. Insufficient for thermal or ridge lift. Not recommended.';
+    tags='<span class="tag ty">Too Light</span><span class="tag ty">No Thermals</span>';
+  } else if(wm>12||gm>15){
+    badge='TOO STRONG';cls='sr';
+    desc='Wind '+wm.toFixed(1)+' m/s with gusts '+gm.toFixed(1)+' m/s exceeds safe limits. Do not fly.';
+    tags='<span class="tag tr">Strong Wind</span><span class="tag tr">High Risk</span>';
+  } else if(wm>=3.5&&wm<=9&&gm<12&&pp<0.5){
+    badge='FLYABLE';cls='sg';
+    desc='Conditions look good. Wind '+wm.toFixed(1)+' m/s, gusts '+gm.toFixed(1)+' m/s, '+pp.toFixed(1)+'mm precip. Standard pre-flight checks apply.';
+    tags='<span class="tag tg">Good Wind</span><span class="tag tg">Go Fly</span>';
+  } else {
+    badge='MARGINAL';cls='sy';
+    desc='Borderline conditions. Wind '+wm.toFixed(1)+' m/s, gusts '+gm.toFixed(1)+' m/s, '+pp.toFixed(1)+'mm precip. P3+ pilots exercise caution.';
+    tags='<span class="tag ty">Marginal</span><span class="tag ty">P3+ Only</span>';
+  }
+  return {badge:badge,cls:cls,desc:'<strong>GO / NO-GO: '+badge+'.</strong> '+desc,tags:tags};
+}
+
+// Go/No-Go for kite flying
+function kiteAssess(windMs,precipMm){
+  var wm=parseFloat(windMs)||0;
+  var pp=parseFloat(precipMm)||0;
+  var badge,cls,desc,tags;
+  if(pp>1){
+    badge='DO NOT FLY';cls='sr';
+    desc='Rain present. Wet and gusty conditions unsafe for kite flying.';
+    tags='<span class="tag tr">Rain</span><span class="tag tr">Unsafe</span>';
+  } else if(wm<2){
+    badge='TOO LIGHT';cls='sy';
+    desc='Wind too light at '+wm.toFixed(1)+' m/s. Most kites need at least 5 MPH to stay aloft.';
+    tags='<span class="tag ty">Too Light</span><span class="tag ty">Kites Grounded</span>';
+  } else if(wm>15){
+    badge='TOO STRONG';cls='sr';
+    desc='Wind at '+wm.toFixed(1)+' m/s is dangerously strong for kite flying.';
+    tags='<span class="tag tr">Dangerous</span><span class="tag tr">Stay Grounded</span>';
+  } else if(wm>=3.5&&wm<=11&&pp<0.5){
+    badge='GREAT CONDITIONS';cls='sg';
+    desc='Ideal kite flying wind at '+wm.toFixed(1)+' m/s. Get out there!';
+    tags='<span class="tag tg">Ideal Wind</span><span class="tag tg">Go Fly</span>';
+  } else {
+    badge='MARGINAL';cls='sy';
+    desc='Borderline kite flying conditions. Wind '+wm.toFixed(1)+' m/s, '+pp.toFixed(1)+'mm precip. Check on-site.';
+    tags='<span class="tag ty">Marginal</span><span class="tag ty">Check On-Site</span>';
+  }
+  return {badge:badge,cls:cls,desc:'<strong>'+badge+'.</strong> '+desc,tags:tags};
+}
+
+// Populate a site's Today/Tomorrow/Outlook from Open-Meteo data
+
+function populateSite(cfg, data){
+  var hourly = data.hourly;
+  var now = new Date();
+  var todayStr = [now.getFullYear(), String(now.getMonth()+1).padStart(2,'0'), String(now.getDate()).padStart(2,'0')].join('-');
+  var tmrwDate = new Date(now);
+  tmrwDate.setDate(tmrwDate.getDate()+1);
+  var tmrwStr = [tmrwDate.getFullYear(), String(tmrwDate.getMonth()+1).padStart(2,'0'), String(tmrwDate.getDate()).padStart(2,'0')].join('-');
+
+  function findHourIdx(dateStr, hour){
+    for(var i=0;i<hourly.time.length;i++){
+      if(hourly.time[i].startsWith(dateStr+'T'+String(hour).padStart(2,'0'))) return i;
+    }
+    for(var i=0;i<hourly.time.length;i++){
+      if(hourly.time[i].startsWith(dateStr)) return i;
+    }
+    return 0;
+  }
+
+  function dayAvg(dateStr){
+    var ws=[],gu=[],pp=0,temps=[],wd=[];
+    for(var i=0;i<hourly.time.length;i++){
+      if(hourly.time[i].startsWith(dateStr)){
+        ws.push(hourly.windspeed_10m[i]);
+        gu.push(hourly.windgusts_10m[i]);
+        pp += hourly.precipitation[i];
+        temps.push(hourly.temperature_2m[i]);
+        if(hourly.winddirection_10m) wd.push(hourly.winddirection_10m[i]);
+      }
+    }
+    if(!ws.length) return null;
+    var avg=function(a){return a.reduce(function(s,v){return s+v},0)/a.length;};
+    var cToF=function(c){return Math.round(c*9/5+32);};
+    var vt=temps.filter(function(v){return v!=null&&!isNaN(v);});
+    var avgDeg=wd.length?wd.reduce(function(a,b){return a+b},0)/wd.length:null;
+    return {
+      wind: (avg(ws)/3.6).toFixed(1),
+      gust: (Math.max.apply(null,gu)/3.6).toFixed(1),
+      precip: pp.toFixed(1),
+      temp: vt.length ? cToF(Math.max.apply(null,vt)) : null,
+      wdir: avgDeg!==null ? degToCard(Math.round(avgDeg)) : '--'
+    };
+  }
+
+  var todayData = dayAvg(todayStr);
+  var tmrwData  = dayAvg(tmrwStr);
+
+  function fillDay(pfx, dayData, isTomorrow, siteType){
+    if(!dayData) return;
+    var sfx = isTomorrow ? 'tmrw' : 'today';
+    var _w=document.getElementById(pfx+'-wind-'+sfx); if(_w) _w.textContent=dayData.wind;
+    var _g=document.getElementById(pfx+'-gust-'+sfx); if(_g) _g.textContent=dayData.gust;
+    var _wd=document.getElementById(pfx+'-wdir-'+sfx); if(_wd) _wd.textContent=dayData.wdir||'--';
+    var _t=document.getElementById(pfx+'-temp-'+sfx); if(_t) _t.textContent=dayData.temp!=null?dayData.temp:'--';
+    var _p=document.getElementById(pfx+'-precip-'+sfx); if(_p) _p.textContent=dayData.precip;
+    var assess=(siteType==='kite')?kiteAssess(dayData.wind,dayData.precip):paraAssess(dayData.wind,dayData.gust,dayData.precip,dayData.temp);
+    var _d=document.getElementById(pfx+'-desc-'+sfx); if(_d) _d.innerHTML=assess.desc;
+    var _tg=document.getElementById(pfx+'-tags-'+sfx); if(_tg) _tg.innerHTML=assess.tags;
+    if(!isTomorrow){
+      var statusEl=document.getElementById(pfx+'-status');
+      if(statusEl){ statusEl.className='sb '+assess.cls; statusEl.innerHTML='&bull; '+assess.badge; }
+      var dotEl=document.getElementById('nav-dot-'+pfx);
+      if(dotEl){
+        var dotColor=assess.cls==='sg'?'var(--green)':assess.cls==='sy'?'var(--yellow)':'var(--red)';
+        dotEl.style.background=dotColor;
+        dotEl.style.boxShadow='0 0 6px '+dotColor;
+      }
+    }
+    // Update status bar pills for levin and mussel
+    var pillPfx=(pfx==='levin'||pfx==='mussel')?pfx:null;
+    if(pillPfx){
+      var pillSfx=isTomorrow?'tmrw':'today';
+      var pillTxt=document.getElementById('pill-text-'+pillPfx+'-'+pillSfx);
+      var pillDot=document.getElementById('pill-dot-'+pillPfx+'-'+pillSfx);
+      var siteLbl=pillPfx==='levin'?'Ed R. Levin':'Mussel Rock';
+      var dayLbl=isTomorrow?' Tomorrow':' Today';
+      if(pillTxt) pillTxt.textContent=siteLbl+' — '+assess.badge+dayLbl;
+      if(pillDot){
+        var pc=assess.cls==='sg'?'var(--green)':assess.cls==='sy'?'var(--yellow)':'var(--red)';
+        pillDot.style.background=pc;
+      }
+    }
+  }
+
+  fillDay(cfg.pfx, todayData, false, cfg.type);
+  fillDay(cfg.pfx, tmrwData, true, cfg.type);
+
+  var tbody=document.getElementById(cfg.pfx+'-outlook-body');
+  if(tbody){
+    var days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+    var months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    var rows=tbody.querySelectorAll('tr');
+    rows.forEach(function(row,i){
+      var dd=new Date(now);
+      dd.setDate(dd.getDate()+i);
+      var ds=[dd.getFullYear(), String(dd.getMonth()+1).padStart(2,'0'), String(dd.getDate()).padStart(2,'0')].join('-');
+      var dd_data=dayAvg(ds);
+      var cells=row.querySelectorAll('td');
+      if(cells[0]) cells[0].textContent=days[dd.getDay()]+' '+months[dd.getMonth()]+' '+dd.getDate();
+      if(dd_data&&cells[1]) cells[1].textContent=dd_data.wind+' / '+dd_data.gust+' m/s';
+      if(dd_data&&cells[2]) cells[2].textContent=dd_data.precip+'mm';
+      if(dd_data&&cells[3]) cells[3].textContent=dd_data.temp+'°F';
+      if(dd_data&&cells[4]){
+        var a=(cfg.type==='kite')?kiteAssess(dd_data.wind,dd_data.precip):paraAssess(dd_data.wind,dd_data.gust,dd_data.precip,dd_data.temp);
+        cells[4].textContent=a.badge;
+      }
+    });
+  }
+}
+// Fetch Open-Meteo for a site
+function fetchOpenMeteo(cfg){
+  var url='https://api.open-meteo.com/v1/forecast?latitude='+cfg.lat+'&longitude='+cfg.lon
+    +'&hourly=temperature_2m,precipitation,windspeed_10m,windgusts_10m,winddirection_10m'
+    +'&temperature_unit=celsius&windspeed_unit=kmh&precipitation_unit=mm'
+    +'&timezone=America%2FLos_Angeles&forecast_days=7';
+  fetch(url)
+    .then(function(r){return r.json();})
+    .then(function(data){try{populateSite(cfg,data);}catch(e){console.error('populateSite err '+cfg.pfx,e);}})
+    .catch(function(e){
+      console.error('Open-Meteo error for '+cfg.pfx,e);
+      var statusEl=document.getElementById(cfg.pfx+'-status');
+      if(statusEl){statusEl.className='sb sr';statusEl.innerHTML='&bull; Data Error';}
+      var desc=document.getElementById(cfg.pfx+'-desc-today');
+      if(desc)desc.innerHTML='<span style="color:var(--red)">Could not load weather data. <a href="https://www.weather.gov" target="_blank" style="color:var(--accent)">Check weather.gov</a></span>';
+    });
+}
+
+// === Fetch Mission Peak & Shoreline ===
+fetchOpenMeteo({pfx:'levin',  lat:37.4619, lon:-121.8610, type:'para'});
+fetchOpenMeteo({pfx:'mussel', lat:37.6740, lon:-122.4887, type:'para'});
+fetchOpenMeteo({pfx:'mpeak',  lat:37.5131, lon:-121.8803, type:'para'});
+fetchOpenMeteo({pfx:'kite',   lat:37.4297, lon:-122.0766, type:'kite'});
+
+// === NWS Forecast Tab Functions ===
+function degToCard(deg){var dirs=['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W','WNW','NW','NNW'];return dirs[Math.round(deg/22.5)%16];}
+
+function buildHourly(periods){
+  var html='<div class="nws-section-title" style="margin-top:20px">&#9201; Hourly Forecast &mdash; Flying Conditions</div>';
+  html+='<div class="hr-scroll"><table class="hr-table"><thead><tr><th>Time</th><th>Temp</th><th>Wind</th><th>Precip %</th><th>Sky / Condition</th><th>Flying</th></tr></thead><tbody>';
+  var lastDay='';
+  var flyBadge=function(wm,sf){
+    var s=sf.toLowerCase();
+    var rain=s.includes('rain')||s.includes('storm')||s.includes('shower')||s.includes('thunder');
+    if(rain)return'<span class="fly-no">No Fly</span>';
+    if(wm<3)return'<span class="fly-no">Too Light</span>';
+    if(wm>25)return'<span class="fly-no">Too Strong</span>';
+    if(wm>=8&&wm<=20)return'<span class="fly-go">Flyable</span>';
+    return'<span class="fly-marg">Marginal</span>';
+  };
+  periods.slice(0,48).forEach(function(p){
+    var dt=new Date(p.startTime);
+    var dayStr=dt.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
+    var timeStr=dt.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',hour12:true});
+    var wm=parseInt((p.windSpeed||'0').replace(/[^0-9]/g,''))||0;
+    var precip=p.probabilityOfPrecipitation&&p.probabilityOfPrecipitation.value!==null?p.probabilityOfPrecipitation.value:0;
+    if(lastDay!==dayStr){html+='<tr class="hr-day-header"><td colspan="6">'+dayStr+'</td></tr>';lastDay=dayStr;}
+    html+='<tr><td class="hr-time">'+timeStr+'</td><td class="hr-temp">'+p.temperature+'&deg;'+p.temperatureUnit+'</td>';
+    html+='<td class="hr-wind">'+(p.windDirection||'')+' '+(p.windSpeed||'')+'</td>';
+    html+='<td class="hr-gust">'+(precip>=50?'<span style="color:#ff7b72">'+precip+'%</span>':precip>=20?'<span style="color:#e3b341">'+precip+'%</span>':'<span style="color:var(--muted)">'+precip+'%</span>')+'</td>';
+    html+='<td class="hr-sky">'+p.shortForecast+'</td><td>'+flyBadge(wm,p.shortForecast)+'</td></tr>';
+  });
+  html+='</tbody></table></div>';
+  return html;
+}
+
+function buildNWS(wrap,forecast,hourly,obs,obsStation,siteName,siteType){
+  if(!forecast||!forecast.properties||!forecast.properties.periods){
+    wrap.innerHTML='<div class="nws-loading">&#9888; NWS data unavailable. '
+      +'<a href="https://www.weather.gov" target="_blank" style="color:var(--accent)">Visit weather.gov</a></div>';
+    return;
+  }
+  var periods=forecast.properties.periods;
+  var html='';
+  var p=obs&&obs.properties?obs.properties:{};
+  var cond='',windMphObs=0,windDir='';
+  if(obs&&obs.properties){
+    var tempC=p.temperature&&p.temperature.value!==null?p.temperature.value:null;
+    var tempF=tempC!==null?Math.round(tempC*9/5+32):null;
+    var windSpd=p.windSpeed&&p.windSpeed.value!==null?Math.round(p.windSpeed.value*0.621371)+' MPH':null;
+    windDir=p.windDirection&&p.windDirection.value!==null?degToCard(p.windDirection.value):'';
+    windMphObs=p.windSpeed&&p.windSpeed.value!==null?Math.round(p.windSpeed.value*0.621371):0;
+    var humidity=p.relativeHumidity&&p.relativeHumidity.value!==null?Math.round(p.relativeHumidity.value)+'%':null;
+    var baro=p.barometricPressure&&p.barometricPressure.value!==null?(p.barometricPressure.value/3386.39).toFixed(2)+' in':null;
+    var dewC=p.dewpoint&&p.dewpoint.value!==null?p.dewpoint.value:null;
+    var dewF=dewC!==null?Math.round(dewC*9/5+32):null;
+    var vis=p.visibility&&p.visibility.value!==null?Math.round(p.visibility.value/1609.34*10)/10+' mi':null;
+    cond=p.textDescription||'';
+    var icon=p.icon||'';
+    var updated=p.timestamp?new Date(p.timestamp).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit',timeZoneName:'short'}):'';
+    html+='<div id="nws-sec-today" class="nws-section-anchor"></div>';
+  html+='<div class="nws-obs-station">Current conditions at <strong>'+(siteName||'')+'</strong></div>';
+    html+='<div class="nws-cur"><div class="nws-cur-left">';
+    if(icon)html+='<img class="nws-cur-icon" src="'+icon+'&size=large" alt="'+cond+'"/>';
+    html+='<div><div class="nws-cur-temp">'+(tempF!==null?tempF+'&deg;F':'--')+'</div><div class="nws-cur-cond">'+cond+'</div></div></div><div class="nws-cur-right">';
+    if(humidity)html+='<div class="nws-cur-row"><span class="nws-cur-label">Humidity</span><span class="nws-cur-val">'+humidity+'</span></div>';
+    if(windSpd)html+='<div class="nws-cur-row"><span class="nws-cur-label">Wind Speed</span><span class="nws-cur-val">'+(windDir?windDir+' ':'')+windSpd+'</span></div>';
+    if(baro)html+='<div class="nws-cur-row"><span class="nws-cur-label">Barometer</span><span class="nws-cur-val">'+baro+'</span></div>';
+    if(dewF!==null)html+='<div class="nws-cur-row"><span class="nws-cur-label">Dewpoint</span><span class="nws-cur-val">'+dewF+'&deg;F</span></div>';
+    if(vis)html+='<div class="nws-cur-row"><span class="nws-cur-label">Visibility</span><span class="nws-cur-val">'+vis+'</span></div>';
+    html+='<div class="nws-cur-meta">Last update: '+updated+'</div></div></div>';
+  }
+  var firstHourly=hourly&&hourly.properties&&hourly.properties.periods&&hourly.properties.periods[0];
+  var precipPct=firstHourly&&firstHourly.probabilityOfPrecipitation&&firstHourly.probabilityOfPrecipitation.value!==null?firstHourly.probabilityOfPrecipitation.value:0;
+  var condLow=cond.toLowerCase();
+  var hasRain=condLow.includes('rain')||condLow.includes('storm')||condLow.includes('shower')||condLow.includes('thunder')||precipPct>=50;
+  var visNum=p.visibility&&p.visibility.value!==null?p.visibility.value/1609.34:99;
+  var gonogo,gonogoClass,gonogoText,tags;
+  if(siteType==='kite'){
+    if(hasRain){gonogo='DO NOT FLY';gonogoClass='sr';gonogoText='Rain or storms present. Unsafe for kite flying.';tags='<span class="tag tr">Rain/Storms</span><span class="tag tr">Unsafe</span>';}
+    else if(windMphObs<5){gonogo='TOO LIGHT';gonogoClass='sy';gonogoText='Wind too light at '+windMphObs+' MPH for kite flying.';tags='<span class="tag ty">Wind Too Light</span><span class="tag ty">Kites Grounded</span>';}
+    else if(windMphObs>35){gonogo='TOO STRONG';gonogoClass='sr';gonogoText='Wind at '+windMphObs+' MPH is dangerously strong.';tags='<span class="tag tr">Dangerous Wind</span><span class="tag tr">Stay Grounded</span>';}
+    else if(windMphObs>=8&&windMphObs<=25&&precipPct<20){gonogo='GREAT CONDITIONS';gonogoClass='sg';gonogoText='Ideal kite flying wind at '+windMphObs+' MPH '+windDir+'. Get out there!';tags='<span class="tag tg">Ideal Wind</span><span class="tag tg">Go Fly</span>';}
+    else{gonogo='MARGINAL';gonogoClass='sy';gonogoText='Borderline conditions. Wind '+windMphObs+' MPH. Check on-site.';tags='<span class="tag ty">Marginal</span><span class="tag ty">Check On-Site</span>';}
+  }else{
+    if(hasRain){gonogo='DO NOT FLY';gonogoClass='sr';gonogoText='Rain/storms present. Wet launch unsafe.';tags='<span class="tag tr">Rain/Storms</span><span class="tag tr">No-Fly</span>';}
+    else if(windMphObs<3){gonogo='TOO LIGHT';gonogoClass='sy';gonogoText='Wind too light at '+windMphObs+' MPH. Sled rides only.';tags='<span class="tag ty">Too Light</span><span class="tag ty">No Thermals</span>';}
+    else if(windMphObs>25){gonogo='TOO STRONG';gonogoClass='sr';gonogoText='Wind '+windMphObs+' MPH exceeds safe limits. Do not fly.';tags='<span class="tag tr">Overpowering</span><span class="tag tr">High Risk</span>';}
+    else if(visNum<3){gonogo='LOW VISIBILITY';gonogoClass='sr';gonogoText='Visibility below 3 miles. Disorientation risk.';tags='<span class="tag tr">Low Visibility</span><span class="tag tr">No-Fly</span>';}
+    else if(windMphObs>=8&&windMphObs<=20&&precipPct<20){gonogo='FLYABLE';gonogoClass='sg';gonogoText='Conditions look good. Wind '+windMphObs+' MPH '+windDir+'.';tags='<span class="tag tg">Good Wind</span><span class="tag tg">Go Fly</span>';}
+    else{gonogo='MARGINAL';gonogoClass='sy';gonogoText='Borderline. Wind '+windMphObs+' MPH. P3+ caution.';tags='<span class="tag ty">Marginal</span><span class="tag ty">P3+ Only</span>';}
+  }
+  html+='<div style="margin-bottom:20px"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px"><div class="nws-section-title" style="margin-bottom:0">GO / NO-GO Assessment</div><span class="sb '+gonogoClass+'">'+gonogo+'</span></div>';
+  html+='<div class="desc"><strong>GO / NO-GO: '+gonogo+'.</strong> '+gonogoText+'</div><div class="tags">'+tags+'</div></div>';
+  html+='<div id="nws-sec-outlook" class="nws-section-anchor"></div>';
+  html+='<div class="nws-section-title">Extended Forecast</div><div class="nws-7day-strip">';
+  periods.slice(0,8).forEach(function(pp,i){
+    var isNight=pp.isDaytime===false;
+    html+='<div class="nws-day'+(i===0?' tonight':'')+'"><div class="nws-day-name">'+pp.name+'</div>';
+    html+='<img class="nws-day-icon" src="'+pp.icon+'&size=medium" alt="'+pp.shortForecast+'"/>';
+    html+='<div class="nws-day-temp '+(isNight?'lo':'hi')+'">'+(isNight?'Low: ':'High: ')+pp.temperature+'&deg;'+pp.temperatureUnit+'</div>';
+    html+='<div class="nws-day-cond">'+pp.shortForecast+'</div></div>';
+  });
+  html+='</div>';
+  html+='<div id="nws-sec-tomorrow" class="nws-section-anchor"></div>';
+  if(hourly&&hourly.properties&&hourly.properties.periods)html+=buildHourly(hourly.properties.periods);
+  html+='<div class="nws-section-title" style="margin-top:20px">Detailed Forecast</div>';
+  periods.slice(0,8).forEach(function(pp){
+    html+='<div class="nws-detail-row"><div class="nws-detail-period">'+pp.name+'</div><div class="nws-detail-text">'+pp.detailedForecast+'</div></div>';
+  });
+  wrap.innerHTML=html;
+}
+
+var SITES={
+  'lev':  {lat:37.4619,lon:-121.8610,wrap:'lev-nws-wrap',  name:'Ed R. Levin Park',         type:'para'},
+  'mus':  {lat:37.6740,lon:-122.4887,wrap:'mus-nws-wrap',  name:'Mussel Rock Park',          type:'para'},
+  'kite': {lat:37.4297,lon:-122.0766,wrap:'kite-nws-wrap', name:'Shoreline Kite Flying Area',type:'kite'},
+  'mpeak':{lat:37.5131,lon:-121.8803,wrap:'mpeak-nws-wrap',name:'Mission Peak',              type:'para'}
+};
+function fetchNWSForSite(siteKey){
+  var cfg=SITES[siteKey];if(!cfg)return;
+  var wrap=document.getElementById(cfg.wrap);if(!wrap)return;
+  if(wrap.dataset.nwsLoaded==='1')return;
+  wrap.innerHTML='<div class="nws-loading">&#9203; Fetching NWS forecast for '+cfg.name+'...</div>';
+  fetch('https://api.weather.gov/points/'+cfg.lat+','+cfg.lon)
+    .then(function(r){if(!r.ok)throw new Error('NWS /points/ '+r.status);return r.json();})
+    .then(function(pts){
+      var props=pts.properties;
+      var fP=fetch(props.forecast).then(function(r){if(!r.ok)throw new Error('forecast '+r.status);return r.json();});
+      var hP=fetch(props.forecastHourly).then(function(r){return r.ok?r.json():null;}).catch(function(){return null;});
+      var oP=fetch(props.observationStations+'?limit=1')
+        .then(function(r){return r.json();})
+        .then(function(sl){
+          var sid=sl.features&&sl.features[0]&&sl.features[0].properties.stationIdentifier;
+          if(!sid)return null;
+          return fetch('https://api.weather.gov/stations/'+sid+'/observations/latest')
+            .then(function(r){return r.ok?r.json():null;}).catch(function(){return null;});
+        }).catch(function(){return null;});
+      return Promise.all([fP,hP,oP]);
+    })
+    .then(function(res){buildNWS(wrap,res[0],res[1],res[2],null,cfg.name,cfg.type);wrap.dataset.nwsLoaded='1';})
+    .catch(function(e){
+      wrap.innerHTML='<div class="nws-loading">&#9888; Could not load NWS data ('+e.message+'). <a href="https://www.weather.gov" target="_blank" style="color:var(--accent)">Visit weather.gov</a></div>';
+    });
+}
+updateBestWindow();
+
+var _refreshSecs=180,_cdEl=document.getElementById('refresh-countdown');
+function _tick(){var m=Math.floor(_refreshSecs/60),s=_refreshSecs%60;if(_cdEl)_cdEl.textContent=m+':'+(s<10?'0':'')+s;_refreshSecs--;if(_refreshSecs<0){_refreshSecs=180;fetchOpenMeteo({pfx:'levin',lat:37.4619,lon:-121.8610,type:'para'});fetchOpenMeteo({pfx:'mussel',lat:37.6740,lon:-122.4887,type:'para'});fetchOpenMeteo({pfx:'mpeak',lat:37.5131,lon:-121.8803,type:'para'});fetchOpenMeteo({pfx:'kite',lat:37.4297,lon:-122.0766,type:'kite'});Object.keys(SITES).forEach(function(k){var w=document.getElementById(SITES[k].wrap);if(w)w.dataset.nwsLoaded='';});updateBestWindow();document.getElementById('dt').textContent=new Date().toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'})+' (auto-refreshed)';}};
+setInterval(_tick,1000);function updateBestWindow(){
+  var sites=[
+    {name:'Ed R. Levin',lat:37.4619,lon:-121.8610},
+    {name:'Mussel Rock',lat:37.6740,lon:-122.4887},
+    {name:'Mission Peak',lat:37.5131,lon:-121.8803}
+  ];
+  var today=new Date(); today.setHours(0,0,0,0);
+  var forecasts=[];
+  var promises=sites.map(function(site){
+    var url='https://api.open-meteo.com/v1/forecast?latitude='+site.lat+'&longitude='+site.lon+'&daily=windspeed_10m_max,windgusts_10m_max,precipitation_sum&wind_speed_unit=ms&timezone=America%2FLos_Angeles&forecast_days=7';
+    return fetch(url).then(function(r){return r.json();}).then(function(data){
+      data.daily.time.forEach(function(dateStr,i){
+        var date=new Date(dateStr+'T00:00:00');
+        if(date<=today) return;
+        var wind=data.daily.windspeed_10m_max[i];
+        var gusts=data.daily.windgusts_10m_max[i];
+        var precip=data.daily.precipitation_sum[i];
+        var score=0;
+        if(wind>=3&&wind<=7) score+=3; else if(wind>=2&&wind<=9) score+=1;
+        if(gusts<10) score+=2;
+        if(precip===0) score+=2;
+        forecasts.push({site:site.name,date:date,score:score});
+      });
+    });
+  });
+  Promise.all(promises).then(function(){
+    if(!forecasts.length) return;
+    forecasts.sort(function(a,b){return b.score-a.score||a.date-b.date;});
+    var best=forecasts[0];
+    var dayName=best.date.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
+    var el=document.getElementById('best-window-label');
+    if(el) el.textContent='Best Window: '+best.site+' '+dayName;
+  });
+}
+updateBestWindow();
+
+// ── Forecast dropdown ────────────────────────────────────────────────────────
+function swForecast(site, tab, label, itemBtn){
+  var card = itemBtn.closest('.card');
+  // deactivate all tc panels and tb buttons
+  card.querySelectorAll('.tc').forEach(function(t){t.classList.remove('on');});
+  card.querySelectorAll('.tb').forEach(function(b){b.classList.remove('on');});
+  // activate selected panel
+  document.getElementById(site+'-'+tab).classList.add('on');
+  // NWS/ws handling
+  var isNwsTab=(tab==='nws'||tab==='t4');
+  var ws=card.querySelector('.ws');
+  if(ws)ws.style.display=isNwsTab?'none':'';
+  if(isNwsTab)fetchNWSForSite(site);
+  // keep fcast-btn in "on" state
+  var fcastBtn=document.getElementById(site+'-fcast-btn');
+  if(fcastBtn)fcastBtn.classList.add('on');
+  // update dropdown item highlighting
+  var dd=document.getElementById(site+'-fcast-dd');
+  if(dd)dd.querySelectorAll('.fcast-dd-item').forEach(function(b){b.classList.remove('on');});
+  itemBtn.classList.add('on');
+  // update button label
+  var rawLbl=label||(itemBtn.querySelector('span')?itemBtn.querySelector('span').textContent:itemBtn.textContent.trim());
+  var lbl=rawLbl||'📅 Forecast';
+  // fcast-label stays fixed as permanent section title (source always visible)
+  // var lblEl=document.getElementById(site+'-fcast-label');
+  // if(lblEl)lblEl.textContent=lbl;
+  closeFcastDd(site);
+}
+function toggleFcastDd(site,e){
+  if(e)e.stopPropagation();
+  var btn=document.getElementById(site+'-fcast-btn');
+  var dd=document.getElementById(site+'-fcast-dd');
+  var isOpen=dd.classList.contains('open');
+  // close all other open dropdowns
+  document.querySelectorAll('.fcast-dd.open').forEach(function(d){
+    d.classList.remove('open');
+    var b=document.getElementById(d.id.replace('-fcast-dd','-fcast-btn'));
+    if(b)b.classList.remove('open');
+  });
+  if(!isOpen){dd.classList.add('open');btn.classList.add('open');}
+}
+function closeFcastDd(site){
+  var btn=document.getElementById(site+'-fcast-btn');
+  var dd=document.getElementById(site+'-fcast-dd');
+  if(btn)btn.classList.remove('open');
+  if(dd)dd.classList.remove('open');
+}
+document.addEventListener('click',function(){
+  document.querySelectorAll('.fcast-dd.open').forEach(function(d){
+    d.classList.remove('open');
+    var b=document.getElementById(d.id.replace('-fcast-dd','-fcast-btn'));
+    if(b)b.classList.remove('open');
+  });
+});
+// Set dynamic tomorrow label in all forecast dropdowns
+(function(){
+  var days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  var tmrw=new Date();tmrw.setDate(tmrw.getDate()+1);
+  var dayName=days[tmrw.getDay()];
+  ['lev','mus','kite','mpeak'].forEach(function(sid){
+    var el=document.getElementById(sid+'-tmrw-label');
+    if(el)el.textContent='📅 Tomorrow ('+dayName+')';
+  });
+})();
+// ── NWS Forecast dropdown
+function swNws(site,tabKey,section,itemBtn){
+  var card=itemBtn.closest('.card');
+  var panel=document.getElementById(site+'-'+tabKey);
+  if(panel&&!panel.classList.contains('on')){
+    card.querySelectorAll('.tc').forEach(function(t){t.classList.remove('on');});
+    card.querySelectorAll('.tb').forEach(function(b){b.classList.remove('on');});
+    panel.classList.add('on');
+    var ws=card.querySelector('.ws');if(ws)ws.style.display='none';
+    fetchNWSForSite(site);
+  }
+  var dd=document.getElementById(site+'-nws-dd');
+  if(dd)dd.querySelectorAll('.nws-dd-item').forEach(function(b){b.classList.remove('on');});
+  itemBtn.classList.add('on');
+  var btn=document.getElementById(site+'-nws-dd-btn');
+  if(btn)btn.classList.add('on');
+  closeNwsDd(site);
+  var aid='nws-sec-'+section;
+  function doScroll(){
+    var p=document.getElementById(site+'-'+tabKey);
+    if(!p)return;
+    var a=p.querySelector('#'+aid);
+    if(a){a.scrollIntoView({behavior:'smooth',block:'start'});}else{setTimeout(doScroll,250);}
+  }
+  setTimeout(doScroll,100);
+}
+function toggleNwsDd(site,e){
+  if(e)e.stopPropagation();
+  var btn=document.getElementById(site+'-nws-dd-btn');
+  var dd=document.getElementById(site+'-nws-dd');
+  var open=dd.classList.contains('open');
+  document.querySelectorAll('.nws-dd.open').forEach(function(d){
+    d.classList.remove('open');
+    var b=document.getElementById(d.id.replace('-nws-dd','-nws-dd-btn'));if(b)b.classList.remove('open');
+  });
+  if(!open){dd.classList.add('open');btn.classList.add('open');}
+}
+function closeNwsDd(site){
+  var btn=document.getElementById(site+'-nws-dd-btn');
+  var dd=document.getElementById(site+'-nws-dd');
+  if(btn)btn.classList.remove('open');if(dd)dd.classList.remove('open');
+}
+document.addEventListener('click',function(e){
+  if(!e.target.closest('.nws-wrap-dd')){
+    document.querySelectorAll('.nws-dd.open').forEach(function(d){
+      d.classList.remove('open');
+      var b=document.getElementById(d.id.replace('-nws-dd','-nws-dd-btn'));if(b)b.classList.remove('open');
+    });
+  }
+});
+(function(){
+  var days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  var now=new Date();var tmrw=new Date();tmrw.setDate(tmrw.getDate()+1);
+  var td=days[now.getDay()];var tr=days[tmrw.getDay()];
+  ['lev','mus','kite','mpeak'].forEach(function(sid){
+    var t=document.getElementById(sid+'-nws-today-lbl');
+    var r=document.getElementById(sid+'-nws-tmrw-lbl');
+    if(t)t.textContent='📋 Today ('+td+')';
+    if(r)r.textContent='📋 Tomorrow ('+tr+')';
+  });
+})();
+// ── Flying Sites FAB ──────────────────────────────────────────────────────────
+function toggleFab(){
+  var btn=document.getElementById('fab-btn');
+  var dd=document.getElementById('fab-dropdown');
+  var isOpen=dd.classList.contains('open');
+  if(isOpen){closeFab();}else{
+    btn.classList.add('open');
+    dd.classList.add('open');
+    btn.setAttribute('aria-expanded','true');
+  }
+}
+function closeFab(){
+  var btn=document.getElementById('fab-btn');
+  var dd=document.getElementById('fab-dropdown');
+  btn.classList.remove('open');
+  dd.classList.remove('open');
+  btn.setAttribute('aria-expanded','false');
+}
+document.addEventListener('click',function(e){
+  var wrap=document.getElementById('fab-wrap');
+  if(wrap&&!wrap.contains(e.target))closeFab();
+});
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeFab();});
+// ─────────────────────────────────────────────────────────────────────────────
+</script>
+
+<script>
+if('serviceWorker' in navigator){
+  window.addEventListener('load',function(){
+    navigator.serviceWorker.register('service-worker.js')
+      .then(function(r){console.log('SW registered:',r.scope);})
+      .catch(function(e){console.warn('SW registration failed:',e);});
+  });
+}
+</script>
+</body>
+</html>
