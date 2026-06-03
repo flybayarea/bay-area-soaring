@@ -548,10 +548,20 @@ function populateSite(cfg, data){
   function findHourIdx(dateStr, hour){
     for(var i=0;i<hourly.time.length;i++){
       if(hourly.time[i].startsWith(dateStr+'T'+String(hour).padStart(2,'0')))return i;
-    }
-    // fallback: first index of that date
+    }function populateSite(cfg, data){
+  var hourly = data.hourly;
+  var now = new Date();
+  var todayStr = [now.getFullYear(), String(now.getMonth()+1).padStart(2,'0'), String(now.getDate()).padStart(2,'0')].join('-');
+  var tmrwDate = new Date(now);
+  tmrwDate.setDate(tmrwDate.getDate()+1);
+  var tmrwStr = [tmrwDate.getFullYear(), String(tmrwDate.getMonth()+1).padStart(2,'0'), String(tmrwDate.getDate()).padStart(2,'0')].join('-');
+
+  function findHourIdx(dateStr, hour){
     for(var i=0;i<hourly.time.length;i++){
-      if(hourly.time[i].startsWith(dateStr))return i;
+      if(hourly.time[i].startsWith(dateStr+'T'+String(hour).padStart(2,'0'))) return i;
+    }
+    for(var i=0;i<hourly.time.length;i++){
+      if(hourly.time[i].startsWith(dateStr)) return i;
     }
     return 0;
   }
@@ -562,40 +572,38 @@ function populateSite(cfg, data){
       if(hourly.time[i].startsWith(dateStr)){
         ws.push(hourly.windspeed_10m[i]);
         gu.push(hourly.windgusts_10m[i]);
-        pp+=hourly.precipitation[i];
+        pp += hourly.precipitation[i];
         temps.push(hourly.temperature_2m[i]);
       }
     }
-    if(!ws.length)return null;
+    if(!ws.length) return null;
     var avg=function(a){return a.reduce(function(s,v){return s+v},0)/a.length;};
     var cToF=function(c){return Math.round(c*9/5+32);};
-    return{
-      wind: (avg(ws)/3.6).toFixed(1),  // km/h -> m/s
+    var vt=temps.filter(function(v){return v!=null&&!isNaN(v);});
+    return {
+      wind: (avg(ws)/3.6).toFixed(1),
       gust: (Math.max.apply(null,gu)/3.6).toFixed(1),
       precip: pp.toFixed(1),
-      [now.getFultemp: (function(){var vt=temps.filter(function(v){return v!=null&&!isNaN(v);});return vt.length?cToF(Math.max.apply(null,vt)):null;})()[tmrwDate.getFullYear(),String(tmrwDate.getMonth()+1).padStart(2,'0'),String(tmrwDate.getDate()).padStart(2,'0')].join('-')lYear(),String(now.getMonth()+1).padStart(2,'0'),String(now.getDate()).padStart(2,'0')].join('-')
+      temp: vt.length ? cToF(Math.max.apply(null,vt)) : null
     };
   }
 
-  var todayData=dayAvg(todayStr);
-  var tmrwData=dayAvg(tmrwStr);
+  var todayData = dayAvg(todayStr);
+  var tmrwData  = dayAvg(tmrwStr);
 
   function fillDay(pfx, dayData, isTomorrow, siteType){
-    if(!dayData)return;
-    var _w=document.getElementById(pfx+'-wind-'+(isTomorrow?'tmrw':'today'));if(_w)_w.textContent=dayData.wind;
-    var _g=document.getElementById(pfx+'-gust-'+(isTomorrow?'tmrw':'today'));if(_g)_g.textContent=dayData.gust;
-    var _t=document.getElementById(pfx+'-temp-'+(isTomorrow?'tmrw':'today'));[now.getFulif(_t)_t.textContent=dayData.temp!=null?dayData.temp:'--';temp: (function(){var vt=temps.filter(function(v){return v!=null&&!isNaN(v);});return vt.length?cToF(Math.max.apply(null,vt)):null;})()[tmrwDate.getFullYear(),String(tmrwDate.getMonth()+1).padStart(2,'0'),String(tmrwDate.getDate()).padStart(2,'0')].join('-')lYear(),String(now.getMonth()+1).padStart(2,'0'),String(now.getDate()).padStart(2,'0')].join('-')
-    var _p=document.getElementById(pfx+'-precip-'+(isTomorrow?'tmrw':'today'));if(_p)_p.textContent=dayData.precip;
+    if(!dayData) return;
+    var sfx = isTomorrow ? 'tmrw' : 'today';
+    var _w=document.getElementById(pfx+'-wind-'+sfx); if(_w) _w.textContent=dayData.wind;
+    var _g=document.getElementById(pfx+'-gust-'+sfx); if(_g) _g.textContent=dayData.gust;
+    var _t=document.getElementById(pfx+'-temp-'+sfx); if(_t) _t.textContent=dayData.temp!=null?dayData.temp:'--';
+    var _p=document.getElementById(pfx+'-precip-'+sfx); if(_p) _p.textContent=dayData.precip;
     var assess=(siteType==='kite')?kiteAssess(dayData.wind,dayData.precip):paraAssess(dayData.wind,dayData.gust,dayData.precip,dayData.temp);
-    var _d=document.getElementById(pfx+'-desc-'+(isTomorrow?'tmrw':'today'));if(_d)_d.innerHTML=assess.desc;
-    var _tg=document.getElementById(pfx+'-tags-'+(isTomorrow?'tmrw':'today'));if(_tg)_tg.innerHTML=assess.tags;
+    var _d=document.getElementById(pfx+'-desc-'+sfx); if(_d) _d.innerHTML=assess.desc;
+    var _tg=document.getElementById(pfx+'-tags-'+sfx); if(_tg) _tg.innerHTML=assess.tags;
     if(!isTomorrow){
       var statusEl=document.getElementById(pfx+'-status');
-      if(statusEl){
-        statusEl.className='sb '+assess.cls;
-        statusEl.innerHTML='&bull; '+assess.badge;
-      }
-      // update sidebar dot
+      if(statusEl){ statusEl.className='sb '+assess.cls; statusEl.innerHTML='&bull; '+assess.badge; }
       var dotEl=document.getElementById('nav-dot-'+pfx);
       if(dotEl){
         var dotColor=assess.cls==='sg'?'var(--green)':assess.cls==='sy'?'var(--yellow)':'var(--red)';
@@ -608,21 +616,21 @@ function populateSite(cfg, data){
   fillDay(cfg.pfx, todayData, false, cfg.type);
   fillDay(cfg.pfx, tmrwData, true, cfg.type);
 
-  // Fill 6-day outlook
   var tbody=document.getElementById(cfg.pfx+'-outlook-body');
   if(tbody){
     var days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
     var months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
     var rows=tbody.querySelectorAll('tr');
     rows.forEach(function(row,i){
-      var dd=new Date(now); dd.setDate(dd.getDate()+i);
-      [now.getFul[dd.getFullYear(),String(dd.getMonth()+1).padStart(2,'0'),String(dd.getDate()).padStart(2,'0')].join('-')if(_t)_t.textContent=dayData.temp!=null?dayData.temp:'--';temp: (function(){var vt=temps.filter(function(v){return v!=null&&!isNaN(v);});return vt.length?cToF(Math.max.apply(null,vt)):null;})()[tmrwDate.getFullYear(),String(tmrwDate.getMonth()+1).padStart(2,'0'),String(tmrwDate.getDate()).padStart(2,'0')].join('-')lYear(),String(now.getMonth()+1).padStart(2,'0'),String(now.getDate()).padStart(2,'0')].join('-');
+      var dd=new Date(now);
+      dd.setDate(dd.getDate()+i);
+      var ds=[dd.getFullYear(), String(dd.getMonth()+1).padStart(2,'0'), String(dd.getDate()).padStart(2,'0')].join('-');
       var dd_data=dayAvg(ds);
       var cells=row.querySelectorAll('td');
-      if(cells[0])cells[0].textContent=days[dd.getDay()]+' '+months[dd.getMonth()]+' '+dd.getDate();
-      if(dd_data&&cells[1])cells[1].textContent=dd_data.wind+' / '+dd_data.gust+' m/s';
-      if(dd_data&&cells[2])cells[2].textContent=dd_data.precip+'mm';
-      if(dd_data&&cells[3])cells[3].textContent=dd_data.temp+'°F';
+      if(cells[0]) cells[0].textContent=days[dd.getDay()]+' '+months[dd.getMonth()]+' '+dd.getDate();
+      if(dd_data&&cells[1]) cells[1].textContent=dd_data.wind+' / '+dd_data.gust+' m/s';
+      if(dd_data&&cells[2]) cells[2].textContent=dd_data.precip+'mm';
+      if(dd_data&&cells[3]) cells[3].textContent=dd_data.temp+'°F';
       if(dd_data&&cells[4]){
         var a=(cfg.type==='kite')?kiteAssess(dd_data.wind,dd_data.precip):paraAssess(dd_data.wind,dd_data.gust,dd_data.precip,dd_data.temp);
         cells[4].textContent=a.badge;
@@ -630,7 +638,6 @@ function populateSite(cfg, data){
     });
   }
 }
-
 // Fetch Open-Meteo for a site
 function fetchOpenMeteo(cfg){
   var url='https://api.open-meteo.com/v1/forecast?latitude='+cfg.lat+'&longitude='+cfg.lon
