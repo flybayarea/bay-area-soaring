@@ -314,7 +314,7 @@ footer a:hover{text-decoration:underline}
       <div class="tabs">
         <div class="fcast-wrap">
           <button class="fcast-btn on" id="lev-fcast-btn" onclick="toggleFcastDd('lev',event)">
-            <span id="lev-fcast-label">🌤 Live Conditions</span><span class="fa">▼</span>
+            <span id="lev-fcast-label">🌤 Open-Meteo Forecast</span><span class="fa">▼</span>
           </button>
           <div class="fcast-dd" id="lev-fcast-dd">
             <button class="fcast-dd-item on" id="lev-dd-t1" onclick="swForecast('lev','t1','🌤 Now (Today)',this)">🌤 Now (Today)</button>
@@ -396,7 +396,7 @@ footer a:hover{text-decoration:underline}
       <div class="tabs">
         <div class="fcast-wrap">
           <button class="fcast-btn on" id="mus-fcast-btn" onclick="toggleFcastDd('mus',event)">
-            <span id="mus-fcast-label">🌤 Live Conditions</span><span class="fa">▼</span>
+            <span id="mus-fcast-label">🌤 Open-Meteo Forecast</span><span class="fa">▼</span>
           </button>
           <div class="fcast-dd" id="mus-fcast-dd">
             <button class="fcast-dd-item on" id="mus-dd-t1" onclick="swForecast('mus','t1','🌤 Now (Today)',this)">🌤 Now (Today)</button>
@@ -476,7 +476,7 @@ footer a:hover{text-decoration:underline}
       <div class="tabs">
         <div class="fcast-wrap">
           <button class="fcast-btn on" id="kite-fcast-btn" onclick="toggleFcastDd('kite',event)">
-            <span id="kite-fcast-label">🌤 Live Conditions</span><span class="fa">▼</span>
+            <span id="kite-fcast-label">🌤 Open-Meteo Forecast</span><span class="fa">▼</span>
           </button>
           <div class="fcast-dd" id="kite-fcast-dd">
             <button class="fcast-dd-item on" id="kite-dd-t1" onclick="swForecast('kite','today','🌤 Now (Today)',this)">🌤 Now (Today)</button>
@@ -550,7 +550,7 @@ footer a:hover{text-decoration:underline}
       <div class="tabs">
         <div class="fcast-wrap">
           <button class="fcast-btn on" id="mpeak-fcast-btn" onclick="toggleFcastDd('mpeak',event)">
-            <span id="mpeak-fcast-label">🌤 Live Conditions</span><span class="fa">▼</span>
+            <span id="mpeak-fcast-label">🌤 Open-Meteo Forecast</span><span class="fa">▼</span>
           </button>
           <div class="fcast-dd" id="mpeak-fcast-dd">
             <button class="fcast-dd-item on" id="mpeak-dd-t1" onclick="swForecast('mpeak','today','🌤 Now (Today)',this)">🌤 Now (Today)</button>
@@ -1099,8 +1099,9 @@ function swForecast(site, tab, label, itemBtn){
   // update button label
   var rawLbl=label||(itemBtn.querySelector('span')?itemBtn.querySelector('span').textContent:itemBtn.textContent.trim());
   var lbl=rawLbl||'📅 Forecast';
-  var lblEl=document.getElementById(site+'-fcast-label');
-  if(lblEl)lblEl.textContent=lbl;
+  // fcast-label stays fixed as permanent section title (source always visible)
+  // var lblEl=document.getElementById(site+'-fcast-label');
+  // if(lblEl)lblEl.textContent=lbl;
   closeFcastDd(site);
 }
 function toggleFcastDd(site,e){
