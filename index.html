@@ -540,9 +540,9 @@ function kiteAssess(windMs,precipMm){
 function populateSite(cfg, data){
   var hourly=data.hourly;
   var now=new Date();
-  var todayStr=now.toISOString().split('T')[0];
+  [now.getFullYear(),String(now.getMonth()+1).padStart(2,'0'),String(now.getDate()).padStart(2,'0')].join('-');
   var tmrwDate=new Date(now); tmrwDate.setDate(tmrwDate.getDate()+1);
-  var tmrwStr=tmrwDate.toISOString().split('T')[0];
+  [now.getFul[tmrwDate.getFullYear(),String(tmrwDate.getMonth()+1).padStart(2,'0'),String(tmrwDate.getDate()).padStart(2,'0')].join('-')lYear(),String(now.getMonth()+1).padStart(2,'0'),String(now.getDate()).padStart(2,'0')].join('-');
 
   // Find afternoon index for today and tomorrow (use hour 14 = 2 PM)
   function findHourIdx(dateStr, hour){
@@ -573,7 +573,7 @@ function populateSite(cfg, data){
       wind: (avg(ws)/3.6).toFixed(1),  // km/h -> m/s
       gust: (Math.max.apply(null,gu)/3.6).toFixed(1),
       precip: pp.toFixed(1),
-      temp: cToF(Math.max.apply(null,temps))
+      [now.getFultemp: (function(){var vt=temps.filter(function(v){return v!=null&&!isNaN(v);});return vt.length?cToF(Math.max.apply(null,vt)):null;})()[tmrwDate.getFullYear(),String(tmrwDate.getMonth()+1).padStart(2,'0'),String(tmrwDate.getDate()).padStart(2,'0')].join('-')lYear(),String(now.getMonth()+1).padStart(2,'0'),String(now.getDate()).padStart(2,'0')].join('-')
     };
   }
 
@@ -584,7 +584,7 @@ function populateSite(cfg, data){
     if(!dayData)return;
     var _w=document.getElementById(pfx+'-wind-'+(isTomorrow?'tmrw':'today'));if(_w)_w.textContent=dayData.wind;
     var _g=document.getElementById(pfx+'-gust-'+(isTomorrow?'tmrw':'today'));if(_g)_g.textContent=dayData.gust;
-    var _t=document.getElementById(pfx+'-temp-'+(isTomorrow?'tmrw':'today'));if(_t)_t.textContent=dayData.temp;
+    var _t=document.getElementById(pfx+'-temp-'+(isTomorrow?'tmrw':'today'));[now.getFulif(_t)_t.textContent=dayData.temp!=null?dayData.temp:'--';temp: (function(){var vt=temps.filter(function(v){return v!=null&&!isNaN(v);});return vt.length?cToF(Math.max.apply(null,vt)):null;})()[tmrwDate.getFullYear(),String(tmrwDate.getMonth()+1).padStart(2,'0'),String(tmrwDate.getDate()).padStart(2,'0')].join('-')lYear(),String(now.getMonth()+1).padStart(2,'0'),String(now.getDate()).padStart(2,'0')].join('-')
     var _p=document.getElementById(pfx+'-precip-'+(isTomorrow?'tmrw':'today'));if(_p)_p.textContent=dayData.precip;
     var assess=(siteType==='kite')?kiteAssess(dayData.wind,dayData.precip):paraAssess(dayData.wind,dayData.gust,dayData.precip,dayData.temp);
     var _d=document.getElementById(pfx+'-desc-'+(isTomorrow?'tmrw':'today'));if(_d)_d.innerHTML=assess.desc;
@@ -616,7 +616,7 @@ function populateSite(cfg, data){
     var rows=tbody.querySelectorAll('tr');
     rows.forEach(function(row,i){
       var dd=new Date(now); dd.setDate(dd.getDate()+i);
-      var ds=dd.toISOString().split('T')[0];
+      [now.getFul[dd.getFullYear(),String(dd.getMonth()+1).padStart(2,'0'),String(dd.getDate()).padStart(2,'0')].join('-')if(_t)_t.textContent=dayData.temp!=null?dayData.temp:'--';temp: (function(){var vt=temps.filter(function(v){return v!=null&&!isNaN(v);});return vt.length?cToF(Math.max.apply(null,vt)):null;})()[tmrwDate.getFullYear(),String(tmrwDate.getMonth()+1).padStart(2,'0'),String(tmrwDate.getDate()).padStart(2,'0')].join('-')lYear(),String(now.getMonth()+1).padStart(2,'0'),String(now.getDate()).padStart(2,'0')].join('-');
       var dd_data=dayAvg(ds);
       var cells=row.querySelectorAll('td');
       if(cells[0])cells[0].textContent=days[dd.getDay()]+' '+months[dd.getMonth()]+' '+dd.getDate();
