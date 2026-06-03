@@ -537,17 +537,7 @@ function kiteAssess(windMs,precipMm){
 }
 
 // Populate a site's Today/Tomorrow/Outlook from Open-Meteo data
-function populateSite(cfg, data){
-  var hourly=data.hourly;
-  var now=new Date();
-  [now.getFullYear(),String(now.getMonth()+1).padStart(2,'0'),String(now.getDate()).padStart(2,'0')].join('-');
-  var tmrwDate=new Date(now); tmrwDate.setDate(tmrwDate.getDate()+1);
-  [now.getFul[tmrwDate.getFullYear(),String(tmrwDate.getMonth()+1).padStart(2,'0'),String(tmrwDate.getDate()).padStart(2,'0')].join('-')lYear(),String(now.getMonth()+1).padStart(2,'0'),String(now.getDate()).padStart(2,'0')].join('-');
 
-  // Find afternoon index for today and tomorrow (use hour 14 = 2 PM)
-  function findHourIdx(dateStr, hour){
-    for(var i=0;i<hourly.time.length;i++){
-      if(hourly.time[i].startsWith(dateStr+'T'+String(hour).padStart(2,'0')))return i;
     }function populateSite(cfg, data){
   var hourly = data.hourly;
   var now = new Date();
