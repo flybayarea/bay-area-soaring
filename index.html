@@ -392,14 +392,14 @@ footer a:hover{text-decoration:underline}
       <div id="lev-t4" class="tc">
         <div id="lev-nws-wrap" class="nws-wrap"><div class="nws-loading">Loading NWS data...</div></div>
         <div class="nws-link-bar">
-          <a class="nws-link" href="https://forecast.weather.gov/MapClick.php?lat=37.4619&lon=-121.861" target="_blank">&#127777; weather.gov</a>
-          <a class="nws-link" href="https://forecast.weather.gov/MapClick.php?lat=37.4619&lon=-121.861&FcstType=graphical" target="_blank">Hourly Chart</a>
+          <a class="nws-link" href="https://forecast.weather.gov/MapClick.php?lat=37.4619&lon=-121.8610" target="_blank">&#127777; weather.gov</a>
+          <a class="nws-link" href="https://forecast.weather.gov/MapClick.php?lat=37.4619&lon=-121.8610&FcstType=graphical" target="_blank">Hourly Chart</a>
         </div>
       </div>
       <div class="ws">
         <div class="wl">🗺 Live Windy Map</div>
         <div class="ww">
-          <iframe width="100%" height="450" src="https://embed.windy.com/embed2.html?lat=37.4619&lon=-121.861&zoom=11&level=surface&overlay=wind&menu=&message=true&marker=true&forecast=12&detailLat=37.4619&detailLon=-121.861&detail=true&metricWind=m%2Fs&metricTemp=%C2%B0F&radarRange=-1" loading="lazy" frameborder="0"></iframe>
+          <iframe width="100%" height="450" src="https://embed.windy.com/embed2.html?lat=37.4619&lon=-121.8610&zoom=11&level=surface&overlay=wind&menu=&message=true&marker=true&forecast=12&detailLat=37.4619&detailLon=-121.8610&detail=true&metricWind=m%2Fs&metricTemp=%C2%B0F&radarRange=-1" loading="lazy" frameborder="0"></iframe>
         </div>
       </div>
       <div style="padding:0 24px 24px">
@@ -488,7 +488,7 @@ footer a:hover{text-decoration:underline}
       <div class="ws">
         <div class="wl">🗺 Live Windy Map</div>
         <div class="ww">
-          <iframe width="100%" height="450" src="https://embed.windy.com/embed2.html?lat=37.674&lon=-122.4887&zoom=11&level=surface&overlay=wind&menu=&message=true&marker=true&forecast=12&detailLat=37.674&detailLon=-122.4887&detail=true&metricWind=m%2Fs&metricTemp=%C2%B0F&radarRange=-1" loading="lazy" frameborder="0"></iframe>
+          <iframe width="100%" height="450" src="https://embed.windy.com/embed2.html?lat=37.6740&lon=-122.4887&zoom=11&level=surface&overlay=wind&menu=&message=true&marker=true&forecast=12&detailLat=37.6740&detailLon=-122.4887&detail=true&metricWind=m%2Fs&metricTemp=%C2%B0F&radarRange=-1" loading="lazy" frameborder="0"></iframe>
         </div>
       </div>
       <div style="padding:0 24px 24px">
@@ -1091,7 +1091,7 @@ var _refreshSecs=180,_cdEl=document.getElementById('refresh-countdown');
 function _tick(){var m=Math.floor(_refreshSecs/60),s=_refreshSecs%60;if(_cdEl)_cdEl.textContent=m+':'+(s<10?'0':'')+s;_refreshSecs--;if(_refreshSecs<0){_refreshSecs=180;fetchOpenMeteo({pfx:'levin',lat:37.4619,lon:-121.8610,type:'para'});fetchOpenMeteo({pfx:'mussel',lat:37.6740,lon:-122.4887,type:'para'});fetchOpenMeteo({pfx:'mpeak',lat:37.5131,lon:-121.8803,type:'para'});fetchOpenMeteo({pfx:'kite',lat:37.4297,lon:-122.0766,type:'kite'});Object.keys(SITES).forEach(function(k){var w=document.getElementById(SITES[k].wrap);if(w)w.dataset.nwsLoaded='';});updateBestWindow();document.getElementById('dt').textContent=new Date().toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'})+' (auto-refreshed)';}};
 setInterval(_tick,1000);function updateBestWindow(){
   var sites=[
-    {name:'Ed R. Levin',lat:37.4619,lon:-121.8610},
+    {name:'Ed R. Levin',lat:37.4619,lon:-121.86100},
     {name:'Mussel Rock',lat:37.6740,lon:-122.4887},
     {name:'Mission Peak',lat:37.5131,lon:-121.8803}
   ];
@@ -1148,9 +1148,7 @@ function swForecast(site, tab, label, itemBtn){
   // update button label
   var rawLbl=label||(itemBtn.querySelector('span')?itemBtn.querySelector('span').textContent:itemBtn.textContent.trim());
   var lbl=rawLbl||'📅 Forecast';
-  // fcast-label stays fixed as permanent section title (source always visible)
-  // var lblEl=document.getElementById(site+'-fcast-label');
-  // if(lblEl)lblEl.textContent=lbl;
+  // fcast-btn label is the permanent section title — not updated on selection
   closeFcastDd(site);
 }
 function toggleFcastDd(site,e){
