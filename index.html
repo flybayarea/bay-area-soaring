@@ -186,6 +186,8 @@ th{text-align:left;padding:10px 12px;font-size:11px;text-transform:uppercase;let
 td{padding:11px 12px;border-bottom:1px solid rgba(48,54,61,0.5);vertical-align:top}
 .dl{font-weight:600;color:var(--text)}
 .ws{padding:0 24px 24px;border-top:1px solid var(--border)}
+.ws iframe{height:450px;display:block;}
+@media(max-width:600px){.ws iframe{height:300px;}}
 .wl{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);padding:16px 0 12px}
 .ww{border-radius:8px;overflow:hidden;border:1px solid var(--border)}
 footer{padding:40px 24px 28px;border-top:1px solid var(--border);margin-top:40px;background:var(--bg)}
@@ -395,9 +397,9 @@ footer a:hover{text-decoration:underline}
         </div>
       </div>
       <div class="ws">
-        <div class="wl">Live Windy.app Widget</div>
+        <div class="wl">🗺 Live Windy Map</div>
         <div class="ww">
-          <iframe width="100%" height="350" src="https://embed.windy.com/embed2.html?lat=37.4619&lon=-121.861&detailLat=37.4619&detailLon=-121.861&width=650&height=450&zoom=11&level=surface&overlay=wind&product=ecmwf&menu=&message=&marker=true&calendar=now&pressure=&type=map&location=coordinates&detail=&metricWind=m%2Fs&metricTemp=%C2%B0F&radarRange=-1" frameborder="0"></iframe>
+          <iframe width="100%" height="450" src="https://embed.windy.com/embed2.html?lat=37.4619&lon=-121.861&zoom=11&level=surface&overlay=wind&menu=&message=true&marker=true&forecast=12&detailLat=37.4619&detailLon=-121.861&detail=true&metricWind=m%2Fs&metricTemp=%C2%B0F&radarRange=-1" loading="lazy" frameborder="0"></iframe>
         </div>
       </div>
       <div style="padding:0 24px 24px">
@@ -484,9 +486,9 @@ footer a:hover{text-decoration:underline}
         </div>
       </div>
       <div class="ws">
-        <div class="wl">Live Windy.app Widget</div>
+        <div class="wl">🗺 Live Windy Map</div>
         <div class="ww">
-          <iframe width="100%" height="350" src="https://embed.windy.com/embed2.html?lat=37.674&lon=-122.4887&detailLat=37.674&detailLon=-122.4887&width=650&height=450&zoom=11&level=surface&overlay=wind&product=ecmwf&menu=&message=&marker=true&calendar=now&pressure=&type=map&location=coordinates&detail=&metricWind=m%2Fs&metricTemp=%C2%B0F&radarRange=-1" frameborder="0"></iframe>
+          <iframe width="100%" height="450" src="https://embed.windy.com/embed2.html?lat=37.674&lon=-122.4887&zoom=11&level=surface&overlay=wind&menu=&message=true&marker=true&forecast=12&detailLat=37.674&detailLon=-122.4887&detail=true&metricWind=m%2Fs&metricTemp=%C2%B0F&radarRange=-1" loading="lazy" frameborder="0"></iframe>
         </div>
       </div>
       <div style="padding:0 24px 24px">
@@ -571,9 +573,9 @@ footer a:hover{text-decoration:underline}
         </div>
       </div>
       <div class="ws">
-        <div class="wl">Live Windy.app Widget</div>
+        <div class="wl">🗺 Live Windy Map</div>
         <div class="ww">
-          <iframe width="100%" height="350" src="https://embed.windy.com/embed2.html?lat=37.4297&lon=-122.0766&detailLat=37.4297&detailLon=-122.0766&width=650&height=450&zoom=11&level=surface&overlay=wind&product=ecmwf&menu=&message=&marker=true&calendar=now&pressure=&type=map&location=coordinates&detail=&metricWind=m%2Fs&metricTemp=%C2%B0F&radarRange=-1" frameborder="0"></iframe>
+          <iframe width="100%" height="450" src="https://embed.windy.com/embed2.html?lat=37.4297&lon=-122.0766&zoom=11&level=surface&overlay=wind&menu=&message=true&marker=true&forecast=12&detailLat=37.4297&detailLon=-122.0766&detail=true&metricWind=m%2Fs&metricTemp=%C2%B0F&radarRange=-1" loading="lazy" frameborder="0"></iframe>
         </div>
       </div>
     </div>
@@ -652,9 +654,9 @@ footer a:hover{text-decoration:underline}
         </div>
       </div>
       <div class="ws">
-        <div class="wl">Live Windy.app Widget</div>
+        <div class="wl">🗺 Live Windy Map</div>
         <div class="ww">
-          <iframe width="100%" height="350" src="https://embed.windy.com/embed2.html?lat=37.5131&lon=-121.8803&detailLat=37.5131&detailLon=-121.8803&width=650&height=450&zoom=11&level=surface&overlay=wind&product=ecmwf&menu=&message=&marker=true&calendar=now&pressure=&type=map&location=coordinates&detail=&metricWind=m%2Fs&metricTemp=%C2%B0F&radarRange=-1" frameborder="0"></iframe>
+          <iframe width="100%" height="450" src="https://embed.windy.com/embed2.html?lat=37.5131&lon=-121.8803&zoom=11&level=surface&overlay=wind&menu=&message=true&marker=true&forecast=12&detailLat=37.5131&detailLon=-121.8803&detail=true&metricWind=m%2Fs&metricTemp=%C2%B0F&radarRange=-1" loading="lazy" frameborder="0"></iframe>
         </div>
       </div>
     </div>
@@ -998,7 +1000,8 @@ function buildNWS(wrap,forecast,hourly,obs,obsStation,siteName,siteType){
     cond=p.textDescription||'';
     var icon=p.icon||'';
     var updated=p.timestamp?new Date(p.timestamp).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit',timeZoneName:'short'}):'';
-    html+='<div class="nws-obs-station">Current conditions at <strong>'+(siteName||'')+'</strong></div>';
+    html+='<div id="nws-sec-today" class="nws-section-anchor"></div>';
+  html+='<div class="nws-obs-station">Current conditions at <strong>'+(siteName||'')+'</strong></div>';
     html+='<div class="nws-cur"><div class="nws-cur-left">';
     if(icon)html+='<img class="nws-cur-icon" src="'+icon+'&size=large" alt="'+cond+'"/>';
     html+='<div><div class="nws-cur-temp">'+(tempF!==null?tempF+'&deg;F':'--')+'</div><div class="nws-cur-cond">'+cond+'</div></div></div><div class="nws-cur-right">';
@@ -1031,6 +1034,7 @@ function buildNWS(wrap,forecast,hourly,obs,obsStation,siteName,siteType){
   }
   html+='<div style="margin-bottom:20px"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px"><div class="nws-section-title" style="margin-bottom:0">GO / NO-GO Assessment</div><span class="sb '+gonogoClass+'">'+gonogo+'</span></div>';
   html+='<div class="desc"><strong>GO / NO-GO: '+gonogo+'.</strong> '+gonogoText+'</div><div class="tags">'+tags+'</div></div>';
+  html+='<div id="nws-sec-outlook" class="nws-section-anchor"></div>';
   html+='<div class="nws-section-title">Extended Forecast</div><div class="nws-7day-strip">';
   periods.slice(0,8).forEach(function(pp,i){
     var isNight=pp.isDaytime===false;
@@ -1040,6 +1044,7 @@ function buildNWS(wrap,forecast,hourly,obs,obsStation,siteName,siteType){
     html+='<div class="nws-day-cond">'+pp.shortForecast+'</div></div>';
   });
   html+='</div>';
+  html+='<div id="nws-sec-tomorrow" class="nws-section-anchor"></div>';
   if(hourly&&hourly.properties&&hourly.properties.periods)html+=buildHourly(hourly.properties.periods);
   html+='<div class="nws-section-title" style="margin-top:20px">Detailed Forecast</div>';
   periods.slice(0,8).forEach(function(pp){
