@@ -279,13 +279,13 @@ footer a{color:var(--accent);text-decoration:none}
       </div>
       <div id="lev-t2" class="tc">
         <div class="stats">
-          <div class="stat"><div class="lbl">Wind Speed</div><div class="val">4.1<span class="u">m/s</span></div></div>
-          <div class="stat"><div class="lbl">Gusts</div><div class="val">3.5<span class="u">m/s</span></div></div>
-          <div class="stat"><div class="lbl">Temperature</div><div class="val">68<span class="u">F</span></div></div>
-          <div class="stat"><div class="lbl">Precipitation</div><div class="val">0<span class="u">mm</span></div></div>
+          <div class="stat"><div class="lbl">Wind Speed</div><div class="val"><span id="levin-wind-tmrw">--</span><span class="u">m/s</span></div></div>
+          <div class="stat"><div class="lbl">Gusts</div><div class="val"><span id="levin-gust-tmrw">--</span><span class="u">m/s</span></div></div>
+          <div class="stat"><div class="lbl">Temperature</div><div class="val"><span id="levin-temp-tmrw">--</span><span class="u">°F</span></div></div>
+          <div class="stat"><div class="lbl">Precipitation</div><div class="val"><span id="levin-precip-tmrw">--</span><span class="u">mm</span></div></div>
         </div>
-        <div class="desc"><strong>GO / NO-GO: Marginal — P3+ only.</strong> NWS shows mostly sunny with W winds 2-9 mph. A small afternoon thermal window may open 1-3 PM. Wet launch from overnight rain — inspect carefully.</div>
-        <div class="tags"><span class="tag ty">Marginal Wind</span><span class="tag ty">Wet Launch</span><span class="tag ty">P3+ Only</span><span class="tag ty">Rain Clearing</span></div>
+        <div class="desc" id="levin-desc-tmrw">Loading tomorrow conditions...</div>
+        <div class="tags" id="levin-tags-tmrw"></div>
       </div>
       <div id="lev-t3" class="tc">
         <table><thead><tr><th>Day</th><th>Wind / Gusts</th><th>Precip</th><th>NWS Condition</th><th>Assessment</th></tr></thead>
@@ -345,18 +345,18 @@ footer a{color:var(--accent);text-decoration:none}
       </div>
       <div id="mus-t2" class="tc">
         <div class="stats">
-          <div class="stat"><div class="lbl">Wind Speed</div><div class="val">5.8<span class="u">m/s</span></div></div>
-          <div class="stat"><div class="lbl">Gusts</div><div class="val">7.7<span class="u">m/s</span></div></div>
-          <div class="stat"><div class="lbl">Temperature</div><div class="val"><span id="levin-temp-today">--</span><span class="u">F</span></div></div>
-          <div class="stat"><div class="lbl">Precipitation</div><div class="val">0<span class="u">mm</span></div></div>
+          <div class="stat"><div class="lbl">Wind Speed</div><div class="val"><span id="mussel-wind-tmrw">--</span><span class="u">m/s</span></div></div>
+          <div class="stat"><div class="lbl">Gusts</div><div class="val"><span id="mussel-gust-tmrw">--</span><span class="u">m/s</span></div></div>
+          <div class="stat"><div class="lbl">Temperature</div><div class="val"><span id="mussel-temp-tmrw">--</span><span class="u">°F</span></div></div>
+          <div class="stat"><div class="lbl">Precipitation</div><div class="val"><span id="mussel-precip-tmrw">--</span><span class="u">mm</span></div></div>
         </div>
-        <div class="desc"><strong>GO / NO-GO: Flyable in the afternoon — experienced pilots only.</strong> W winds around 13 mph — ideal onshore direction for the cliff. Best window 1-4 PM. Wetsuit required, water at 57F.</div>
-        <div class="tags"><span class="tag tg">Afternoon Window</span><span class="tag ty">Wetsuit Required</span><span class="tag ty">Exp. Pilots Only</span><span class="tag tg">Good Wind Direction</span></div>
+        <div class="desc" id="mussel-desc-tmrw">Loading tomorrow conditions...</div>
+        <div class="tags" id="mussel-tags-tmrw"></div>
       </div>
       <div id="mus-t3" class="tc">
         <table><thead><tr><th>Day</th><th>Wind / Gusts</th><th>Precip</th><th>NWS Condition</th><th>Assessment</th></tr></thead>
         <tbody id="mussel-outlook-body">
-          <tr><td class="dl"></td><td>4.5 / 9.2 m/s</td><td><span id="mussel-precip-today">--</span>mm</td><td>Partly Cloudy, Rain, W 6-12mph</td><td>Dangerous</td></tr>
+          <tr><td class="dl"></td><td>--</td><td>--mm</td><td>--</td><td>--</td></tr>
           <tr><td class="dl"></td><td>5.8 / 7.7 m/s</td><td>0mm</td><td>Mostly Cloudy, 57F, W 13mph</td><td>Flyable PM</td></tr>
           <tr><td class="dl"></td><td>7.6 / 10.7 m/s</td><td>0mm</td><td>Mostly Sunny, 58F, WNW 13-17mph, G22</td><td>Best Day!</td></tr>
           <tr><td class="dl"></td><td>5.5 / 7.0 m/s</td><td>0mm</td><td>Sunny, 61F, WNW 6-12mph</td><td>Good</td></tr>
@@ -546,7 +546,9 @@ function sw(site,tab,btn){
   document.getElementById(site+'-'+tab).classList.add('on');
   btn.classList.add('on');
   var ws=c.querySelector('.ws');
-  if(ws)ws.style.display=(tab==='nws')?'none':'';
+  var isNwsTab=(tab==='nws'||tab==='t4');
+  if(ws)ws.style.display=isNwsTab?'none':'';
+  if(isNwsTab)fetchNWSForSite(site);
 }
 
 // Helper: wind m/s -> mph
@@ -613,7 +615,7 @@ function kiteAssess(windMs,precipMm){
 
 // Populate a site's Today/Tomorrow/Outlook from Open-Meteo data
 
-    }function populateSite(cfg, data){
+function populateSite(cfg, data){
   var hourly = data.hourly;
   var now = new Date();
   var todayStr = [now.getFullYear(), String(now.getMonth()+1).padStart(2,'0'), String(now.getDate()).padStart(2,'0')].join('-');
@@ -760,6 +762,7 @@ function buildHourly(periods){
 }
 
 function buildNWS(wrap,forecast,hourly,obs,obsStation,siteName,siteType){
+  if(!forecast||!forecast.properties||!forecast.properties.periods){wrap.innerHTML='<div class="nws-loading">&#9888; NWS data unavailable. <a href="https://www.weather.gov" target="_blank" style="color:var(--accent)">Visit weather.gov</a></div>';return;}
   var periods=forecast.properties.periods;
   var html='';
   var p=obs&&obs.properties?obs.properties:{};
@@ -828,27 +831,42 @@ function buildNWS(wrap,forecast,hourly,obs,obsStation,siteName,siteType){
   wrap.innerHTML=html;
 }
 
-function loadSite(gridUrl,wrapId,obsStn,siteName,siteType){
-  var wrap=document.getElementById(wrapId);
-  if(!wrap)return;
-  var fP=fetch('https://api.weather.gov/gridpoints/'+gridUrl+'/forecast').then(function(r){return r.json()});
-  var hP=fetch('https://api.weather.gov/gridpoints/'+gridUrl+'/forecast/hourly').then(function(r){return r.json()}).catch(function(){return null});
-  var oP=obsStn?fetch('https://api.weather.gov/stations/'+obsStn+'/observations/latest').then(function(r){return r.json()}).catch(function(){return null}):Promise.resolve(null);
-  var sP=obsStn?fetch('https://api.weather.gov/stations/'+obsStn).then(function(r){return r.json()}).catch(function(){return null}):Promise.resolve(null);
-  Promise.all([fP,hP,oP,sP]).then(function(res){
-    buildNWS(wrap,res[0],res[1],res[2],res[3],siteName,siteType||'para');
-  }).catch(function(){
-    wrap.innerHTML='<div class="nws-loading">Could not load NWS data. <a href="https://www.weather.gov" target="_blank" style="color:var(--accent)">Visit weather.gov</a></div>';
-  });
+var SITES={
+  'lev':  {lat:37.4619,lon:-121.8610,wrap:'lev-nws-wrap',  name:'Ed R. Levin Park',         type:'para'},
+  'mus':  {lat:37.6740,lon:-122.4887,wrap:'mus-nws-wrap',  name:'Mussel Rock Park',          type:'para'},
+  'kite': {lat:37.4297,lon:-122.0766,wrap:'kite-nws-wrap', name:'Shoreline Kite Flying Area',type:'kite'},
+  'mpeak':{lat:37.5131,lon:-121.8803,wrap:'mpeak-nws-wrap',name:'Mission Peak',              type:'para'}
+};
+function fetchNWSForSite(siteKey){
+  var cfg=SITES[siteKey];if(!cfg)return;
+  var wrap=document.getElementById(cfg.wrap);if(!wrap)return;
+  if(wrap.dataset.nwsLoaded==='1')return;
+  wrap.innerHTML='<div class="nws-loading">&#9203; Fetching NWS forecast for '+cfg.name+'...</div>';
+  fetch('https://api.weather.gov/points/'+cfg.lat+','+cfg.lon)
+    .then(function(r){if(!r.ok)throw new Error('NWS /points/ '+r.status);return r.json();})
+    .then(function(pts){
+      var props=pts.properties;
+      var fP=fetch(props.forecast).then(function(r){if(!r.ok)throw new Error('forecast '+r.status);return r.json();});
+      var hP=fetch(props.forecastHourly).then(function(r){return r.ok?r.json():null;}).catch(function(){return null;});
+      var oP=fetch(props.observationStations+'?limit=1')
+        .then(function(r){return r.json();})
+        .then(function(sl){
+          var sid=sl.features&&sl.features[0]&&sl.features[0].properties.stationIdentifier;
+          if(!sid)return null;
+          return fetch('https://api.weather.gov/stations/'+sid+'/observations/latest')
+            .then(function(r){return r.ok?r.json():null;}).catch(function(){return null;});
+        }).catch(function(){return null;});
+      return Promise.all([fP,hP,oP]);
+    })
+    .then(function(res){buildNWS(wrap,res[0],res[1],res[2],null,cfg.name,cfg.type);wrap.dataset.nwsLoaded='1';})
+    .catch(function(e){
+      wrap.innerHTML='<div class="nws-loading">&#9888; Could not load NWS data ('+e.message+'). <a href="https://www.weather.gov" target="_blank" style="color:var(--accent)">Visit weather.gov</a></div>';
+    });
 }
-
-loadSite('MTR/101,87','lev-nws-wrap','KSJC','Ed R. Levin Park','para');
-loadSite('MTR/81,101','mus-nws-wrap','KSFO','Mussel Rock Park','para');
-loadSite('MTR/94,88','kite-nws-wrap','KNUQ','Shoreline Kite Flying Area','kite');
-loadSite('MTR/101,90','mpeak-nws-wrap','KSJC','Mission Peak','para');updateBestWindow();
+updateBestWindow();
 
 var _refreshSecs=180,_cdEl=document.getElementById('refresh-countdown');
-function _tick(){var m=Math.floor(_refreshSecs/60),s=_refreshSecs%60;if(_cdEl)_cdEl.textContent=m+':'+(s<10?'0':'')+s;_refreshSecs--;if(_refreshSecs<0){_refreshSecs=180;fetchOpenMeteo({pfx:'levin',lat:37.4619,lon:-121.8610,type:'para'});fetchOpenMeteo({pfx:'mussel',lat:37.6740,lon:-122.4887,type:'para'});fetchOpenMeteo({pfx:'mpeak',lat:37.5131,lon:-121.8803,type:'para'});fetchOpenMeteo({pfx:'kite',lat:37.4297,lon:-122.0766,type:'kite'});loadSite('MTR/101,87','lev-nws-wrap','KSJC','Ed R. Levin Park','para');loadSite('MTR/81,101','mus-nws-wrap','KSFO','Mussel Rock Park','para');loadSite('MTR/94,88','kite-nws-wrap','KNUQ','Shoreline Kite Flying Area','kite');loadSite('MTR/101,90','mpeak-nws-wrap','KSJC','Mission Peak','para');updateBestWindow();document.getElementById('dt').textContent=new Date().toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'})+' (auto-refreshed)';}};
+function _tick(){var m=Math.floor(_refreshSecs/60),s=_refreshSecs%60;if(_cdEl)_cdEl.textContent=m+':'+(s<10?'0':'')+s;_refreshSecs--;if(_refreshSecs<0){_refreshSecs=180;fetchOpenMeteo({pfx:'levin',lat:37.4619,lon:-121.8610,type:'para'});fetchOpenMeteo({pfx:'mussel',lat:37.6740,lon:-122.4887,type:'para'});fetchOpenMeteo({pfx:'mpeak',lat:37.5131,lon:-121.8803,type:'para'});fetchOpenMeteo({pfx:'kite',lat:37.4297,lon:-122.0766,type:'kite'});Object.keys(SITES).forEach(function(k){var w=document.getElementById(SITES[k].wrap);if(w)w.dataset.nwsLoaded='';});updateBestWindow();document.getElementById('dt').textContent=new Date().toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'})+' (auto-refreshed)';}};
 setInterval(_tick,1000);function updateBestWindow(){
   var sites=[
     {name:'Ed R. Levin',lat:37.4619,lon:-121.8610},
