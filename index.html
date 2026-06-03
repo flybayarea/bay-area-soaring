@@ -141,8 +141,25 @@ td{padding:11px 12px;border-bottom:1px solid rgba(48,54,61,0.5);vertical-align:t
 .ws{padding:0 24px 24px;border-top:1px solid var(--border)}
 .wl{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);padding:16px 0 12px}
 .ww{border-radius:8px;overflow:hidden;border:1px solid var(--border)}
-footer{text-align:center;padding:20px;font-size:12px;color:var(--muted);border-top:1px solid var(--border)}
+footer{padding:40px 24px 28px;border-top:1px solid var(--border);margin-top:40px;background:var(--bg)}
 footer a{color:var(--accent);text-decoration:none}
+footer a:hover{text-decoration:underline}
+.ft-inner{max-width:860px;margin:0 auto;}
+.ft-sources{display:flex;flex-wrap:wrap;gap:24px;justify-content:center;margin-bottom:24px;}
+.ft-source{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:130px;}
+.ft-source-icon{font-size:22px;line-height:1;}
+.ft-source-name{font-size:13px;font-weight:600;color:var(--text);}
+.ft-source-desc{font-size:11px;color:var(--muted);text-align:center;max-width:140px;}
+.ft-divider{border:none;border-top:1px solid var(--border);margin:0 0 20px;}
+.ft-safety{background:rgba(255,200,50,0.07);border:1px solid rgba(255,200,50,0.2);border-radius:8px;padding:14px 18px;margin-bottom:18px;font-size:12px;color:#d4b54a;line-height:1.6;text-align:center;}
+.ft-safety strong{color:#e8c84a;}
+.ft-refresh-note{font-size:11px;color:var(--muted);text-align:center;margin-bottom:18px;line-height:1.5;}
+.ft-copyright{font-size:11px;color:var(--muted);text-align:center;opacity:0.6;}
+@media(max-width:600px){
+  .ft-sources{gap:16px;}
+  .ft-source{min-width:110px;}
+  footer{padding:28px 16px 20px;}
+}
 .nws-wrap{font-size:13px}
 .nws-obs-station{font-size:11px;color:var(--muted);margin-bottom:12px}
 .nws-cur{display:flex;gap:20px;align-items:flex-start;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:20px;margin-bottom:20px;flex-wrap:wrap}
@@ -515,7 +532,44 @@ footer a{color:var(--accent);text-decoration:none}
 </div>
 
 <footer>
-  Data: <a href="https://www.weather.gov" target="_blank">NOAA / NWS</a> &amp; <a href="https://windy.app" target="_blank">Windy.app</a> &middot; Bay Area Soaring &middot; Always verify conditions before flying
+  <div class="ft-inner">
+    <!-- Data Sources -->
+    <div class="ft-sources">
+      <div class="ft-source">
+        <span class="ft-source-icon">🌡️</span>
+        <span class="ft-source-name"><a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a></span>
+        <span class="ft-source-desc">Wind, gusts, temperature &amp; precipitation data</span>
+      </div>
+      <div class="ft-source">
+        <span class="ft-source-icon">🌀</span>
+        <span class="ft-source-name"><a href="https://www.windy.com/" target="_blank" rel="noopener">Windy</a></span>
+        <span class="ft-source-desc">Live wind overlays &amp; interactive weather maps</span>
+      </div>
+      <div class="ft-source">
+        <span class="ft-source-icon">🏛️</span>
+        <span class="ft-source-name"><a href="https://www.weather.gov/" target="_blank" rel="noopener">NOAA / NWS</a></span>
+        <span class="ft-source-desc">Extended hourly forecasts via weather.gov</span>
+      </div>
+    </div>
+
+    <hr class="ft-divider">
+
+    <!-- Refresh note -->
+    <p class="ft-refresh-note">
+      Weather data is fetched from Open-Meteo and refreshed every 3 minutes. NWS forecasts are loaded on demand.<br>
+      Data may not reflect real-time conditions at the exact flying site. Always check current on-site conditions.
+    </p>
+
+    <!-- Safety disclaimer -->
+    <div class="ft-safety">
+      <strong>⚠️ Safety Disclaimer:</strong> This site is intended for informational purposes only.
+      Always verify conditions with a certified instructor or local flying club before flying.
+      Weather conditions can change rapidly — <strong>fly at your own risk.</strong>
+    </div>
+
+    <!-- Copyright -->
+    <p class="ft-copyright">© 2026 Bay Area Soaring &nbsp;·&nbsp; For recreational use only &nbsp;·&nbsp; Not a substitute for professional weather briefings</p>
+  </div>
 </footer>
 
 <script>
