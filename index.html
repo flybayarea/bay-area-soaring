@@ -194,7 +194,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer}
   100%{transform:scale(1);box-shadow:0 0 0 0 rgba(248,113,113,0)}
 }
 
-/* Sidebar footer: cams + FlyXC */
+/* Sidebar footer */
 .sidebar-footer{
   padding:8px 12px 10px;
   border-top:1px solid rgba(31,41,55,0.9);
@@ -767,7 +767,7 @@ const SITES=[
     nwsX:90,
     nwsY:93,
     notamHint:"Near PAO / NUQ — check NOTAMs",
-    youtubeId:"sqQbWv7YgEk",
+    youtubeId:"sqQbW7YgEk",
     externalSite:null
   },
   {
@@ -1136,7 +1136,7 @@ async function fetchNWSHourly(site){
   return {ts:Date.now(),data};
 }
 
-/* Shared hourly renderer: same layout for OM & NWS */
+/* Shared hourly renderer */
 function renderHourlyCards(hourlyArr,max=8){
   if(!hourlyArr || !hourlyArr.length){
     return `<div style="font-size:12px;color:#9ca3af;">No future hours available.</div>`;
@@ -1160,6 +1160,45 @@ function renderHourlyCards(hourlyArr,max=8){
       </div>`;
     }).join("")
   }</div>`;
+}
+
+/* Normalize NWS hourly first future period into "current" */
+function nwsHourlyToCurrent(site, periods){
+  if(!periods || !periods.length) return null;
+  const now = nowLocal();
+  const idx = periods.findIndex(p => new Date(p.startTime) >= now);
+  const p = periods[idx >= 0 ? idx : 0];
+
+  const currentTime = new Date(p.startTime);
+  const temp = p.temperature;
+  const short = p.shortForecast || "";
+
+  const ws = p.windSpeed || "";
+  let avgWind = 0;
+  const m = ws.match(/(\d+)\s*(?:to|-)\s*(\d+)\s*mph/i);
+  const m2 = ws.match(/(\d+)\s*mph/i);
+  if(m){
+    avgWind = (parseInt(m[1],10)+parseInt(m[2],10))/2;
+  }else if(m2){
+    avgWind = parseInt(m2[1],10);
+  }
+
+  const dir = p.windDirection || "";
+  const precipMention = /rain|shower|storm|snow|drizzle/i.test(short);
+  const precip = precipMention ? 0.01 : 0;
+
+  return {
+    time: currentTime,
+    current: {
+      temperature_2m: temp,
+      windspeed_10m: avgWind,
+      windgusts_10m: avgWind,
+      winddirection_10m: 0,
+      precipitation: precip
+    },
+    dirText: dir,
+    shortForecast: short
+  };
 }
 
 /* Sidebar & mobile nav */
@@ -1321,12 +1360,11 @@ function renderDetail(siteId){
     return;
   }
   const om=state.om.data;
-  const current=om.current||{};
-  const precip=current.precipitation||0;
+  const liveCurrent = state.liveCurrent || (om.current || {});
+  const precip=liveCurrent.precipitation||0;
   const score=state.safetyScore;
   const cat=state.safetyCategory;
-  const gust=current.windgusts_10m||current.windspeed_10m||0;
-  const gustAlert=gust>=STATE.gustThreshold;
+  const gust=liveCurrent.windgusts_10m||liveCurrent.windspeed_10m||0;
   const condLabel=cat==="SAFE"?"Safe":cat==="MARGINAL"?"Marginal":"Dangerous";
   const condClass=cat==="SAFE"?"safe":cat==="MARGINAL"?"marginal":"danger";
   const lastTs=state.updatedTs;
@@ -1371,10 +1409,12 @@ function renderDetail(siteId){
 
   const metricsCard=document.querySelector(".metrics-card");
   if(metricsCard){
-    const wind=current.windspeed_10m||0;
-    const gustVal=current.windgusts_10m||wind;
-    const dir=dirFromDeg(current.winddirection_10m||0);
-    const temp=Math.round(current.temperature_2m||0);
+    const wind=liveCurrent.windspeed_10m||0;
+    const gustVal=liveCurrent.windgusts_10m||wind;
+    const dir=state.liveDirText
+      ? state.liveDirText
+      : dirFromDeg(liveCurrent.winddirection_10m||0);
+    const temp=Math.round(liveCurrent.temperature_2m||0);
     const prec=precip;
     const gustClass=gustVal>=STATE.gustThreshold?"metric gust-alert":"metric";
 
@@ -1452,7 +1492,7 @@ function renderDetail(siteId){
   updateSidebarRow(siteId);
 }
 
-/* Open-Meteo hourly from current time; uses shared renderer */
+/* Open‑Meteo hourly from current time using shared renderer */
 function renderOpenMeteoForecast(site,state){
   const om=state.om.data;
   const hourly=om.hourly||{};
@@ -1541,7 +1581,7 @@ function wireOmTabs(siteId){
   });
 }
 
-/* NWS hourly: normalize into same shape & render with shared grid */
+/* NWS hourly: normalize and render with shared layout */
 async function ensureNwsLoaded(siteId){
   const site=SITES.find(s=>s.id===siteId);
   const state=STATE.siteData[siteId]||{};
@@ -1569,10 +1609,8 @@ async function ensureNwsLoaded(siteId){
       const t=new Date(p.startTime);
       const temp=p.temperature;
       const short=p.shortForecast||"";
-      // windSpeed is like "5 to 10 mph". Extract a representative mph.
-      let avgWind=0;
-      let gust=null;
       const ws=p.windSpeed||"";
+      let avgWind=0;
       const m=ws.match(/(\d+)\s*(?:to|-)\s*(\d+)\s*mph/i);
       const m2=ws.match(/(\d+)\s*mph/i);
       if(m){
@@ -1580,15 +1618,15 @@ async function ensureNwsLoaded(siteId){
       }else if(m2){
         avgWind=parseInt(m2[1],10);
       }
-      // NWS hourly doesn't expose gust explicitly; we leave gust=null to render plain wind
-      const precipMention=/rain|shower|storm|snow|drizzle/i.test(short)?"Precip possible":"No explicit precip";
+      const precipMention=/rain|shower|storm|snow|drizzle/i.test(short);
+      const precipTxt=precipMention?"Precip possible":"No explicit precip";
       return {
         time:t,
         windSpeed:avgWind||0,
         windGust:null,
         temperature:temp,
         precipitation:null,
-        precipitationText:precipMention,
+        precipitationText:precipTxt,
         shortForecast:short
       };
     });
@@ -1663,16 +1701,18 @@ function renderReports(siteId){
   `;
 }
 
-/* Sidebar row update */
+/* Sidebar row update: use liveCurrent (NWS‑driven) */
 function updateSidebarRow(siteId){
   const site=SITES.find(s=>s.id===siteId);
   const state=STATE.siteData[siteId];
   if(!state||!state.om) return;
   const om=state.om.data;
-  const current=om.current||{};
-  const wind=current.windspeed_10m||0;
-  const gust=current.windgusts_10m||wind;
-  const dir=dirFromDeg(current.winddirection_10m||0);
+  const liveCurrent = state.liveCurrent || (om.current || {});
+  const wind=liveCurrent.windspeed_10m||0;
+  const gust=liveCurrent.windgusts_10m||wind;
+  const dir=state.liveDirText
+    ? state.liveDirText
+    : dirFromDeg(liveCurrent.winddirection_10m||0);
   const cat=state.safetyCategory;
   const label=cat==="SAFE"?"Safe":cat==="MARGINAL"?"Marginal":"Dangerous";
   const condEl=document.getElementById("site-cond-"+siteId);
@@ -1722,33 +1762,61 @@ function selectSite(id){
   loadSiteData(id);
 }
 
-/* Load site data then advisor */
+/* Load site data: NWS drives liveCurrent */
 async function loadSiteData(siteId){
   const site=SITES.find(s=>s.id===siteId);
   if(!site) return;
   try{
     const omRes=await fetchOpenMeteo(site);
     const om=omRes.data;
-    const current=om.current||{};
-    const precip=current.precipitation||0;
-    const score=computeSafetyScore(site,current,precip);
+
+    let nwsHourRes=null;
+    let nwsPeriods=null;
+    let nwsCurrent=null;
+    try{
+      nwsHourRes=await fetchNWSHourly(site);
+      nwsPeriods=(nwsHourRes.data.properties && nwsHourRes.data.properties.periods) || [];
+      if(nwsPeriods.length){
+        nwsCurrent=nwsHourlyToCurrent(site,nwsPeriods);
+      }
+    }catch(e){
+      console.warn("NWS hourly unavailable, falling back to Open‑Meteo for live conditions",e);
+    }
+
+    let liveCurrent, liveDirText;
+    if(nwsCurrent){
+      liveCurrent=nwsCurrent.current;
+      liveDirText=nwsCurrent.dirText;
+    }else{
+      const c=om.current||{};
+      liveCurrent=c;
+      liveDirText=null;
+    }
+
+    const precip=liveCurrent.precipitation||0;
+    const score=computeSafetyScore(site,liveCurrent,precip);
     const cat=safetyCategory(score,site);
     const bestWindow=bestWindowFromHourly(site,om.hourly||{});
     const prev=STATE.siteData[siteId]||{};
+
     STATE.siteData[siteId]=Object.assign({},prev,{
       om:omRes,
+      nwsHourly:nwsPeriods || null,
+      liveCurrent,
+      liveDirText,
       safetyScore:score,
       safetyCategory:cat,
       bestWindow,
       updatedTs:Date.now()
     });
+
     updateSidebarRow(siteId);
     if(STATE.currentId===siteId){
       renderDetail(siteId);
     }
     updateAdvisor(siteId);
   }catch(e){
-    console.error("Open‑Meteo error",e);
+    console.error("Open‑Meteo / NWS error",e);
     if(STATE.currentId===siteId){
       const detail=document.getElementById("detail");
       detail.innerHTML=`<div style="padding:16px;font-size:13px;color:#fca5a5;">Failed to load live weather data. Check your connection and try again.</div>`;
@@ -1857,10 +1925,9 @@ document.addEventListener("DOMContentLoaded",()=>{
   window.addEventListener("online",()=>{
     for(const site of SITES){
       const state=STATE.siteData[site.id];
-      const om=state&&state.om&&state.om.data;
-      if(om){
-        const current=om.current||{};
-        const gust=current.windgusts_10m||current.windspeed_10m||0;
+      const live=state && state.liveCurrent;
+      if(live){
+        const gust=live.windgusts_10m||live.windspeed_10m||0;
         if(gust>=STATE.gustThreshold) showGustToast(site,gust);
       }
     }
