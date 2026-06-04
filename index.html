@@ -455,23 +455,6 @@ button{font-family:inherit;border:none;background:none;cursor:pointer}
   border-color:rgba(59,130,246,0.9);
   color:#e5f2ff;
 }
-
-/* Green safety bar */
-.safety-timeline{
-  margin-top:8px;
-  display:flex;
-  gap:1px;
-}
-.safety-slot{
-  flex:1;
-  height:9px;
-  border-radius:2px;
-}
-.safety-slot.safe{background:#22c55e}
-.safety-slot.marginal{background:#eab308}
-.safety-slot.danger{background:#ef4444}
-
-/* Forecast items grid */
 .forecast-grid{
   display:grid;
   grid-template-columns:repeat(2,minmax(0,1fr));
@@ -497,6 +480,21 @@ button{font-family:inherit;border:none;background:none;cursor:pointer}
   margin-top:2px;
   color:#9ca3af;
 }
+
+/* Safety timeline */
+.safety-timeline{
+  margin-top:8px;
+  display:flex;
+  gap:1px;
+}
+.safety-slot{
+  flex:1;
+  height:9px;
+  border-radius:2px;
+}
+.safety-slot.safe{background:#22c55e}
+.safety-slot.marginal{background:#eab308}
+.safety-slot.danger{background:#ef4444}
 
 /* Info & reports */
 .info-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-top:6px}
@@ -743,7 +741,7 @@ const SITES=[
     typicalWind:"Strong W–NW ocean flow",
     emergency:"San Mateo County Dispatch · 911",
     landing:"Beach below cliffs — advanced pilots only",
-    windyEmbed:"https://embed.windy.com/embed2.html?lat=37.674&lon:-122.4887&detailLat=37.674&detailLon=-122.4887&width=650&height=350&zoom=12&level=surface&overlay=wind&product=ecmwf&menu=&message=&marker=true&calendar=now&pressure=true&type=map&location=coordinates&detail=true&metricWind=mph&metricTemp=%C2%B0F&radarRange=-1",
+    windyEmbed:"https://embed.windy.com/embed2.html?lat=37.674&lon=-122.4887&detailLat=37.674&detailLon=-122.4887&width=650&height=350&zoom=12&level=surface&overlay=wind&product=ecmwf&menu=&message=&marker=true&calendar=now&pressure=true&type=map&location=coordinates&detail=true&metricWind=mph&metricTemp=%C2%B0F&radarRange=-1",
     nwsOffice:"MTR",
     nwsX:82,
     nwsY:120,
@@ -1415,7 +1413,7 @@ function renderDetailSkeleton(){
     <div class="detail-grid-mid">
       <div class="card" id="om-card-${site.id}">
         <div class="card-header" data-target="om-body-${site.id}">
-          <div class="card-title">OPEN‑METEO FORECAST</div>
+          <div class="card-title">Open‑Meteo Forecast</div>
           <div class="card-toggle-pill open" id="om-pill-${site.id}">Tap to collapse</div>
         </div>
         <div class="card-body open" id="om-body-${site.id}"></div>
@@ -1423,7 +1421,7 @@ function renderDetailSkeleton(){
 
       <div class="card" id="nws-card-${site.id}">
         <div class="card-header" data-target="nws-body-${site.id}">
-          <div class="card-title">NWS FORECAST</div>
+          <div class="card-title">NWS Forecast</div>
           <div class="card-toggle-pill open" id="nws-pill-${site.id}">Tap to collapse</div>
         </div>
         <div class="card-body open" id="nws-body-${site.id}"></div>
@@ -1539,4 +1537,544 @@ function renderDetail(siteId){
           </div>
           <div class="metric-sub">${dir} surface flow</div>
         </div>
-       
+        <div class="${gustClass}">
+          <div class="metric-label">Gusts</div>
+          <div class="metric-value">
+            <span class="metric-main">${gustVal.toFixed(1)}</span>
+            <span class="metric-unit">mph</span>
+          </div>
+          <div class="metric-sub">${gustVal>=STATE.gustThreshold?"⚠ Above gust threshold — advanced only":"Within normal gust range"}</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">Temperature</div>
+          <div class="metric-value">
+            <span class="metric-main">${temp}</span>
+            <span class="metric-unit">°F</span>
+          </div>
+          <div class="metric-sub">At launch level, representative of now</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">Precipitation</div>
+          <div class="metric-value">
+            <span class="metric-main">${prec.toFixed(2)}</span>
+            <span class="metric-unit">in</span>
+          </div>
+          <div class="metric-sub">${prec? "Showers in play — watch wing loading":"Dry air — better for fabric & lines"}</div>
+        </div>
+      </div>
+    `;
+  }
+
+  const omBody=document.getElementById("om-body-"+site.id);
+  if(omBody){omBody.innerHTML=renderOpenMeteoForecast(site,state);wireOmTabs(site.id);}
+  const infoBody=document.getElementById("info-body-"+site.id);
+  if(infoBody) infoBody.innerHTML=renderSiteInfo(site);
+  const reportsBody=document.getElementById("reports-body-"+site.id);
+  if(reportsBody) reportsBody.innerHTML=renderReports(site.id);
+
+  ensureNwsDailyAndHourly(site.id);
+
+  document.querySelectorAll(".card-header").forEach(h=>{
+    h.addEventListener("click",()=>{
+      const targetId=h.getAttribute("data-target");
+      const body=document.getElementById(targetId);
+      const pill=h.querySelector(".card-toggle-pill");
+      const open=!body.classList.contains("open");
+      body.classList.toggle("open",open);
+      pill.classList.toggle("open",open);
+      if(targetId.startsWith("nws-body-")&&open){
+        ensureNwsDailyAndHourly(site.id);
+      }
+      if(targetId.startsWith("om-body-")||
+         targetId.startsWith("nws-body-")||
+         targetId.startsWith("info-body-")||
+         targetId.startsWith("reports-body-")){
+        pill.textContent=open?"Tap to collapse":"Tap to expand";
+      }
+    });
+  });
+
+  updateSidebarRow(siteId);
+}
+
+/* Open‑Meteo forecast with windDir */
+function renderOpenMeteoForecast(site,state){
+  const om=state.om.data;
+  const hourly=om.hourly||{};
+  const times=hourly.time||[];
+  if(!times.length){
+    return `<div style="font-size:12px;color:#9ca3af;">No hourly forecast available.</div>`;
+  }
+  const now=nowLocal();
+  const nowMs=now.getTime();
+  const startIdx = times.findIndex(tStr=>{
+    const t=new Date(tStr);
+    return t.getTime()>=nowMs-30*60*1000;
+  });
+  const fromIdx = startIdx>=0?startIdx:0;
+
+  const todaySafety=[];
+  const buckets={today:[],tomorrow:[],week:[]};
+
+  for(let i=fromIdx;i<times.length;i++){
+    const t=new Date(times[i]);
+    const diffDays=Math.floor((t-now)/86400000);
+    const temp=hourly.temperature_2m[i]||0;
+    const wind=hourly.windspeed_10m[i]||0;
+    const gust=hourly.windgusts_10m[i]||wind;
+    const precip=hourly.precipitation[i]||0;
+    const dirDeg=(hourly.winddirection_10m && hourly.winddirection_10m[i]) || 0;
+    const windDir=dirFromDeg(dirDeg);
+
+    const entry={
+      time:t,
+      windSpeed:wind,
+      windGust:gust,
+      temperature:temp,
+      precipitation:precip,
+      precipitationText:null,
+      shortForecast:"",
+      windDir
+    };
+
+    if(diffDays<=0){
+      buckets.today.push(entry);
+      const score=computeSafetyScore(site,{windspeed_10m:wind,windgusts_10m:gust},precip);
+      const cat=safetyCategory(score,site);
+      todaySafety.push(cat);
+    }else if(diffDays===1){
+      buckets.tomorrow.push(entry);
+    }
+    if(diffDays>=0 && diffDays<=5){
+      buckets.week.push(entry);
+    }
+  }
+
+  const timeline = todaySafety.length
+    ? `<div class="safety-timeline">${todaySafety.map(cat=>{
+        const cls = cat==="SAFE"?"safe":cat==="MARGINAL"?"marginal":"danger";
+        return `<div class="safety-slot ${cls}"></div>`;
+      }).join("")}</div>`
+    : "";
+
+  return `
+    <div class="forecast-tabs">
+      <button class="forecast-tab active" data-om-tab="today" data-site="${site.id}">Today (from now)</button>
+      <button class="forecast-tab" data-om-tab="tomorrow" data-site="${site.id}">Tomorrow</button>
+      <button class="forecast-tab" data-om-tab="week" data-site="${site.id}">6‑Day</button>
+    </div>
+    ${timeline}
+    <div id="om-panel-${site.id}-today" class="om-panel">
+      ${renderHourlyCards(buckets.today,8)}
+    </div>
+    <div id="om-panel-${site.id}-tomorrow" class="om-panel" style="display:none;">
+      ${renderHourlyCards(buckets.tomorrow,8)}
+    </div>
+    <div id="om-panel-${site.id}-week" class="om-panel" style="display:none;">
+      ${renderHourlyCards(buckets.week,8)}
+    </div>
+  `;
+}
+function wireOmTabs(siteId){
+  const detail=document.getElementById("detail");
+  const tabs=detail.querySelectorAll(`.forecast-tab[data-site="${siteId}"]`);
+  tabs.forEach(tab=>{
+    tab.addEventListener("click",()=>{
+      const mode=tab.getAttribute("data-om-tab");
+      tabs.forEach(t=>t.classList.remove("active"));
+      tab.classList.add("active");
+      ["today","tomorrow","week"].forEach(m=>{
+        const panel=document.getElementById(`om-panel-${siteId}-${m}`);
+        if(panel) panel.style.display=m===mode?"block":"none";
+      });
+    });
+  });
+}
+
+/* NWS daily + hourly combined card, with direction on daily rows */
+async function ensureNwsDailyAndHourly(siteId){
+  const site=SITES.find(s=>s.id===siteId);
+  const state=STATE.siteData[siteId]||{};
+  const body=document.getElementById("nws-body-"+siteId);
+  const pill=document.getElementById("nws-pill-"+siteId);
+  if(state.nwsRendered) return;
+  body.innerHTML=`<div style="font-size:12px;color:#9ca3af;">Loading NWS forecast…</div>`;
+  pill.textContent="Loading…";
+  try{
+    const [nwsDayRes,nwsHourRes]=await Promise.all([
+      fetchNWSDaily(site).catch(()=>null),
+      fetchNWSHourly(site).catch(()=>null)
+    ]);
+
+    const dailyPeriods = nwsDayRes && nwsDayRes.data.properties && nwsDayRes.data.properties.periods
+      ? nwsDayRes.data.properties.periods
+      : [];
+    const hourlyPeriods = nwsHourRes && nwsHourRes.data.properties && nwsHourRes.data.properties.periods
+      ? nwsHourRes.data.properties.periods
+      : [];
+
+    let dailyHtml="";
+    if(dailyPeriods.length){
+      const firstFew=dailyPeriods.slice(0,8);
+      dailyHtml = `<div style="font-size:11px;text-transform:uppercase;letter-spacing:0.16em;color:#9ca3af;margin-bottom:4px;">Daily outlook</div>`+
+        `<div class="forecast-grid">${
+          firstFew.map(p=>{
+            const name=esc(p.name || "");
+            const temp=p.temperature;
+            const short=esc(p.shortForecast || "");
+            const ws=p.windSpeed || "";
+            const dir=p.windDirection || "";
+            const windPhrase = ws && dir ? `${ws} ${esc(dir)}` : (ws || "");
+            return `<div class="forecast-item">
+              <div class="forecast-item-title">${name}</div>
+              <div class="forecast-item-temp">${Math.round(temp)}°F</div>
+              <div class="forecast-item-text">${short}${windPhrase ? " · "+windPhrase : ""}</div>
+            </div>`;
+          }).join("")
+        }</div>`;
+    }else{
+      dailyHtml = `<div style="font-size:12px;color:#9ca3af;">No NWS daily forecast available.</div>`;
+    }
+
+    let hourlyHtml="";
+    if(hourlyPeriods.length){
+      const now=nowLocal();
+      const startIdx=hourlyPeriods.findIndex(p=>new Date(p.startTime)>=now);
+      const fromIdx=startIdx>=0?startIdx:0;
+      const sliced=hourlyPeriods.slice(fromIdx,fromIdx+12);
+      const hourlyNorm=sliced.map(p=>{
+        const t=new Date(p.startTime);
+        const temp=p.temperature;
+        const short=p.shortForecast||"";
+        const ws=p.windSpeed||"";
+        let avgWind=0;
+        const m=ws.match(/(\d+)\s*(?:to|-)\s*(\d+)\s*mph/i);
+        const m2=ws.match(/(\d+)\s*mph/i);
+        if(m){
+          avgWind=(parseInt(m[1],10)+parseInt(m[2],10))/2;
+        }else if(m2){
+          avgWind=parseInt(m2[1],10);
+        }
+        const precipMention=/rain|shower|storm|snow|drizzle/i.test(short);
+        const precipTxt=precipMention?"Precip possible":"No explicit precip";
+        const windDir=p.windDirection || "";
+        return {
+          time:t,
+          windSpeed:avgWind||0,
+          windGust:null,
+          temperature:temp,
+          precipitation:null,
+          precipitationText:precipTxt,
+          shortForecast:short,
+          windDir
+        };
+      });
+      hourlyHtml = `<div style="font-size:11px;text-transform:uppercase;letter-spacing:0.16em;color:#9ca3af;margin:8px 0 4px;">Next hours (NWS)</div>`+
+        renderHourlyCards(hourlyNorm,8);
+    }else{
+      hourlyHtml += `<div style="font-size:12px;color:#9ca3af;margin-top:6px;">No NWS hourly data available.</div>`;
+    }
+
+    body.innerHTML = dailyHtml+hourlyHtml;
+    pill.textContent="Tap to collapse";
+    state.nwsRendered=true;
+    STATE.siteData[siteId]=state;
+  }catch(e){
+    console.error("NWS forecast error",e);
+    body.innerHTML=`<div style="font-size:12px;color:#fca5a5;">Failed to load NWS forecast. Try again later.</div>`;
+    pill.textContent="Tap to expand";
+  }
+}
+
+/* Site info & reports */
+function renderSiteInfo(site){
+  const diffClass=site.difficulty==="beginner"?"diff-beginner":site.difficulty==="advanced"?"diff-advanced":"diff-intermediate";
+  const diffLabel=site.difficulty==="beginner"?"Beginner":site.difficulty==="advanced"?"Advanced":"Intermediate";
+  return `
+    <div class="info-grid">
+      <div class="info-item">
+        <div class="info-label">Elevation</div>
+        <div class="info-value">${site.elevation}</div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">Difficulty</div>
+        <div class="info-value"><span class="diff-pill ${diffClass}">${diffLabel}</span></div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">Typical wind</div>
+        <div class="info-value">${site.typicalWind}</div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">Landing zone</div>
+        <div class="info-value">${site.landing}</div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">Emergency</div>
+        <div class="info-value">${site.emergency}</div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">Airspace / NOTAM</div>
+        <div class="info-value">
+          <span class="notam-pill">⚠ Check NOTAMs & TFRs · ${site.notamHint}</span>
+        </div>
+      </div>
+    </div>
+  `;
+}
+function renderReports(siteId){
+  const list=STATE.reports[siteId]||[];
+  const items=list.length?list.map(r=>`
+    <div class="report-item">
+      <div class="report-meta">${new Date(r.ts).toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"})} · ${minutesAgo(r.ts)}</div>
+      <div class="report-text">${esc(r.text)}</div>
+    </div>`).join(""):`<div style="font-size:12px;color:#9ca3af;">No recent pilot reports. Be the first to post what you see on launch.</div>`;
+  return `
+    <div class="report-list">${items}</div>
+    <div class="report-form">
+      <textarea class="report-input" id="report-input-${siteId}" placeholder="Quick observation — e.g. 'Flying great, 12mph SW at ridge, light thermals 2–3PM'"></textarea>
+      <button class="report-submit" data-site="${siteId}">Post report</button>
+    </div>
+  `;
+}
+
+/* Sidebar row update */
+function updateSidebarRow(siteId){
+  const site=SITES.find(s=>s.id===siteId);
+  const state=STATE.siteData[siteId];
+  if(!state||!state.om) return;
+  const om=state.om.data;
+  const liveCurrent = state.liveCurrent || (om.current || {});
+  const wind=liveCurrent.windspeed_10m||0;
+  const gust=liveCurrent.windgusts_10m||wind;
+  const dir=state.liveDirText
+    ? state.liveDirText
+    : dirFromDeg(liveCurrent.winddirection_10m||0);
+  const cat=state.safetyCategory;
+  const label=cat==="SAFE"?"Safe":cat==="MARGINAL"?"Marginal":"Dangerous";
+  const condEl=document.getElementById("site-cond-"+siteId);
+  const scoreEl=document.getElementById("site-score-"+siteId);
+  const windEl=document.getElementById("site-wind-"+siteId);
+  const gustDot=document.getElementById("gust-dot-"+siteId);
+  if(condEl){
+    condEl.textContent=label;
+    condEl.className="site-pill-condition "+(cat==="SAFE"?"site-pill-safe":cat==="MARGINAL"?"site-pill-marginal":"site-pill-danger");
+  }
+  if(scoreEl) scoreEl.textContent=state.safetyScore+"/100";
+  if(windEl) windEl.textContent=`${wind.toFixed(1)} ${dir}`;
+  if(gustDot) gustDot.style.display=gust>=STATE.gustThreshold?"block":"none";
+}
+
+/* Global click handlers */
+document.addEventListener("click",e=>{
+  const reportBtn=e.target.closest(".report-submit");
+  if(reportBtn){
+    const siteId=reportBtn.dataset.site;
+    const textarea=document.getElementById("report-input-"+siteId);
+    if(!textarea) return;
+    const text=textarea.value.trim();
+    if(!text) return;
+    saveReport(siteId,text);
+    textarea.value="";
+    const reportsBody=document.getElementById("reports-body-"+siteId);
+    if(reportsBody) reportsBody.innerHTML=renderReports(siteId);
+  }
+  const retryBtn=e.target.closest(".ai-error button");
+  if(retryBtn){
+    const siteId=retryBtn.dataset.site;
+    updateAdvisor(siteId);
+  }
+});
+
+/* Site selection */
+function selectSite(id){
+  STATE.currentId=id;
+  document.querySelectorAll(".site-pill").forEach(el=>{
+    el.classList.toggle("active",el.id==="site-pill-"+id);
+  });
+  document.querySelectorAll(".mobile-nav-btn").forEach(el=>{
+    el.classList.toggle("active",el.dataset.site===id);
+  });
+  renderDetailSkeleton();
+  loadSiteData(id);
+}
+
+/* Load site data: NWS drives liveCurrent when present */
+async function loadSiteData(siteId){
+  const site=SITES.find(s=>s.id===siteId);
+  if(!site) return;
+  try{
+    const omRes=await fetchOpenMeteo(site);
+    const om=omRes.data;
+
+    let nwsDayRes=null;
+    let nwsPeriodsDaily=null;
+    let nwsHourRes=null;
+    let nwsPeriodsHourly=null;
+    let nwsCurrent=null;
+    try{
+      nwsDayRes=await fetchNWSDaily(site);
+      nwsPeriodsDaily=(nwsDayRes.data.properties && nwsDayRes.data.properties.periods) || [];
+
+      nwsHourRes=await fetchNWSHourly(site);
+      nwsPeriodsHourly=(nwsHourRes.data.properties && nwsHourRes.data.properties.periods) || [];
+      if(nwsPeriodsHourly.length){
+        nwsCurrent=nwsHourlyToCurrent(site,nwsPeriodsHourly);
+      }
+    }catch(e){
+      console.warn("NWS daily/hourly unavailable, falling back to Open‑Meteo for live conditions",e);
+    }
+
+    let liveCurrent, liveDirText;
+    if(nwsCurrent){
+      liveCurrent=nwsCurrent.current;
+      liveDirText=nwsCurrent.dirText;
+    }else{
+      const c=om.current||{};
+      liveCurrent=c;
+      liveDirText=null;
+    }
+
+    const precip=liveCurrent.precipitation||0;
+    const score=computeSafetyScore(site,liveCurrent,precip);
+    const cat=safetyCategory(score,site);
+    const bestWindow=bestWindowFromHourly(site,om.hourly||{});
+    const prev=STATE.siteData[siteId]||{};
+
+    STATE.siteData[siteId]=Object.assign({},prev,{
+      om:omRes,
+      nwsDaily:nwsPeriodsDaily || null,
+      nwsHourly:nwsPeriodsHourly || null,
+      liveCurrent,
+      liveDirText,
+      safetyScore:score,
+      safetyCategory:cat,
+      bestWindow,
+      updatedTs:Date.now()
+    });
+
+    updateSidebarRow(siteId);
+    if(STATE.currentId===siteId){
+      renderDetail(siteId);
+    }
+    updateAdvisor(siteId);
+  }catch(e){
+    console.error("Open‑Meteo / NWS error",e);
+    if(STATE.currentId===siteId){
+      const detail=document.getElementById("detail");
+      detail.innerHTML=`<div style="padding:16px;font-size:13px;color:#fca5a5;">Failed to load live weather data. Check your connection and try again.</div>`;
+    }
+  }
+}
+
+/* Clock & countdown */
+function startClock(){
+  const clock=document.getElementById("clock");
+  function tick(){clock.textContent=fmtClock(nowLocal());}
+  tick();
+  setInterval(tick,1000);
+}
+function startCountdown(){
+  const el=document.getElementById("next-refresh");
+  if(STATE.countdownTimer) clearInterval(STATE.countdownTimer);
+  STATE.countdown=180;
+  el.textContent="in 180s";
+  STATE.countdownTimer=setInterval(()=>{
+    STATE.countdown--;
+    if(STATE.countdown<=0){
+      refreshAll();
+      STATE.countdown=180;
+    }
+    el.textContent="in "+STATE.countdown+"s";
+  },1000);
+}
+
+/* Offline & gust toast */
+function setupOffline(){
+  const banner=document.getElementById("offline-banner");
+  function handle(){banner.style.display=navigator.onLine?"none":"flex";}
+  window.addEventListener("online",handle);
+  window.addEventListener("offline",handle);
+  handle();
+}
+function showGustToast(site,gust){
+  const toast=document.getElementById("gust-toast");
+  toast.textContent=`Gust alert at ${site.name}: ${gust.toFixed(1)} mph`;
+  toast.style.display="block";
+  setTimeout(()=>{toast.style.display="none";},5000);
+}
+
+/* Refresh all */
+function refreshAll(){
+  for(const site of SITES){
+    loadSiteData(site.id);
+  }
+}
+
+/* Service worker */
+const SW_CODE=`
+const CACHE_NAME='bay-area-soaring-v1';
+self.addEventListener('install',event=>{
+  event.waitUntil(caches.open(CACHE_NAME).then(cache=>cache.addAll(['./'])));
+  self.skipWaiting();
+});
+self.addEventListener('activate',event=>{
+  event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE_NAME).map(k=>caches.delete(k)))));
+  self.clients.claim();
+});
+self.addEventListener('fetch',event=>{
+  const url=event.request.url;
+  if(url.includes('api.open-meteo.com')||url.includes('api.weather.gov')){
+    event.respondWith(
+      fetch(event.request).then(resp=>{
+        const clone=resp.clone();
+        caches.open(CACHE_NAME).then(c=>c.put(event.request,clone));
+        return resp;
+      }).catch(()=>caches.match(event.request))
+    );
+    return;
+  }
+  event.respondWith(
+    caches.match(event.request).then(cached=>{
+      return cached||fetch(event.request).then(resp=>{
+        const clone=resp.clone();
+        caches.open(CACHE_NAME).then(c=>c.put(event.request,clone));
+        return resp;
+      });
+    })
+  );
+});
+`;
+function registerServiceWorker(){
+  if(!("serviceWorker" in navigator)) return;
+  const blob=new Blob([SW_CODE],{type:"text/javascript"});
+  const url=URL.createObjectURL(blob);
+  navigator.serviceWorker.register(url).catch(()=>{});
+}
+
+/* Init */
+document.addEventListener("DOMContentLoaded",()=>{
+  renderSiteLists();
+  loadReports();
+  selectSite(STATE.currentId);
+  startClock();
+  startCountdown();
+  setupOffline();
+  registerServiceWorker();
+  document.getElementById("refresh-btn").addEventListener("click",()=>{
+    STATE.countdown=180;
+    refreshAll();
+  });
+  window.addEventListener("online",()=>{
+    for(const site of SITES){
+      const state=STATE.siteData[site.id];
+      const live=state && state.liveCurrent;
+      if(live){
+        const gust=live.windgusts_10m||live.windspeed_10m||0;
+        if(gust>=STATE.gustThreshold) showGustToast(site,gust);
+      }
+    }
+  });
+});
+</script>
+</body>
+</html>
