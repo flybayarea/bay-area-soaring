@@ -139,9 +139,9 @@ button{
   border-bottom:1px solid rgba(55,65,81,0.7);
 }
 .header-inner{
-  max-width:1240px;
+  max-width:1680px; /* wider container for header */
   margin:0 auto;
-  padding:10px 16px;
+  padding:10px 20px;
   display:flex;
   align-items:center;
   justify-content:space-between;
@@ -230,20 +230,21 @@ button{
   flex:1;
   display:flex;
   justify-content:center;
-  padding:16px 8px 64px;
+  padding:16px 16px 64px;
 }
 .app-main-inner{
   width:100%;
-  max-width:1240px;
+  max-width:1680px; /* main content much wider than before */
+  margin:0 auto;
   display:flex;
-  gap:14px;
+  gap:18px;
   min-height:calc(100vh - 64px - 40px);
 }
 
 /* Sidebar */
 .sidebar{
-  width:260px;
-  max-width:280px;
+  width:280px;
+  max-width:300px;
   background:radial-gradient(circle at top left,rgba(15,23,42,0.95),rgba(15,23,42,0.9));
   border-radius:var(--radius-lg);
   border:1px solid rgba(31,41,55,0.9);
@@ -559,7 +560,7 @@ button{
   line-height:1.4;
   background:rgba(15,23,42,0.8);
   border:1px dashed rgba(148,163,184,0.6);
-  color:var(--muted);
+  color:#9ca3af;
 }
 .ai-error{
   margin-top:8px;
@@ -596,7 +597,7 @@ button{
   font-size:11px;
   text-transform:uppercase;
   letter-spacing:0.16em;
-  color:var(--muted-soft);
+  color:#9ca3af;
 }
 .metrics-mode-toggle{
   display:flex;
@@ -610,7 +611,7 @@ button{
   border-radius:999px;
   padding:2px 8px;
   font-size:10px;
-  color:var(--muted-soft);
+  color:#9ca3af;
   background:transparent;
   transition:background var(--transition-fast),color var(--transition-fast);
 }
@@ -635,7 +636,7 @@ button{
   font-size:10px;
   text-transform:uppercase;
   letter-spacing:0.14em;
-  color:var(--muted-soft);
+  color:#9ca3af;
   margin-bottom:3px;
 }
 .metric-value{
@@ -649,12 +650,12 @@ button{
 }
 .metric-unit{
   font-size:11px;
-  color:var(--muted-soft);
+  color:#9ca3af;
 }
 .metric-sub{
   margin-top:2px;
   font-size:11px;
-  color:var(--muted-soft);
+  color:#9ca3af;
 }
 .metric.gust-alert{
   border-color:rgba(248,113,113,0.85);
@@ -713,7 +714,7 @@ button{
   font-size:11px;
   text-transform:uppercase;
   letter-spacing:0.14em;
-  color:var(--muted-soft);
+  color:#9ca3af;
   display:flex;
   align-items:center;
   gap:6px;
@@ -723,7 +724,7 @@ button{
   padding:2px 7px;
   font-size:10px;
   border:1px solid rgba(55,65,81,0.7);
-  color:var(--muted-soft);
+  color:#9ca3af;
 }
 .card-toggle-pill.open{
   background:rgba(37,99,235,0.25);
@@ -749,7 +750,7 @@ button{
   text-align:center;
   background:rgba(15,23,42,0.9);
   border:1px solid rgba(31,41,55,0.9);
-  color:var(--muted-soft);
+  color:#9ca3af;
 }
 .forecast-tab.active{
   background:radial-gradient(circle at top,#38bdf8,#4f46e5);
@@ -770,7 +771,7 @@ button{
 }
 .forecast-item-title{
   font-size:11px;
-  color:var(--muted-soft);
+  color:#9ca3af;
 }
 .forecast-item-temp{
   font-size:14px;
@@ -779,7 +780,7 @@ button{
 .forecast-item-text{
   font-size:11px;
   margin-top:2px;
-  color:var(--muted);
+  color:#9ca3af;
 }
 
 /* Site info */
@@ -799,7 +800,7 @@ button{
   font-size:10px;
   text-transform:uppercase;
   letter-spacing:0.14em;
-  color:var(--muted-soft);
+  color:#9ca3af;
   margin-bottom:2px;
 }
 .info-value{
@@ -857,14 +858,14 @@ button{
   align-items:center;
   justify-content:space-between;
   font-size:11px;
-  color:var(--muted-soft);
+  color:#9ca3af;
   background:linear-gradient(90deg,rgba(15,23,42,0.98),rgba(15,23,42,0.96));
 }
 .windy-embed-wrapper,
 .flyxc-embed-wrapper{
   position:relative;
   width:100%;
-  height:520px; /* ~2× previous map height on desktop */
+  height:520px;
 }
 .windy-iframe,
 .flyxc-iframe{
@@ -965,9 +966,9 @@ button{
 
 /* Footer */
 .footer{
-  max-width:1240px;
+  max-width:1680px;
   margin:8px auto 18px;
-  padding:0 12px;
+  padding:0 20px;
   font-size:11px;
   color:#9ca3af;
   display:flex;
@@ -979,7 +980,7 @@ button{
   color:#9ca3af;
 }
 .footer-warning{
-  max-width:520px;
+  max-width:620px;
 }
 
 /* Mobile nav */
@@ -1018,7 +1019,16 @@ button{
   color:#e5f2ff;
 }
 
-/* Responsive */
+/* Responsiveness / side padding tuning */
+@media(max-width:1280px){
+  .header-inner,
+  .app-main-inner,
+  .footer{
+    max-width:100%;
+    padding-left:12px;
+    padding-right:12px;
+  }
+}
 @media(max-width:960px){
   .app-main-inner{
     flex-direction:column;
@@ -1037,11 +1047,11 @@ button{
     grid-template-columns:minmax(0,1fr);
   }
   .maps-row{
-    grid-template-columns:minmax(0,1fr); /* stack Windy then FlyXC */
+    grid-template-columns:minmax(0,1fr);
   }
   .windy-embed-wrapper,
   .flyxc-embed-wrapper{
-    height:380px; /* slightly reduced but still large on mobile */
+    height:380px;
   }
 }
 @media(max-width:640px){
@@ -1237,7 +1247,7 @@ function dirFromDeg(deg){
 function clamp(v,min,max){return v<min?min:v>max?max:v;}
 function esc(str){return String(str).replace(/</g,"&lt;").replace(/>/g,"&gt;");}
 
-/* Cache */
+/* Cache helpers */
 function cacheKey(siteId,suffix){return "bas_"+siteId+"_"+suffix;}
 function cacheSet(siteId,suffix,data){
   try{localStorage.setItem(cacheKey(siteId,suffix),JSON.stringify({ts:Date.now(),data}));}catch(e){}
@@ -1267,7 +1277,7 @@ function saveReport(siteId,text){
   try{localStorage.setItem("bas_reports_"+siteId,JSON.stringify(STATE.reports[siteId]));}catch(e){}
 }
 
-/* Safety & scoring */
+/* Safety / scoring */
 function computeSafetyScore(site,current,precip){
   const wind=current.windspeed_10m||0;
   const gust=current.windgusts_10m||wind;
@@ -1527,7 +1537,7 @@ async function updateAdvisor(siteId){
   }
 }
 
-/* Open‑Meteo & NWS */
+/* Open‑Meteo & NWS fetch */
 async function fetchOpenMeteo(site){
   const cached=cacheGet(site.id,"om");
   if(cached) return cached;
@@ -1840,7 +1850,7 @@ function renderDetail(siteId){
   updateFlyXCIframeToSite(site);
 }
 
-/* FlyXC URLs */
+/* FlyXC integration */
 function setFlyXCCaliforniaDefault(){
   const iframe=document.getElementById("flyxc-iframe");
   if(!iframe) return;
@@ -2068,7 +2078,7 @@ function selectSite(id){
   loadSiteData(id);
 }
 
-/* Load site data */
+/* Load site data then advisor */
 async function loadSiteData(siteId){
   const site=SITES.find(s=>s.id===siteId);
   if(!site) return;
