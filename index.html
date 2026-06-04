@@ -592,7 +592,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer}
 }
 .mobile-nav-btn{
   flex:1;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;gap:90px;
+  align-items:center;justify-content:center;gap:2px;
   font-size:10px;color:#9ca3af;
 }
 .mobile-nav-btn span.emoji{font-size:16px}
@@ -1341,7 +1341,7 @@ function renderSiteLists(){
     const btn=document.createElement("button");
     btn.className="mobile-nav-btn";
     btn.dataset.site=site.id;
-    btn.innerHTML = `<span class="emoji">${site.emoji}</span><span>&nbsp;${site.name.split(" ")[0]}&nbsp;</span>`;
+    btn.innerHTML=`<span class="emoji">${site.emoji}</span><span>${site.name.split(" ")[0]}</span>`;
     btn.addEventListener("click",()=>selectSite(site.id));
     mobile.appendChild(btn);
   }
@@ -1450,7 +1450,9 @@ function renderDetailSkeleton(){
         <span>Windy — Live wind field around ${site.name}</span>
         <span style="font-size:10px;color:#9ca3af;">Map: drag / zoom for detail · Forecast panel open by default</span>
       </div>
-      <div class="windy-embed-wrapper" id="windy-wrapper-${site.id}"></div>
+      <div class="windy-embed-wrapper">
+        <iframe class="windy-iframe" src="${site.windyEmbed}" loading="lazy"></iframe>
+      </div>
     </div>
   `;
 }
