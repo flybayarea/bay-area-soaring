@@ -1114,7 +1114,7 @@ button{
 <script>
 "use strict";
 
-/* Core state */
+/* Core state and sites */
 const SITES=[
   {
     id:"levin",
@@ -1134,8 +1134,8 @@ const SITES=[
     nwsX:97,
     nwsY:93,
     notamHint:"Check KSJC / NUQ for TFRs",
-    // For Levin, use WindSlammer site instead of a direct embed
-    externalSite:"http://windslammer.net/WindSlammer/"
+    externalSite:"http://windslammer.net/WindSlammer/",
+    youtubeId:null
   },
   {
     id:"mussel",
@@ -1155,8 +1155,8 @@ const SITES=[
     nwsX:82,
     nwsY:120,
     notamHint:"Check KSFO / Class B shelves & TFRs",
-    // Mussel Rock YouTube video vZEINdmawdc
-    youtubeId:"vZEINdmawdc"
+    youtubeId:"vZEINdmawdc",
+    externalSite:null
   },
   {
     id:"shoreline",
@@ -1176,7 +1176,8 @@ const SITES=[
     nwsX:90,
     nwsY:93,
     notamHint:"Near PAO / NUQ — check NOTAMs",
-    youtubeId:"sqQbWv7YgEk"
+    youtubeId:"sqQbWv7YgEk",
+    externalSite:null
   },
   {
     id:"mission",
@@ -1196,7 +1197,8 @@ const SITES=[
     nwsX:100,
     nwsY:99,
     notamHint:"Check KSJC TFRs and local advisories",
-    youtubeId:"6uJdeuY2Z7A"
+    youtubeId:"6uJdeuY2Z7A",
+    externalSite:null
   }
 ];
 
@@ -1225,7 +1227,7 @@ function dirFromDeg(deg){
 function clamp(v,min,max){return v<min?min:v>max?max:v;}
 function esc(str){return String(str).replace(/</g,"&lt;").replace(/>/g,"&gt;");}
 
-/* Cache helpers */
+/* Cache */
 function cacheKey(siteId,suffix){return "bas_"+siteId+"_"+suffix;}
 function cacheSet(siteId,suffix,data){
   try{localStorage.setItem(cacheKey(siteId,suffix),JSON.stringify({ts:Date.now(),data}));}catch(e){}
@@ -1326,8 +1328,8 @@ function buildAdvisorSummary(site,forecast){
   const dir=dirFromDeg(current.winddirection_10m||0);
   const temp=Math.round(current.temperature_2m||0);
   const precip=current.precipitation||0;
-  const score=forecast.safetyScore;
   const cat=forecast.safetyCategory;
+
   let intro="";
   if(cat==="SAFE"){
     intro=site.type==="Kite Flying"
@@ -1338,12 +1340,14 @@ function buildAdvisorSummary(site,forecast){
   }else{
     intro=`⛔ High‑risk conditions at ${site.name}. `;
   }
+
   const windPart=`${dir} winds ${wind.toFixed(1)} mph, gusting ${gust.toFixed(1)} mph. `;
   const tempPart=`Temperature around ${temp}°F. `;
   let precipPart="";
   if(precip>0.2) precipPart="Light to moderate precipitation nearby — expect wet gear and possible shutdowns. ";
   else if(precip>0) precipPart="Isolated showers possible. ";
   else precipPart="Skies dry with no significant precipitation. ";
+
   let advice="";
   if(cat==="SAFE"){
     advice=site.difficulty==="beginner"
@@ -1354,6 +1358,7 @@ function buildAdvisorSummary(site,forecast){
   }else{
     advice="Stand down — treat this as a non‑flying day unless you have strong alpine experience and local coaching. ";
   }
+
   if(forecast.bestWindow){
     advice+=`Best time window: ${forecast.bestWindow}.`;
   }
@@ -1444,7 +1449,7 @@ function renderAdvisorError(siteId,message){
   errorEl.style.display="flex";
 }
 
-/* Forecast loader shared with advisor */
+/* Advisor forecast loader (shared with cache) */
 async function loadForecastForAdvisor(siteId){
   const site=SITES.find(s=>s.id===siteId);
   if(!site) throw new Error("Unknown site");
@@ -1465,7 +1470,7 @@ async function loadForecastForAdvisor(siteId){
   const current=om.current||{};
   const precip=current.precipitation||0;
   const safetyScore=computeSafetyScore(site,current,precip);
-  const safetyCategory=safetyCategory(safetyScore,site);
+  const cat=safetyCategory(safetyScore,site);
   const bestWindow=bestWindowFromHourly(site,om.hourly||{});
 
   let nwsWrap=null;
@@ -1494,7 +1499,7 @@ async function loadForecastForAdvisor(siteId){
     om:omRes,
     nws:nwsWrap,
     safetyScore,
-    safetyCategory,
+    safetyCategory:cat,
     bestWindow,
     updatedTs:Date.now()
   };
@@ -1516,7 +1521,7 @@ async function updateAdvisor(siteId){
   }
 }
 
-/* Open‑Meteo / NWS for metrics */
+/* Metrics / forecast loaders */
 async function fetchOpenMeteo(site){
   const cached=cacheGet(site.id,"om");
   if(cached) return cached;
@@ -1544,7 +1549,7 @@ async function fetchNWS(site){
   return {ts:Date.now(),data};
 }
 
-/* Sidebar & mobile nav */
+/* Sidebar & mobile */
 function renderSiteLists(){
   const list=document.getElementById("site-list");
   const mobile=document.getElementById("mobile-nav-inner");
@@ -1695,7 +1700,7 @@ function renderDetailSkeleton(){
   `;
 }
 
-/* Detail render (metrics / forecast / info / media) */
+/* Detail render */
 function renderDetail(siteId){
   const site=SITES.find(s=>s.id===siteId);
   const state=STATE.siteData[siteId];
@@ -1817,7 +1822,7 @@ function renderDetail(siteId){
   });
 }
 
-/* OM forecast UI */
+/* Open-Meteo forecast UI */
 function renderOpenMeteoForecast(site,state){
   const om=state.om.data;
   const hourly=om.hourly||{};
@@ -1973,7 +1978,7 @@ function renderReports(siteId){
 function renderMediaBlock(site){
   const container=document.getElementById("media-card-"+site.id);
   if(!container) return;
-  // Levin: external WindSlammer site info
+
   if(site.id==="levin" && site.externalSite){
     container.innerHTML=`
       <div style="font-size:11px;color:#9ca3af;margin-bottom:4px;">Site video & info</div>
@@ -1991,7 +1996,7 @@ function renderMediaBlock(site){
     `;
     return;
   }
-  // YouTube videos for sites with youtubeId (Mussel, Shoreline, Mission)
+
   if(site.youtubeId){
     const id=site.youtubeId;
     const src=`https://www.youtube.com/embed/${id}?autoplay=1&mute=1&loop=1&playlist=${id}&controls=1&rel=0`;
@@ -2004,6 +2009,7 @@ function renderMediaBlock(site){
     `;
     return;
   }
+
   container.innerHTML=`
     <div style="font-size:11px;color:#9ca3af;margin-bottom:4px;">Site media</div>
     <div class="video-wrapper">
@@ -2071,7 +2077,7 @@ function selectSite(id){
   loadSiteData(id);
 }
 
-/* Load site data, then advisor */
+/* Load site data then advisor */
 async function loadSiteData(siteId){
   const site=SITES.find(s=>s.id===siteId);
   if(!site) return;
@@ -2142,7 +2148,7 @@ function showGustToast(site,gust){
   setTimeout(()=>{toast.style.display="none";},5000);
 }
 
-/* Refresh all sites */
+/* Refresh all */
 function refreshAll(){
   for(const site of SITES){
     loadSiteData(site.id);
