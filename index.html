@@ -1341,7 +1341,7 @@ function renderSiteLists(){
     const btn=document.createElement("button");
     btn.className="mobile-nav-btn";
     btn.dataset.site=site.id;
-    btn.innerHTML=`<span class="emoji">${site.emoji}</span><span>${site.name.split(" ")[0]}</span>`;
+    btn.innerHTML = `<span class="emoji">${site.emoji}</span><span>&nbsp;${site.name.split(" ")[0]}&nbsp;</span>`;
     btn.addEventListener("click",()=>selectSite(site.id));
     mobile.appendChild(btn);
   }
