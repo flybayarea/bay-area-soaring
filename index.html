@@ -888,6 +888,23 @@ button{
   width:100%;
   height:160px;
 }
+.media-note{
+  font-size:11px;
+  color:#9ca3af;
+  margin-top:4px;
+}
+.media-button{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  border-radius:999px;
+  padding:4px 10px;
+  font-size:11px;
+  background:radial-gradient(circle at 0 0,#38bdf8,#4f46e5);
+  color:#eff6ff;
+  border:1px solid rgba(59,130,246,0.85);
+  text-decoration:none;
+}
 .report-list{
   max-height:120px;
   overflow-y:auto;
@@ -1097,53 +1114,95 @@ button{
 <script>
 "use strict";
 
-/* --- Core state --- */
+/* Core state */
 const SITES=[
-  {id:"levin",name:"Ed R. Levin Park",emoji:"🪂",city:"Milpitas, CA",type:"Paragliding",
-   lat:37.4619,lon:-121.861,elevation:"1,102 ft (336 m)",difficulty:"intermediate",
-   typicalWind:"SW thermic in afternoon",emergency:"Santa Clara County Parks · +1 (408) 262‑6980",
-   landing:"Lower park LZ near main entrance",
-   windyEmbed:"https://embed.windy.com/embed2.html?lat=37.4619&lon=-121.861&detailLat=37.4619&detailLon=-121.861&width=650&height=350&zoom=11&level=surface&overlay=wind&product=ecmwf&menu=&message=&marker=true&calendar=now&pressure=true&type=map&location=coordinates&detail=true&metricWind=mph&metricTemp=%C2%B0F&radarRange=-1",
-   nwsOffice:"MTR",nwsX:97,nwsY:93,
-   notamHint:"Check KSJC / NUQ for TFRs",
-   webcam:null,
-   youtube:"https://www.youtube.com/embed/VKXH7c0Rk7Q?autoplay=1&mute=1&loop=1&playlist=VKXH7c0Rk7Q"
+  {
+    id:"levin",
+    name:"Ed R. Levin Park",
+    emoji:"🪂",
+    city:"Milpitas, CA",
+    type:"Paragliding",
+    lat:37.4619,
+    lon:-121.861,
+    elevation:"1,102 ft (336 m)",
+    difficulty:"intermediate",
+    typicalWind:"SW thermic in afternoon",
+    emergency:"Santa Clara County Parks · +1 (408) 262‑6980",
+    landing:"Lower park LZ near main entrance",
+    windyEmbed:"https://embed.windy.com/embed2.html?lat=37.4619&lon=-121.861&detailLat=37.4619&detailLon=-121.861&width=650&height=350&zoom=11&level=surface&overlay=wind&product=ecmwf&menu=&message=&marker=true&calendar=now&pressure=true&type=map&location=coordinates&detail=true&metricWind=mph&metricTemp=%C2%B0F&radarRange=-1",
+    nwsOffice:"MTR",
+    nwsX:97,
+    nwsY:93,
+    notamHint:"Check KSJC / NUQ for TFRs",
+    // For Levin, use WindSlammer site instead of a direct embed
+    externalSite:"http://windslammer.net/WindSlammer/"
   },
-  {id:"mussel",name:"Mussel Rock Park",emoji:"🏔",city:"Daly City, CA",type:"Hang / Paraglide",
-   lat:37.674,lon:-122.4887,elevation:"557 ft (170 m)",difficulty:"advanced",
-   typicalWind:"Strong W–NW ocean flow",emergency:"San Mateo County Dispatch · 911",
-   landing:"Beach below cliffs — advanced pilots only",
-   windyEmbed:"https://embed.windy.com/embed2.html?lat=37.674&lon=-122.4887&detailLat=37.674&detailLon=-122.4887&width=650&height=350&zoom=12&level=surface&overlay=wind&product=ecmwf&menu=&message=&marker=true&calendar=now&pressure=true&type=map&location=coordinates&detail=true&metricWind=mph&metricTemp=%C2%B0F&radarRange=-1",
-   nwsOffice:"MTR",nwsX:82,nwsY:120,
-   notamHint:"Check KSFO / Class B shelves & TFRs",
-   webcam:"https://www.youtube.com/embed/live_stream?channel=UCH-iMvI7MtskM4ulRbD7-Tg&autoplay=1&mute=1&loop=1",
-   youtube:null
+  {
+    id:"mussel",
+    name:"Mussel Rock Park",
+    emoji:"🏔",
+    city:"Daly City, CA",
+    type:"Hang / Paraglide",
+    lat:37.674,
+    lon:-122.4887,
+    elevation:"557 ft (170 m)",
+    difficulty:"advanced",
+    typicalWind:"Strong W–NW ocean flow",
+    emergency:"San Mateo County Dispatch · 911",
+    landing:"Beach below cliffs — advanced pilots only",
+    windyEmbed:"https://embed.windy.com/embed2.html?lat=37.674&lon=-122.4887&detailLat=37.674&detailLon=-122.4887&width=650&height=350&zoom=12&level=surface&overlay=wind&product=ecmwf&menu=&message=&marker=true&calendar=now&pressure=true&type=map&location=coordinates&detail=true&metricWind=mph&metricTemp=%C2%B0F&radarRange=-1",
+    nwsOffice:"MTR",
+    nwsX:82,
+    nwsY:120,
+    notamHint:"Check KSFO / Class B shelves & TFRs",
+    // Mussel Rock YouTube video vZEINdmawdc
+    youtubeId:"vZEINdmawdc"
   },
-  {id:"shoreline",name:"Shoreline Kite Area",emoji:"🪁",city:"Mountain View, CA",type:"Kite Flying",
-   lat:37.4297,lon:-122.0766,elevation:"3 ft (1 m)",difficulty:"beginner",
-   typicalWind:"NW bay breeze, afternoons",emergency:"Mountain View Fire · 911",
-   landing:"Open grass fields throughout park",
-   windyEmbed:"https://embed.windy.com/embed2.html?lat=37.4297&lon=-122.0766&detailLat=37.4297&detailLon=-122.0766&width=650&height=350&zoom=12&level=surface&overlay=wind&product=ecmwf&menu=&message=&marker=true&calendar=now&pressure=true&type=map&location=coordinates&detail=true&metricWind=mph&metricTemp=%C2%B0F&radarRange=-1",
-   nwsOffice:"MTR",nwsX:90,nwsY:93,
-   notamHint:"Near PAO / NUQ — check NOTAMs",
-   webcam:null,
-   youtube:"https://www.youtube.com/embed/sqQbWv7YgEk?autoplay=1&mute=1&loop=1&playlist=sqQbWv7YgEk"
+  {
+    id:"shoreline",
+    name:"Shoreline Kite Area",
+    emoji:"🪁",
+    city:"Mountain View, CA",
+    type:"Kite Flying",
+    lat:37.4297,
+    lon:-122.0766,
+    elevation:"3 ft (1 m)",
+    difficulty:"beginner",
+    typicalWind:"NW bay breeze, afternoons",
+    emergency:"Mountain View Fire · 911",
+    landing:"Open grass fields throughout park",
+    windyEmbed:"https://embed.windy.com/embed2.html?lat=37.4297&lon=-122.0766&detailLat=37.4297&detailLon=-122.0766&width=650&height=350&zoom=12&level=surface&overlay=wind&product=ecmwf&menu=&message=&marker=true&calendar=now&pressure=true&type=map&location=coordinates&detail=true&metricWind=mph&metricTemp=%C2%B0F&radarRange=-1",
+    nwsOffice:"MTR",
+    nwsX:90,
+    nwsY:93,
+    notamHint:"Near PAO / NUQ — check NOTAMs",
+    youtubeId:"sqQbWv7YgEk"
   },
-  {id:"mission",name:"Mission Peak",emoji:"⛰",city:"Fremont, CA",type:"Paragliding / Hang",
-   lat:37.5131,lon:-121.8803,elevation:"2,305 ft (703 m)",difficulty:"advanced",
-   typicalWind:"SSW thermic with valley breeze",emergency:"EBRPD Police · +1 (510) 881‑1833",
-   landing:"Designated LZ in Fremont foothills",
-   windyEmbed:"https://embed.windy.com/embed2.html?lat=37.5131&lon=-121.8803&detailLat=37.5131&detailLon=-121.8803&width=650&height=350&zoom=12&level=surface&overlay=wind&product=ecmwf&menu=&message=&marker=true&calendar=now&pressure=true&type=map&location=coordinates&detail=true&metricWind=mph&metricTemp=%C2%B0F&radarRange=-1",
-   nwsOffice:"MTR",nwsX:100,nwsY:99,
-   notamHint:"Check KSJC TFRs and local advisories",
-   webcam:null,
-   youtube:"https://www.youtube.com/embed/6uJdeuY2Z7A?autoplay=1&mute=1&loop=1&playlist=6uJdeuY2Z7A"
+  {
+    id:"mission",
+    name:"Mission Peak",
+    emoji:"⛰",
+    city:"Fremont, CA",
+    type:"Paragliding / Hang",
+    lat:37.5131,
+    lon:-121.8803,
+    elevation:"2,305 ft (703 m)",
+    difficulty:"advanced",
+    typicalWind:"SSW thermic with valley breeze",
+    emergency:"EBRPD Police · +1 (510) 881‑1833",
+    landing:"Designated LZ in Fremont foothills",
+    windyEmbed:"https://embed.windy.com/embed2.html?lat=37.5131&lon=-121.8803&detailLat=37.5131&detailLon=-121.8803&width=650&height=350&zoom=12&level=surface&overlay=wind&product=ecmwf&menu=&message=&marker=true&calendar=now&pressure=true&type=map&location=coordinates&detail=true&metricWind=mph&metricTemp=%C2%B0F&radarRange=-1",
+    nwsOffice:"MTR",
+    nwsX:100,
+    nwsY:99,
+    notamHint:"Check KSJC TFRs and local advisories",
+    youtubeId:"6uJdeuY2Z7A"
   }
 ];
 
 const STATE={
   currentId:SITES[0].id,
-  siteData:{},        // per-site: om, nws, safety, advisorState
+  siteData:{},
   countdown:180,
   countdownTimer:null,
   localCacheTTL:3600000,
@@ -1227,7 +1286,7 @@ function safetyCategory(score,site){
   return "DANGEROUS";
 }
 
-/* Best window (advisor + UI) */
+/* Best window */
 function bestWindowFromHourly(site,hourly){
   if(!hourly||!hourly.time) return null;
   const now=nowLocal();
@@ -1269,7 +1328,6 @@ function buildAdvisorSummary(site,forecast){
   const precip=current.precipitation||0;
   const score=forecast.safetyScore;
   const cat=forecast.safetyCategory;
-
   let intro="";
   if(cat==="SAFE"){
     intro=site.type==="Kite Flying"
@@ -1280,14 +1338,12 @@ function buildAdvisorSummary(site,forecast){
   }else{
     intro=`⛔ High‑risk conditions at ${site.name}. `;
   }
-
   const windPart=`${dir} winds ${wind.toFixed(1)} mph, gusting ${gust.toFixed(1)} mph. `;
   const tempPart=`Temperature around ${temp}°F. `;
   let precipPart="";
   if(precip>0.2) precipPart="Light to moderate precipitation nearby — expect wet gear and possible shutdowns. ";
   else if(precip>0) precipPart="Isolated showers possible. ";
   else precipPart="Skies dry with no significant precipitation. ";
-
   let advice="";
   if(cat==="SAFE"){
     advice=site.difficulty==="beginner"
@@ -1298,7 +1354,6 @@ function buildAdvisorSummary(site,forecast){
   }else{
     advice="Stand down — treat this as a non‑flying day unless you have strong alpine experience and local coaching. ";
   }
-
   if(forecast.bestWindow){
     advice+=`Best time window: ${forecast.bestWindow}.`;
   }
@@ -1322,7 +1377,7 @@ function buildDailyBrief(site,forecast){
   return `${dayLabel} overview: ${phrase}${win}${nwsExtra}`;
 }
 
-/* Advisor UI state: loading / success / error */
+/* Advisor UI */
 function setAdvisorState(siteId,state){
   const card=document.getElementById("advisor-card-"+siteId);
   if(!card) return;
@@ -1330,7 +1385,6 @@ function setAdvisorState(siteId,state){
   const briefEl=card.querySelector(".ai-daily-brief");
   const bestEl=card.querySelector(".ai-best-window");
   const errorEl=card.querySelector(".ai-error");
-
   if(state==="loading"){
     if(textEl){
       textEl.innerHTML=`<span class="skel skel-line" style="width:82%;display:block;"></span>
@@ -1390,7 +1444,7 @@ function renderAdvisorError(siteId,message){
   errorEl.style.display="flex";
 }
 
-/* Shared forecast loader for advisor + metrics */
+/* Forecast loader shared with advisor */
 async function loadForecastForAdvisor(siteId){
   const site=SITES.find(s=>s.id===siteId);
   if(!site) throw new Error("Unknown site");
@@ -1411,7 +1465,7 @@ async function loadForecastForAdvisor(siteId){
   const current=om.current||{};
   const precip=current.precipitation||0;
   const safetyScore=computeSafetyScore(site,current,precip);
-  const safetyCategory=safetyCategoryWrapper(site,safetyScore);
+  const safetyCategory=safetyCategory(safetyScore,site);
   const bestWindow=bestWindowFromHourly(site,om.hourly||{});
 
   let nwsWrap=null;
@@ -1429,9 +1483,7 @@ async function loadForecastForAdvisor(siteId){
         if(periods) nwsWrap={periods};
         cacheSet(site.id,"nws",data2);
       }
-    }catch(e){
-      // advisor stays usable without NWS
-    }
+    }catch(e){}
   }else{
     const periods=(nwsRes.data.properties&&nwsRes.data.properties.periods)||null;
     if(periods) nwsWrap={periods};
@@ -1447,11 +1499,8 @@ async function loadForecastForAdvisor(siteId){
     updatedTs:Date.now()
   };
 }
-function safetyCategoryWrapper(site,score){
-  return safetyCategory(score,site);
-}
 
-/* Advisor controller: always leaves loading state */
+/* Advisor controller */
 async function updateAdvisor(siteId){
   setAdvisorState(siteId,"loading");
   try{
@@ -1467,7 +1516,7 @@ async function updateAdvisor(siteId){
   }
 }
 
-/* Metrics / forecast loader reuses same OM cache */
+/* Open‑Meteo / NWS for metrics */
 async function fetchOpenMeteo(site){
   const cached=cacheGet(site.id,"om");
   if(cached) return cached;
@@ -1495,7 +1544,7 @@ async function fetchNWS(site){
   return {ts:Date.now(),data};
 }
 
-/* Sidebar + mobile */
+/* Sidebar & mobile nav */
 function renderSiteLists(){
   const list=document.getElementById("site-list");
   const mobile=document.getElementById("mobile-nav-inner");
@@ -1646,7 +1695,7 @@ function renderDetailSkeleton(){
   `;
 }
 
-/* Detail with metrics & cards */
+/* Detail render (metrics / forecast / info / media) */
 function renderDetail(siteId){
   const site=SITES.find(s=>s.id===siteId);
   const state=STATE.siteData[siteId];
@@ -1743,7 +1792,7 @@ function renderDetail(siteId){
   const reportsBody=document.getElementById("reports-body-"+site.id);
   if(reportsBody) reportsBody.innerHTML=renderReports(site.id);
   const mediaCard=document.getElementById("media-card-"+site.id);
-  if(mediaCard) mediaCard.innerHTML=renderMediaBlock(site);
+  if(mediaCard) renderMediaBlock(site);
 
   document.querySelectorAll(".card-header").forEach(h=>{
     h.addEventListener("click",()=>{
@@ -1768,7 +1817,7 @@ function renderDetail(siteId){
   });
 }
 
-/* Open‑Meteo forecast UI */
+/* OM forecast UI */
 function renderOpenMeteoForecast(site,state){
   const om=state.om.data;
   const hourly=om.hourly||{};
@@ -1839,7 +1888,7 @@ function wireOmTabs(siteId){
   });
 }
 
-/* NWS forecast card */
+/* NWS forecast */
 async function ensureNwsLoaded(siteId){
   const site=SITES.find(s=>s.id===siteId);
   const state=STATE.siteData[siteId]||{};
@@ -1871,7 +1920,7 @@ async function ensureNwsLoaded(siteId){
   }
 }
 
-/* Site info / reports / media */
+/* Site info, reports, media */
 function renderSiteInfo(site){
   const diffClass=site.difficulty==="beginner"?"diff-beginner":site.difficulty==="advanced"?"diff-advanced":"diff-intermediate";
   const diffLabel=site.difficulty==="beginner"?"Beginner":site.difficulty==="advanced"?"Advanced":"Intermediate";
@@ -1922,13 +1971,43 @@ function renderReports(siteId){
   `;
 }
 function renderMediaBlock(site){
-  const cam=site.webcam||site.youtube;
-  const label=site.webcam?"Live webcam":"Site video loop";
-  const src=cam;
-  return `
-    <div style="font-size:11px;color:#9ca3af;margin-bottom:4px;">${label}</div>
+  const container=document.getElementById("media-card-"+site.id);
+  if(!container) return;
+  // Levin: external WindSlammer site info
+  if(site.id==="levin" && site.externalSite){
+    container.innerHTML=`
+      <div style="font-size:11px;color:#9ca3af;margin-bottom:4px;">Site video & info</div>
+      <div class="video-wrapper">
+        <div style="padding:16px;font-size:12px;color:#e5e7eb;">
+          Ed Levin video & launch info is maintained on WindSlammer.
+          <div style="margin-top:8px;">
+            <a class="media-button" href="${site.externalSite}" target="_blank" rel="noopener noreferrer">
+              <span>🔗</span><span>Open WindSlammer site</span>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="media-note">Opens windslammer.net in a new tab for current videos, site rules, and launch details.</div>
+    `;
+    return;
+  }
+  // YouTube videos for sites with youtubeId (Mussel, Shoreline, Mission)
+  if(site.youtubeId){
+    const id=site.youtubeId;
+    const src=`https://www.youtube.com/embed/${id}?autoplay=1&mute=1&loop=1&playlist=${id}&controls=1&rel=0`;
+    container.innerHTML=`
+      <div style="font-size:11px;color:#9ca3af;margin-bottom:4px;">Site video loop</div>
+      <div class="video-wrapper">
+        <iframe src="${src}" loading="lazy" allow="autoplay; encrypted-media"></iframe>
+      </div>
+      <div class="media-note">Autoplay is muted; mobile browsers may require a tap to start playback.</div>
+    `;
+    return;
+  }
+  container.innerHTML=`
+    <div style="font-size:11px;color:#9ca3af;margin-bottom:4px;">Site media</div>
     <div class="video-wrapper">
-      ${src?`<iframe src="${src}" loading="lazy" allow="autoplay; encrypted-media"></iframe>`:"<div style='padding:16px;font-size:12px;color:#9ca3af;'>No public webcam available.</div>"}
+      <div style="padding:16px;font-size:12px;color:#9ca3af;">No public video or webcam configured for this site.</div>
     </div>
   `;
 }
@@ -1945,12 +2024,10 @@ function updateSidebarRow(siteId){
   const dir=dirFromDeg(current.winddirection_10m||0);
   const cat=state.safetyCategory;
   const label=cat==="SAFE"?"Safe":cat==="MARGINAL"?"Marginal":"Dangerous";
-
   const condEl=document.getElementById("site-cond-"+siteId);
   const scoreEl=document.getElementById("site-score-"+siteId);
   const windEl=document.getElementById("site-wind-"+siteId);
   const gustDot=document.getElementById("gust-dot-"+siteId);
-
   if(condEl){
     condEl.textContent=label;
     condEl.className="site-pill-condition "+(cat==="SAFE"?"site-pill-safe":cat==="MARGINAL"?"site-pill-marginal":"site-pill-danger");
@@ -1960,7 +2037,7 @@ function updateSidebarRow(siteId){
   if(gustDot) gustDot.style.display=gust>=STATE.gustThreshold?"block":"none";
 }
 
-/* Reports + advisor retry handlers */
+/* Reports & advisor retry */
 document.addEventListener("click",e=>{
   const reportBtn=e.target.closest(".report-submit");
   if(reportBtn){
@@ -1994,7 +2071,7 @@ function selectSite(id){
   loadSiteData(id);
 }
 
-/* Load metrics/forecast & then advisor uses same data/caches */
+/* Load site data, then advisor */
 async function loadSiteData(siteId){
   const site=SITES.find(s=>s.id===siteId);
   if(!site) return;
@@ -2018,7 +2095,6 @@ async function loadSiteData(siteId){
     if(STATE.currentId===siteId){
       renderDetail(siteId);
     }
-    // Advisor uses the same cache and will not refetch OM
     updateAdvisor(siteId);
   }catch(e){
     console.error("Open‑Meteo error",e);
@@ -2066,14 +2142,14 @@ function showGustToast(site,gust){
   setTimeout(()=>{toast.style.display="none";},5000);
 }
 
-/* Global refresh */
+/* Refresh all sites */
 function refreshAll(){
   for(const site of SITES){
     loadSiteData(site.id);
   }
 }
 
-/* Service worker (unchanged) */
+/* Service worker */
 const SW_CODE=`
 const CACHE_NAME='bay-area-soaring-v1';
 self.addEventListener('install',event=>{
