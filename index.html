@@ -93,7 +93,6 @@ button{font-family:inherit;border:none;background:none;cursor:pointer}
   display:none;z-index:9998;box-shadow:0 18px 45px rgba(0,0,0,0.85);
 }
 
-/* Layout shell */
 .app-shell{display:flex;flex-direction:column;min-height:100vh}
 
 /* Header */
@@ -154,7 +153,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer}
   border-bottom:1px solid rgba(31,41,55,0.9);
   display:flex;align-items:center;justify-content:space-between;
 }
-.sidebar-title{font-size:11px;text-transform:uppercase;letter-spacing:0.18em;color:var(--muted-soft)}
+.sidebar-title{font-size:11px;text-transform:uppercase;letter-spacing:0.18em;color:#6b7280}
 .sidebar-badge{
   font-size:10px;padding:2px 8px;border-radius:999px;
   background:rgba(56,189,248,0.12);border:1px solid rgba(56,189,248,0.5);color:#e0f2fe;
@@ -172,7 +171,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer}
 }
 .site-pill-row1{display:flex;align-items:center;justify-content:space-between}
 .site-pill-name{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600}
-.site-pill-meta{font-size:11px;color:var(--muted-soft)}
+.site-pill-meta{font-size:11px;color:#9ca3af}
 .site-pill-row2{display:flex;align-items:center;justify-content:space-between;gap:6px}
 .site-pill-condition{
   font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;
@@ -182,8 +181,8 @@ button{font-family:inherit;border:none;background:none;cursor:pointer}
 .site-pill-safe{background:rgba(34,197,94,0.18);border:1px solid rgba(34,197,94,0.6);color:#bbf7d0}
 .site-pill-marginal{background:rgba(234,179,8,0.18);border:1px solid rgba(234,179,8,0.7);color:#fef9c3}
 .site-pill-danger{background:rgba(239,68,68,0.18);border:1px solid rgba(239,68,68,0.7);color:#fee2e2}
-.site-pill-score{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted)}
-.site-pill-wind{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted-soft)}
+.site-pill-score{font-family:'JetBrains Mono',monospace;font-size:11px;color:#9ca3af}
+.site-pill-wind{font-family:'JetBrains Mono',monospace;font-size:11px;color:#9ca3af}
 .gust-dot{
   width:8px;height:8px;border-radius:999px;
   background:var(--accent-danger);
@@ -195,14 +194,26 @@ button{font-family:inherit;border:none;background:none;cursor:pointer}
   100%{transform:scale(1);box-shadow:0 0 0 0 rgba(248,113,113,0)}
 }
 
-/* FlyXC link in sidebar */
+/* Sidebar footer: cams + FlyXC */
 .sidebar-footer{
   padding:8px 12px 10px;
   border-top:1px solid rgba(31,41,55,0.9);
-  display:flex;justify-content:space-between;align-items:center;gap:8px;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
 }
-.flyxc-link-btn{
-  display:inline-flex;align-items:center;gap:6px;
+.sidebar-footer-row{
+  display:flex;
+  justify-content:space-between;
+  gap:6px;
+}
+.sidebar-footer-row.single{
+  justify-content:flex-start;
+}
+.footer-link-btn{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
   border-radius:999px;
   padding:4px 10px;
   font-size:11px;
@@ -210,8 +221,9 @@ button{font-family:inherit;border:none;background:none;cursor:pointer}
   border:1px solid rgba(56,189,248,0.6);
   color:#e0f2fe;
   text-decoration:none;
+  white-space:nowrap;
 }
-.flyxc-link-btn span.icon{font-size:13px}
+.footer-link-btn span.icon{font-size:13px}
 
 /* Detail */
 .detail{
@@ -219,7 +231,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer}
   background:linear-gradient(145deg,rgba(15,23,42,0.96),rgba(15,23,42,0.9));
   border-radius:var(--radius-lg);
   border:1px solid rgba(31,41,55,0.95);
-  box-shadow:var(--shadow-heavy);
+  box-shadow:0 30px 80px rgba(15,23,42,0.9);
   padding:14px 14px 16px;
   display:flex;flex-direction:column;gap:10px;
 }
@@ -231,7 +243,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer}
 .detail-title-row{display:flex;align-items:center;gap:10px}
 .detail-title-emoji{font-size:20px}
 .detail-title-text{font-size:18px;font-weight:700;letter-spacing:-0.03em}
-.detail-title-sub{font-size:12px;color:var(--muted-soft)}
+.detail-title-sub{font-size:12px;color:#9ca3af}
 .detail-header-right{display:flex;align-items:center;gap:10px}
 .safety-chip{
   border-radius:var(--radius-pill);
@@ -240,7 +252,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer}
   border:1px solid rgba(148,163,184,0.4);
 }
 .safety-score-val{font-family:'JetBrains Mono',monospace;font-size:13px}
-.safety-label{font-size:10px;text-transform:uppercase;letter-spacing:0.12em;color:var(--muted-soft)}
+.safety-label{font-size:10px;text-transform:uppercase;letter-spacing:0.12em;color:#9ca3af}
 .safety-chip.safe{background:rgba(34,197,94,0.10);border-color:rgba(34,197,94,0.7);color:#bbf7d0}
 .safety-chip.marginal{background:rgba(234,179,8,0.10);border-color:rgba(234,179,8,0.7);color:#fef9c3}
 .safety-chip.danger{background:rgba(239,68,68,0.10);border-color:rgba(239,68,68,0.7);color:#fee2e2}
@@ -252,7 +264,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer}
 .condition-pill.safe{background:rgba(34,197,94,0.18);border:1px solid rgba(34,197,94,0.7);color:#bbf7d0}
 .condition-pill.marginal{background:rgba(234,179,8,0.18);border:1px solid rgba(234,179,8,0.7);color:#fef9c3}
 .condition-pill.danger{background:rgba(239,68,68,0.18);border:1px solid rgba(239,68,68,0.8);color:#fee2e2}
-.last-updated{font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--muted-soft)}
+.last-updated{font-size:11px;font-family:'JetBrains Mono',monospace;color:#9ca3af}
 
 /* Decision banner */
 .decision-banner{
@@ -288,7 +300,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer}
   gap:10px;
 }
 
-/* AI card, metrics, etc. */
+/* AI card */
 .ai-card{
   position:relative;
   border-radius:var(--radius-lg);
@@ -317,9 +329,9 @@ button{font-family:inherit;border:none;background:none;cursor:pointer}
   border:1px solid rgba(191,219,254,0.65);
   background:rgba(15,23,42,0.65);color:#e0f2fe;
 }
-.ai-summary-text{font-size:13px;color:var(--text);line-height:1.55}
+.ai-summary-text{font-size:13px;color:#e5e7eb;line-height:1.55}
 .ai-best-window{
-  margin-top:6px;border-radius:var(--radius-pill);padding:3px 9px;
+  margin-top:6px;border-radius:999px;padding:3px 9px;
   font-size:11px;display:none;align-items:center;gap:4px;
   background:rgba(34,197,94,0.14);border:1px solid rgba(34,197,94,0.7);color:#bbf7d0;
 }
@@ -339,7 +351,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer}
   border:1px solid rgba(248,113,113,0.7);color:#fee2e2;
 }
 
-/* Metrics card (no mode buttons) */
+/* Metrics (live now) */
 .metrics-card{
   border-radius:var(--radius-lg);
   padding:10px 10px 10px;
@@ -393,7 +405,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer}
 }
 .skel-line{height:10px;margin:3px 0;border-radius:999px}
 
-/* Middle cards, info, reports, Open-Meteo tabs, etc. */
+/* Mid cards, forecast tabs */
 .detail-grid-mid{
   display:grid;
   grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);
@@ -469,7 +481,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer}
   color:#9ca3af;
 }
 
-/* Safety timeline under Open-Meteo */
+/* Safety timeline */
 .safety-timeline{
   margin-top:8px;
   display:flex;
@@ -484,7 +496,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer}
 .safety-slot.marginal{background:#eab308}
 .safety-slot.danger{background:#ef4444}
 
-/* Info grid, reports, same as before */
+/* Info & reports */
 .info-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-top:6px}
 .info-item{
   border-radius:var(--radius-md);
@@ -586,7 +598,6 @@ button{font-family:inherit;border:none;background:none;cursor:pointer}
 .mobile-nav-btn span.emoji{font-size:16px}
 .mobile-nav-btn.active{color:#e5f2ff}
 
-/* Responsiveness */
 @media(max-width:1280px){
   .header-inner,
   .app-main-inner,
@@ -650,10 +661,24 @@ button{font-family:inherit;border:none;background:none;cursor:pointer}
         </div>
         <div class="sidebar-sites" id="site-list"></div>
         <div class="sidebar-footer">
-          <a class="flyxc-link-btn" href="https://flyxc.app" target="_blank" rel="noopener noreferrer">
-            <span class="icon">📡</span>
-            <span>FlyXC Live Tracking</span>
-          </a>
+          <div class="sidebar-footer-row">
+            <a class="footer-link-btn" href="https://www.youtube.com/watch?v=vZEINdmawdc" target="_blank" rel="noopener noreferrer">
+              <span class="icon">🎥</span>
+              <span>Mussel Rock live cam</span>
+            </a>
+          </div>
+          <div class="sidebar-footer-row">
+            <a class="footer-link-btn" href="http://windslammer.net/WindSlammer/" target="_blank" rel="noopener noreferrer">
+              <span class="icon">📷</span>
+              <span>Ed Levin live cam</span>
+            </a>
+          </div>
+          <div class="sidebar-footer-row single">
+            <a class="footer-link-btn" href="https://flyxc.app" target="_blank" rel="noopener noreferrer">
+              <span class="icon">📡</span>
+              <span>FlyXC Live Tracking</span>
+            </a>
+          </div>
         </div>
       </aside>
 
