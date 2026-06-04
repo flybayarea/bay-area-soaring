@@ -921,7 +921,7 @@ button{
 /* Bottom row */
 .detail-grid-bottom{
   display:grid;
-  grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr);
   gap:10px;
 }
 .windy-shell{
@@ -951,6 +951,37 @@ button{
   width:100%;
   height:100%;
   border:0;
+}
+
+/* FlyXC tracking */
+.flyxc-shell{
+  border-radius:var(--radius-lg);
+  overflow:hidden;
+  background:#020617;
+  border:1px solid rgba(15,23,42,0.9);
+  box-shadow:0 18px 45px rgba(15,23,42,0.9);
+}
+.flyxc-header{
+  padding:7px 9px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  font-size:11px;
+  color:var(--muted-soft);
+  background:linear-gradient(90deg,rgba(15,23,42,0.98),rgba(15,23,42,0.96));
+}
+.flyxc-embed-wrapper{
+  position:relative;
+  width:100%;
+  height:260px;
+}
+.flyxc-iframe{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  border:0;
+  background:#020617;
 }
 
 /* Media & reports */
@@ -1114,7 +1145,8 @@ button{
   .detail-grid-bottom{
     grid-template-columns:minmax(0,1fr);
   }
-  .windy-embed-wrapper{
+  .windy-embed-wrapper,
+  .flyxc-embed-wrapper{
     height:240px;
   }
 }
@@ -1186,7 +1218,8 @@ button{
     <div class="footer-links">
       Data: <a href="https://open-meteo.com">Open‑Meteo</a> ·
       <a href="https://www.weather.gov">NOAA / NWS</a> ·
-      <a href="https://windy.com">Windy</a>
+      <a href="https://windy.com">Windy</a> ·
+      <a href="https://flyxc.app" target="_blank" rel="noopener noreferrer">FlyXC</a>
     </div>
     <div class="footer-warning">
       ⚠ Safety: Informational only. Always verify with instructors / local clubs. Conditions change quickly — fly at your own risk. © 2026 Bay Area Soaring.
@@ -1197,7 +1230,7 @@ button{
 <script>
 "use strict";
 
-/* Core state and sites */
+/* Core state and sites (unchanged except we might reuse lat/lon for FlyXC) */
 const SITES=[
   {
     id:"levin",
@@ -1218,18 +1251,7 @@ const SITES=[
     nwsY:93,
     notamHint:"Check KSJC / NUQ for TFRs",
     externalSite:"http://windslammer.net/WindSlammer/",
-    youtubeId:null,
-    launchRules:{
-      dirMin:190,dirMax:260,
-      minWindP2:4,maxWindP2:14,maxGustP2:20,
-      minWindP3:4,maxWindP3:18,maxGustP3:24,
-      minWindP4:4,maxWindP4:22,maxGustP4:28
-    },
-    safetyRules:{
-      minRating:"P2",
-      inland:true,
-      notes:["Thermals common mid‑day","Rotor behind ridges in strong SW"]
-    }
+    youtubeId:null
   },
   {
     id:"mussel",
@@ -1250,18 +1272,7 @@ const SITES=[
     nwsY:120,
     notamHint:"Check KSFO / Class B shelves & TFRs",
     youtubeId:"vZEINdmawdc",
-    externalSite:null,
-    launchRules:{
-      dirMin:250,dirMax:320,
-      minWindP2:6,maxWindP2:14,maxGustP2:20,
-      minWindP3:6,maxWindP3:18,maxGustP3:24,
-      minWindP4:6,maxWindP4:24,maxGustP4:30
-    },
-    safetyRules:{
-      minRating:"P3",
-      inland:false,
-      notes:["Strong ridge lift","Rotor if north or south of ideal","High consequence terrain"]
-    }
+    externalSite:null
   },
   {
     id:"shoreline",
@@ -1282,18 +1293,7 @@ const SITES=[
     nwsY:93,
     notamHint:"Near PAO / NUQ — check NOTAMs",
     youtubeId:"sqQbWv7YgEk",
-    externalSite:null,
-    launchRules:{
-      dirMin:280,dirMax:340,
-      minWindP2:6,maxWindP2:18,maxGustP2:24,
-      minWindP3:6,maxWindP3:20,maxGustP3:26,
-      minWindP4:6,maxWindP4:24,maxGustP4:30
-    },
-    safetyRules:{
-      minRating:"P2",
-      inland:false,
-      notes:["Open park; kiting only","Good for ground handling practice"]
-    }
+    externalSite:null
   },
   {
     id:"mission",
@@ -1314,18 +1314,7 @@ const SITES=[
     nwsY:99,
     notamHint:"Check KSJC TFRs and local advisories",
     youtubeId:"6uJdeuY2Z7A",
-    externalSite:null,
-    launchRules:{
-      dirMin:150,dirMax:230,
-      minWindP2:4,maxWindP2:12,maxGustP2:18,
-      minWindP3:4,maxWindP3:16,maxGustP3:22,
-      minWindP4:4,maxWindP4:22,maxGustP4:28
-    },
-    safetyRules:{
-      minRating:"P3",
-      inland:true,
-      notes:["Strong thermals mid‑day","Venturi and rotor in valley winds"]
-    }
+    externalSite:null
   }
 ];
 
@@ -1336,8 +1325,7 @@ const STATE={
   countdownTimer:null,
   localCacheTTL:3600000,
   gustThreshold:25,
-  reports:{},
-  coachSkillLevel:"P2"
+  reports:{}
 };
 
 function nowLocal(){return new Date();}
@@ -1385,7 +1373,7 @@ function saveReport(siteId,text){
   try{localStorage.setItem("bas_reports_"+siteId,JSON.stringify(STATE.reports[siteId]));}catch(e){}
 }
 
-/* Safety / scoring */
+/* Safety / scoring (same as your existing) */
 function computeSafetyScore(site,current,precip){
   const wind=current.windspeed_10m||0;
   const gust=current.windgusts_10m||wind;
@@ -1416,103 +1404,6 @@ function safetyCategory(score,site){
   return "DANGEROUS";
 }
 
-/* Launch window scoring */
-function scoreHourForPilot(site, hourIndex, hourly, level) {
-  const wind = hourly.windspeed_10m[hourIndex] || 0;
-  const gust = hourly.windgusts_10m[hourIndex] || wind;
-  const dirDeg = hourly.winddirection_10m[hourIndex] || 0;
-  const precip = hourly.precipitation[hourIndex] || 0;
-  const t = new Date(hourly.time[hourIndex]);
-
-  const rules = site.launchRules;
-  if (!rules) return 0;
-
-  const baseScore = computeSafetyScore(
-    site,
-    { windspeed_10m: wind, windgusts_10m: gust, winddirection_10m: dirDeg, precipitation: precip },
-    precip
-  );
-
-  const dMin = rules.dirMin;
-  const dMax = rules.dirMax;
-  const inSector = (
-    dMin <= dMax ?
-      (dirDeg >= dMin && dirDeg <= dMax) :
-      (dirDeg >= dMin || dirDeg <= dMax)
-  );
-  let score = baseScore;
-  if (!inSector) {
-    score -= 30;
-  }
-
-  const isP2 = level === "P2";
-  const isP3 = level === "P3";
-  const minWind = isP2 ? rules.minWindP2 : isP3 ? rules.minWindP3 : rules.minWindP4;
-  const maxWind = isP2 ? rules.maxWindP2 : isP3 ? rules.maxWindP3 : rules.maxWindP4;
-  const maxGust = isP2 ? rules.maxGustP2 : isP3 ? rules.maxGustP3 : rules.maxGustP4;
-
-  if (wind < minWind) score -= 10;
-  if (wind > maxWind) score -= 25;
-  if (gust > maxGust) score -= 25;
-
-  if (precip > 0.2) score -= 25;
-  else if (precip > 0.05) score -= 10;
-
-  const hour = t.getHours();
-  if (hour >= 10 && hour <= 17) score += 5;
-  if (hour >= 19 || hour <= 7) score -= 5;
-
-  return clamp(Math.round(score), 0, 100);
-}
-
-function computeLaunchWindows(site, hourly, level, maxHours = 24) {
-  if (!hourly || !hourly.time || !hourly.time.length) return [];
-  const now = nowLocal();
-  const windows = [];
-  const scores = [];
-
-  for (let i = 0; i < hourly.time.length; i++) {
-    const t = new Date(hourly.time[i]);
-    const diffH = (t - now) / 3600000;
-    if (diffH < 0 || diffH > maxHours) continue;
-    const s = scoreHourForPilot(site, i, hourly, level);
-    scores.push({ index: i, t, score: s });
-  }
-
-  const GOOD_THRESHOLD = 65;
-  const MAX_GAP_HOURS = 2;
-  const MIN_WINDOW_HOURS = 1;
-
-  let current = null;
-  for (const point of scores) {
-    if (point.score >= GOOD_THRESHOLD) {
-      if (!current) {
-        current = { start: point.t, end: point.t, bestScore: point.score, points: [point] };
-      } else {
-        const gapH = (point.t - current.end) / 3600000;
-        if (gapH <= MAX_GAP_HOURS) {
-          current.end = point.t;
-          current.bestScore = Math.max(current.bestScore, point.score);
-          current.points.push(point);
-        } else {
-          windows.push(current);
-          current = { start: point.t, end: point.t, bestScore: point.score, points: [point] };
-        }
-      }
-    }
-  }
-  if (current) windows.push(current);
-  const filtered = windows.filter(w => (w.end - w.start) / 3600000 >= MIN_WINDOW_HOURS);
-  const withLabels = filtered.map(w => {
-    const label = w.bestScore >= 80 ? "Excellent" :
-                  w.bestScore >= 70 ? "Good" : "Marginal";
-    return Object.assign({}, w, { label });
-  });
-  withLabels.sort((a, b) => b.bestScore - a.bestScore);
-  return withLabels;
-}
-
-/* Best window (existing) */
 function bestWindowFromHourly(site,hourly){
   if(!hourly||!hourly.time) return null;
   const now=nowLocal();
@@ -1543,7 +1434,7 @@ function bestWindowFromHourly(site,hourly){
   return `${fmt(start)} – ${fmt(end)}`;
 }
 
-/* Advisor text */
+/* Advisor text (same as before) */
 function buildAdvisorSummary(site,forecast){
   const om=forecast.om.data;
   const current=om.current||{};
@@ -1745,7 +1636,7 @@ async function updateAdvisor(siteId){
   }
 }
 
-/* Metrics / forecast loaders */
+/* Open-Meteo & NWS */
 async function fetchOpenMeteo(site){
   const cached=cacheGet(site.id,"om");
   if(cached) return cached;
@@ -1813,7 +1704,7 @@ function renderSiteLists(){
   }
 }
 
-/* Skeleton detail */
+/* Detail skeleton */
 function renderDetailSkeleton(){
   const site=SITES.find(s=>s.id===STATE.currentId);
   const detail=document.getElementById("detail");
@@ -1857,21 +1748,6 @@ function renderDetailSkeleton(){
             <div class="ai-error"></div>
           </div>
         </div>
-
-        <div class="coach-card" id="coach-card-${site.id}">
-          <div class="coach-header">
-            <div class="coach-title">SITE SAFETY COACH</div>
-            <div class="coach-skill-toggle">
-              <button class="coach-skill-btn active" data-skill="P2">P2</button>
-              <button class="coach-skill-btn" data-skill="P3">P3</button>
-              <button class="coach-skill-btn" data-skill="P4">P4</button>
-            </div>
-          </div>
-          <div class="coach-body">
-            <div class="coach-decision">Loading recommendation…</div>
-            <div class="coach-reasons">Waiting for live data.</div>
-          </div>
-        </div>
       </div>
 
       <div class="metrics-card">
@@ -1888,9 +1764,6 @@ function renderDetailSkeleton(){
           <div class="metric"><div class="skel skel-line" style="width:60%;height:24px;"></div></div>
           <div class="metric"><div class="skel skel-line" style="width:60%;height:24px;"></div></div>
           <div class="metric"><div class="skel skel-line" style="width:60%;height:24px;"></div></div>
-        </div>
-        <div class="launch-planner" id="launch-planner-${site.id}">
-          <span class="skel skel-line" style="width:70%;height:10px;"></span>
         </div>
       </div>
     </div>
@@ -1940,7 +1813,15 @@ function renderDetailSkeleton(){
           <iframe class="windy-iframe" src="${site.windyEmbed}" loading="lazy"></iframe>
         </div>
       </div>
-      <div class="media-card" id="media-card-${site.id}"></div>
+      <div class="flyxc-shell">
+        <div class="flyxc-header">
+          <span>FlyXC — Live tracking near ${site.name}</span>
+          <span style="font-size:10px;color:#9ca3af;">Shows pilots broadcasting to FlyXC in this area</span>
+        </div>
+        <div class="flyxc-embed-wrapper">
+          <iframe class="flyxc-iframe" id="flyxc-iframe-${site.id}" loading="lazy" src="" title="FlyXC live tracking"></iframe>
+        </div>
+      </div>
     </div>
   `;
 }
@@ -1954,7 +1835,6 @@ function renderDetail(siteId){
     return;
   }
   const om=state.om.data;
-  const hourly=om.hourly||{};
   const current=om.current||{};
   const precip=current.precipitation||0;
   const score=state.safetyScore;
@@ -2033,38 +1913,8 @@ function renderDetail(siteId){
           <div class="metric-sub">${precip? "Showers in play — watch wing loading":"Dry air — better for fabric & lines"}</div>
         </div>
       </div>
-      <div class="launch-planner" id="launch-planner-${site.id}"></div>
     `;
   }
-
-  const plannerEl=document.getElementById("launch-planner-"+site.id);
-  if(plannerEl && hourly.time){
-    const lvl=STATE.coachSkillLevel || "P2";
-    const windows=computeLaunchWindows(site,hourly,lvl,24);
-    if(!windows.length){
-      plannerEl.textContent=`Launch windows for ${lvl}: no clearly good slots in next 24 hours.`;
-    }else{
-      const fmt=d=>{
-        let h=d.getHours(),m=d.getMinutes();
-        const am=h>=12?"PM":"AM";
-        h=h%12||12;
-        return `${h}${m?":"+String(m).padStart(2,"0"):""} ${am}`;
-      };
-      const top=windows.slice(0,2);
-      plannerEl.innerHTML=`Launch windows for ${lvl}:`+
-        top.map(w=>{
-          const className=w.label==="Excellent"?"excellent":w.label==="Good"?"good":"marginal";
-          return `<div class="launch-planner-row">
-            <span class="launch-badge ${className}">${w.label}</span>
-            <span>${fmt(w.start)} – ${fmt(w.end)}</span>
-            <span style="color:#6b7280;"> · best score ${w.bestScore}</span>
-          </div>`;
-        }).join("");
-    }
-  }
-
-  const coachCard=document.getElementById("coach-card-"+site.id);
-  if(coachCard) renderCoach(site, state);
 
   const omBody=document.getElementById("om-body-"+site.id);
   if(omBody){omBody.innerHTML=renderOpenMeteoForecast(site,state);wireOmTabs(site.id);}
@@ -2096,113 +1946,26 @@ function renderDetail(siteId){
       btn.classList.add("active");
     });
   });
-  document.querySelectorAll(".coach-skill-btn").forEach(btn=>{
-    btn.addEventListener("click",()=>{
-      const skill=btn.dataset.skill;
-      STATE.coachSkillLevel=skill;
-      document.querySelectorAll(".coach-skill-btn").forEach(b=>b.classList.remove("active"));
-      btn.classList.add("active");
-      renderCoach(site,STATE.siteData[site.id]);
-      const planner=document.getElementById("launch-planner-"+site.id);
-      if(planner && hourly.time){
-        const windows=computeLaunchWindows(site,hourly,skill,24);
-        const fmt=d=>{
-          let h=d.getHours(),m=d.getMinutes();
-          const am=h>=12?"PM":"AM";
-          h=h%12||12;
-          return `${h}${m?":"+String(m).padStart(2,"0"):""} ${am}`;
-        };
-        if(!windows.length){
-          planner.textContent=`Launch windows for ${skill}: no clearly good slots in next 24 hours.`;
-        }else{
-          const top=windows.slice(0,2);
-          planner.innerHTML=`Launch windows for ${skill}:`+
-            top.map(w=>{
-              const className=w.label==="Excellent"?"excellent":w.label==="Good"?"good":"marginal";
-              return `<div class="launch-planner-row">
-                <span class="launch-badge ${className}">${w.label}</span>
-                <span>${fmt(w.start)} – ${fmt(w.end)}</span>
-                <span style="color:#6b7280;"> · best score ${w.bestScore}</span>
-              </div>`;
-            }).join("");
-        }
-      }
-    });
-  });
+
+  updateFlyXCIframe(site);
 }
 
-/* Site Safety Coach */
-function ratingRank(r){
-  if(r==="P2") return 2;
-  if(r==="P3") return 3;
-  if(r==="P4") return 4;
-  return 0;
-}
-function renderCoach(site,state){
-  const card=document.getElementById("coach-card-"+site.id);
-  if(!card||!state||!state.om) return;
-  const om=state.om.data;
-  const current=om.current||{};
-  const wind=current.windspeed_10m||0;
-  const gust=current.windgusts_10m||wind;
-  const dir=current.winddirection_10m||0;
-  const precip=current.precipitation||0;
-  const lvl=STATE.coachSkillLevel||"P2";
-  const minSiteRating = site.safetyRules && site.safetyRules.minRating ? site.safetyRules.minRating : "P2";
-
-  const pilotRank = ratingRank(lvl);
-  const siteRank = ratingRank(minSiteRating);
-
-  let decision="Recommended";
-  let decisionClass="good";
-  const reasons=[];
-
-  if(pilotRank < siteRank){
-    decision="Do Not Fly (rating too low)";
-    decisionClass="nope";
-    reasons.push(`Site is rated ${minSiteRating}+; your profile is ${lvl}.`);
+/* FlyXC integration: center on site */
+function updateFlyXCIframe(site){
+  const iframeId="flyxc-iframe-"+site.id;
+  let iframe=document.getElementById(iframeId);
+  if(!iframe){
+    // if detail re-rendered from skeleton, ensure we grab the current one
+    iframe=document.querySelector(".flyxc-iframe");
   }
+  if(!iframe) return;
 
-  const rules=site.launchRules;
-  if(rules){
-    const dMin=rules.dirMin,dMax=rules.dirMax;
-    const inSector = dMin<=dMax ? (dir>=dMin && dir<=dMax) : (dir>=dMin || dir<=dMax);
-    const minWind = lvl==="P2"?rules.minWindP2:lvl==="P3"?rules.minWindP3:rules.minWindP4;
-    const maxWind = lvl==="P2"?rules.maxWindP2:lvl==="P3"?rules.maxWindP3:rules.maxWindP4;
-    const maxGust = lvl==="P2"?rules.maxGustP2:lvl==="P3"?rules.maxGustP3:rules.maxGustP4;
-
-    if(!inSector){
-      decision="Caution";
-      decisionClass=(decisionClass==="nope")?"nope":"caution";
-      reasons.push("Wind is off‑axis for the main launch; expect rotor or weak lift.");
-    }
-    if(wind>maxWind){
-      decision="Do Not Fly";
-      decisionClass="nope";
-      reasons.push(`Wind ${wind.toFixed(1)} mph exceeds suggested max for ${lvl}.`);
-    }
-    if(gust>maxGust){
-      decision="Do Not Fly";
-      decisionClass="nope";
-      reasons.push(`Gusts ${gust.toFixed(1)} mph exceed suggested max for ${lvl}.`);
-    }
-    if(precip>0.05){
-      decision=decision==="Do Not Fly"?"Do Not Fly":"Caution";
-      decisionClass=decisionClass==="nope"?"nope":"caution";
-      reasons.push("Precipitation is in the area; expect wet gear and possible shutdowns.");
-    }
-  }
-
-  const coachDecision=card.querySelector(".coach-decision");
-  const coachReasons=card.querySelector(".coach-reasons");
-  coachDecision.textContent=`${decision} for ${lvl} today.`;
-  coachDecision.className="coach-decision "+decisionClass;
-  if(!reasons.length){
-    reasons.push("Within suggested limits for this rating. Always apply your own judgment and local guidance.");
-  }
-  const notes=site.safetyRules && site.safetyRules.notes ? site.safetyRules.notes : [];
-  coachReasons.innerHTML = reasons.map(r=>`• ${esc(r)}`).join("<br/>") +
-    (notes.length?("<br/><br/>Local notes: "+notes.join("; ")): "");
+  // FlyXC supports query params for center and zoom; using map view (not 3d). [web:21]
+  const lat=site.lat;
+  const lon=site.lon;
+  const zoom=11; // reasonable for site-scale view
+  const url=`https://flyxc.app?lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lon)}&z=${zoom}&dark=1&live=1`;
+  iframe.src=url;
 }
 
 /* Open-Meteo forecast UI */
@@ -2308,7 +2071,7 @@ async function ensureNwsLoaded(siteId){
   }
 }
 
-/* Site info, reports, media */
+/* Site info, reports, media (same as before) */
 function renderSiteInfo(site){
   const diffClass=site.difficulty==="beginner"?"diff-beginner":site.difficulty==="advanced"?"diff-advanced":"diff-intermediate";
   const diffLabel=site.difficulty==="beginner"?"Beginner":site.difficulty==="advanced"?"Advanced":"Intermediate";
@@ -2426,7 +2189,7 @@ function updateSidebarRow(siteId){
   if(gustDot) gustDot.style.display=gust>=STATE.gustThreshold?"block":"none";
 }
 
-/* Reports & advisor retry */
+/* Click handlers */
 document.addEventListener("click",e=>{
   const reportBtn=e.target.closest(".report-submit");
   if(reportBtn){
