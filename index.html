@@ -623,14 +623,14 @@ button{font-family:inherit;border:none;background:none;cursor:pointer}
 </style>
 </head>
 <body>
-<div id="offline-banner">âš  Offline â€” showing last cached data</div>
+<div id="offline-banner">⚠ Offline — showing last cached data</div>
 <div id="gust-toast"></div>
 
 <div class="app-shell">
   <header class="app-header">
     <div class="header-inner">
       <div class="brand">
-        <div class="brand-logo">ðŸª‚</div>
+        <div class="brand-logo">🪂</div>
         <div>
           <div class="brand-text-main">Bay Area Soaring</div>
           <div class="brand-text-sub">AI WEATHER OPS DASHBOARD</div>
@@ -646,7 +646,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer}
           <div class="meta-value" id="next-refresh">in 180s</div>
         </div>
         <button class="refresh-button" id="refresh-btn">
-          <span>â†»</span><span>Refresh now</span>
+          <span>↻</span><span>Refresh now</span>
         </button>
       </div>
     </div>
@@ -657,25 +657,25 @@ button{font-family:inherit;border:none;background:none;cursor:pointer}
       <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
           <div class="sidebar-title">Flying Sites</div>
-          <div class="sidebar-badge">Live Â· Openâ€‘Meteo + NWS</div>
+          <div class="sidebar-badge">Live · Open‑Meteo + NWS</div>
         </div>
         <div class="sidebar-sites" id="site-list"></div>
         <div class="sidebar-footer">
           <div class="sidebar-footer-row">
             <a class="footer-link-btn" href="https://www.youtube.com/watch?v=vZEINdmawdc" target="_blank" rel="noopener noreferrer">
-              <span class="icon">ðŸŽ¥</span>
+              <span class="icon">🎥</span>
               <span>Mussel Rock live cam</span>
             </a>
           </div>
           <div class="sidebar-footer-row">
             <a class="footer-link-btn" href="http://windslammer.net/WindSlammer/" target="_blank" rel="noopener noreferrer">
-              <span class="icon">ðŸ“·</span>
+              <span class="icon">📷</span>
               <span>Ed Levin live cam</span>
             </a>
           </div>
           <div class="sidebar-footer-row single">
             <a class="footer-link-btn" href="https://flyxc.app" target="_blank" rel="noopener noreferrer">
-              <span class="icon">ðŸ“¡</span>
+              <span class="icon">📡</span>
               <span>FlyXC Live Tracking</span>
             </a>
           </div>
@@ -692,13 +692,13 @@ button{font-family:inherit;border:none;background:none;cursor:pointer}
 
   <footer class="footer">
     <div class="footer-links">
-      Data: <a href="https://open-meteo.com">Openâ€‘Meteo</a> Â·
-      <a href="https://www.weather.gov">NOAA / NWS</a> Â·
-      <a href="https://windy.com">Windy</a> Â·
+      Data: <a href="https://open-meteo.com">Open‑Meteo</a> ·
+      <a href="https://www.weather.gov">NOAA / NWS</a> ·
+      <a href="https://windy.com">Windy</a> ·
       <a href="https://flyxc.app" target="_blank" rel="noopener noreferrer">FlyXC</a>
     </div>
     <div class="footer-warning">
-      âš  Safety: Informational only. Always verify with instructors / local clubs. Conditions change quickly â€” fly at your own risk. Â© 2026 Bay Area Soaring.
+      ⚠ Safety: Informational only. Always verify with instructors / local clubs. Conditions change quickly — fly at your own risk. © 2026 Bay Area Soaring.
     </div>
   </footer>
 </div>
@@ -710,7 +710,7 @@ const SITES=[
   {
     id:"levin",
     name:"Ed R. Levin Park",
-    emoji:"ðŸª‚",
+    emoji:"🪂",
     city:"Milpitas, CA",
     type:"Paragliding",
     lat:37.4619,
@@ -718,7 +718,7 @@ const SITES=[
     elevation:"1,102 ft (336 m)",
     difficulty:"intermediate",
     typicalWind:"SW thermic in afternoon",
-    emergency:"Santa Clara County Parks Â· +1 (408) 262â€‘6980",
+    emergency:"Santa Clara County Parks · +1 (408) 262‑6980",
     landing:"Lower park LZ near main entrance",
     windyEmbed:"https://embed.windy.com/embed2.html?lat=37.4619&lon=-121.861&detailLat=37.4619&detailLon=-121.861&width=650&height=350&zoom=11&level=surface&overlay=wind&product=ecmwf&menu=&message=&marker=true&calendar=now&pressure=true&type=map&location=coordinates&detail=true&metricWind=mph&metricTemp=%C2%B0F&radarRange=-1",
     nwsOffice:"MTR",
@@ -731,17 +731,17 @@ const SITES=[
   {
     id:"mussel",
     name:"Mussel Rock Park",
-    emoji:"ðŸ”",
+    emoji:"🏔",
     city:"Daly City, CA",
     type:"Hang / Paraglide",
     lat:37.674,
     lon:-122.4887,
     elevation:"557 ft (170 m)",
     difficulty:"advanced",
-    typicalWind:"Strong Wâ€“NW ocean flow",
-    emergency:"San Mateo County Dispatch Â· 911",
-    landing:"Beach below cliffs â€” advanced pilots only",
-    windyEmbed:"https://embed.windy.com/embed2.html?lat=37.674&lon=-122.4887&detailLat=37.674&detailLon=-122.4887&width=650&height=350&zoom=12&level=surface&overlay=wind&product=ecmwf&menu=&message=&marker=true&calendar=now&pressure=true&type=map&location=coordinates&detail=true&metricWind=mph&metricTemp=%C2%B0F&radarRange=-1",
+    typicalWind:"Strong W–NW ocean flow",
+    emergency:"San Mateo County Dispatch · 911",
+    landing:"Beach below cliffs — advanced pilots only",
+    windyEmbed:"https://embed.windy.com/embed2.html?lat=37.674&lon:-122.4887&detailLat=37.674&detailLon:-122.4887&width=650&height=350&zoom=12&level=surface&overlay=wind&product=ecmwf&menu=&message=&marker=true&calendar=now&pressure=true&type=map&location=coordinates&detail=true&metricWind=mph&metricTemp=%C2%B0F&radarRange=-1",
     nwsOffice:"MTR",
     nwsX:82,
     nwsY:120,
@@ -752,7 +752,7 @@ const SITES=[
   {
     id:"shoreline",
     name:"Shoreline Kite Area",
-    emoji:"ðŸª",
+    emoji:"🪁",
     city:"Mountain View, CA",
     type:"Kite Flying",
     lat:37.4297,
@@ -760,20 +760,20 @@ const SITES=[
     elevation:"3 ft (1 m)",
     difficulty:"beginner",
     typicalWind:"NW bay breeze, afternoons",
-    emergency:"Mountain View Fire Â· 911",
+    emergency:"Mountain View Fire · 911",
     landing:"Open grass fields throughout park",
     windyEmbed:"https://embed.windy.com/embed2.html?lat=37.4297&lon:-122.0766&detailLat:37.4297&detailLon:-122.0766&width=650&height=350&zoom=12&level=surface&overlay=wind&product=ecmwf&menu=&message=&marker:true&calendar=now&pressure:true&type=map&location=coordinates&detail:true&metricWind:mph&metricTemp:%C2%B0F&radarRange:-1",
     nwsOffice:"MTR",
     nwsX:90,
     nwsY:93,
-    notamHint:"Near PAO / NUQ â€” check NOTAMs",
+    notamHint:"Near PAO / NUQ — check NOTAMs",
     youtubeId:"sqQbWv7YgEk",
     externalSite:null
   },
   {
     id:"mission",
     name:"Mission Peak",
-    emoji:"â›°",
+    emoji:"⛰",
     city:"Fremont, CA",
     type:"Paragliding / Hang",
     lat:37.5131,
@@ -781,7 +781,7 @@ const SITES=[
     elevation:"2,305 ft (703 m)",
     difficulty:"advanced",
     typicalWind:"SSW thermic with valley breeze",
-    emergency:"EBRPD Police Â· +1 (510) 881â€‘1833",
+    emergency:"EBRPD Police · +1 (510) 881‑1833",
     landing:"Designated LZ in Fremont foothills",
     windyEmbed:"https://embed.windy.com/embed2.html?lat=37.5131&lon:-121.8803&detailLat:37.5131&detailLon:-121.8803&width=650&height=350&zoom=12&level=surface&overlay=wind&product=ecmwf&menu=&message=&marker:true&calendar=now&pressure:true&type=map&location=coordinates&detail:true&metricWind:mph&metricTemp:%C2%B0F&radarRange:-1",
     nwsOffice:"MTR",
@@ -888,32 +888,32 @@ function pilotRatingClassification(site,score,cat,current){
   const isRainy = (current.precipitation||0)>0.1;
 
   const diff=site.difficulty;
-  const labelBase = cat==="SAFE"?"GO":cat==="MARGINAL"?"CAUTION":"NOâ€‘GO";
+  const labelBase = cat==="SAFE"?"GO":cat==="MARGINAL"?"CAUTION":"NO‑GO";
 
-  let ratingLabel="P2â€“P3 OK";
-  let explanation="Conditions look workable for most P2â€“P3 pilots with normal margins.";
+  let ratingLabel="P2–P3 OK";
+  let explanation="Conditions look workable for most P2–P3 pilots with normal margins.";
 
   if(cat==="SAFE"){
     if(diff==="beginner"){
       if(score>=80 && !hasStrongGusts && !isRainy){
-        ratingLabel="P2â€“P3 OK";
+        ratingLabel="P2–P3 OK";
         explanation="Friendly beginner air; suitable for newer P2 with instructor briefing.";
       }else{
-        ratingLabel="P3 OK Â· New P2 use caution";
-        explanation="Some factors (gusts or showers) â€” P3 fine, newer P2 should get a site check.";
+        ratingLabel="P3 OK · New P2 use caution";
+        explanation="Some factors (gusts or showers) — P3 fine, newer P2 should get a site check.";
       }
     }else if(diff==="intermediate"){
       if(score>=85 && !hasStrongGusts){
-        ratingLabel="P3 OK Â· Solid P2 with coaching";
+        ratingLabel="P3 OK · Solid P2 with coaching";
         explanation="Good taskable air; ideal for P3 and supervised, current P2.";
       }else{
-        ratingLabel="P3â€“P4 OK";
-        explanation="Generally good but with quirks; P3â€“P4 recommended, lowâ€‘time P2 should sit out.";
+        ratingLabel="P3–P4 OK";
+        explanation="Generally good but with quirks; P3–P4 recommended, low‑time P2 should sit out.";
       }
     }else{
       if(score>=80 && !hasStrongGusts){
-        ratingLabel="P3â€“P4 OK";
-        explanation="Advanced site but within normal range for current P3â€“P4 pilots.";
+        ratingLabel="P3–P4 OK";
+        explanation="Advanced site but within normal range for current P3–P4 pilots.";
       }else{
         ratingLabel="Strong P4 preferred";
         explanation="Edges of comfort band at an advanced site; best for current, conservative P4.";
@@ -922,26 +922,26 @@ function pilotRatingClassification(site,score,cat,current){
   }else if(cat==="MARGINAL"){
     if(diff==="beginner"){
       ratingLabel="Experienced P3 only";
-      explanation="Margins are thin; beginners and lowâ€‘time P2 should not fly here today.";
+      explanation="Margins are thin; beginners and low‑time P2 should not fly here today.";
     }else if(diff==="intermediate"){
       if(hasStrongGusts || isRainy){
         ratingLabel="Strong P4 only";
-        explanation="Gusts / moisture push this into strongâ€‘air territory â€” only for very current P4.";
+        explanation="Gusts / moisture push this into strong‑air territory — only for very current P4.";
       }else{
-        ratingLabel="P3â€“P4 only";
-        explanation="Manageable for current P3â€“P4; P2 and rusty pilots should stand down.";
+        ratingLabel="P3–P4 only";
+        explanation="Manageable for current P3–P4; P2 and rusty pilots should stand down.";
       }
     }else{
       ratingLabel="Very current P4 only";
-      explanation="Advanced, punchy day; only for very current P4 with strongâ€‘wind and activeâ€‘flying skills.";
+      explanation="Advanced, punchy day; only for very current P4 with strong‑wind and active‑flying skills.";
     }
   }else{
     if(hasStrongGusts || isRainy){
-      ratingLabel="Unsafe for P2â€“P4";
-      explanation="Blownâ€‘out or stormy profile â€” treat as a rest day for recreational pilots.";
+      ratingLabel="Unsafe for P2–P4";
+      explanation="Blown‑out or stormy profile — treat as a rest day for recreational pilots.";
     }else{
       ratingLabel="P4 only in exceptional cases";
-      explanation="Nonâ€‘standard conditions even for P4; only consider with local expert guidance.";
+      explanation="Non‑standard conditions even for P4; only consider with local expert guidance.";
     }
   }
 
@@ -975,7 +975,7 @@ function bestWindowFromHourly(site,hourly){
     h=h%12||12;
     return m?`${h}:${String(m).padStart(2,"0")} ${am}`:`${h} ${am}`;
   };
-  return `${fmt(start)} â€“ ${fmt(end)}`;
+  return `${fmt(start)} – ${fmt(end)}`;
 }
 
 /* Advisor text */
@@ -997,13 +997,13 @@ function buildAdvisorSummary(site,forecast){
   }else if(cat==="MARGINAL"){
     intro=`Borderline conditions at ${site.name}. `;
   }else{
-    intro=`â›” Highâ€‘risk conditions at ${site.name}. `;
+    intro=`⛔ High‑risk conditions at ${site.name}. `;
   }
 
   const windPart=`${dir} winds ${wind.toFixed(1)} mph, gusting ${gust.toFixed(1)} mph. `;
-  const tempPart=`Temperature around ${temp}Â°F. `;
+  const tempPart=`Temperature around ${temp}°F. `;
   let precipPart="";
-  if(precip>0.2) precipPart="Light to moderate precipitation nearby â€” expect wet gear and possible shutdowns. ";
+  if(precip>0.2) precipPart="Light to moderate precipitation nearby — expect wet gear and possible shutdowns. ";
   else if(precip>0) precipPart="Isolated showers possible. ";
   else precipPart="Skies dry with no significant precipitation. ";
 
@@ -1015,7 +1015,7 @@ function buildAdvisorSummary(site,forecast){
   }else if(cat==="MARGINAL"){
     advice="Recommended for experienced P3/H3+ pilots only; newer pilots should stand down. ";
   }else{
-    advice="Stand down â€” treat this as a nonâ€‘flying day unless you have strong alpine experience and local coaching. ";
+    advice="Stand down — treat this as a non‑flying day unless you have strong alpine experience and local coaching. ";
   }
 
   if(forecast.bestWindow){
@@ -1030,13 +1030,13 @@ function buildDailyBrief(site,forecast){
   if(forecast.safetyCategory==="SAFE"){
     phrase="Overall a workable day with at least one decent flying window.";
   }else if(forecast.safetyCategory==="MARGINAL"){
-    phrase="Day looks sketchy â€” tight margins and variable wind.";
+    phrase="Day looks sketchy — tight margins and variable wind.";
   }else{
     phrase="Today looks mostly blown out or unstable for safe flying.";
   }
   const win=forecast.bestWindow?` Primary window: ${forecast.bestWindow}.`:"";
   const nwsExtra=forecast.nwsDaily && forecast.nwsDaily.length
-    ? ` NWS calls it â€œ${forecast.nwsDaily[0].shortForecast}â€ with ${forecast.nwsDaily[0].temperature}Â°F and ${forecast.nwsDaily[0].windSpeed} ${forecast.nwsDaily[0].windDirection}.`
+    ? ` NWS calls it “${forecast.nwsDaily[0].shortForecast}” with ${forecast.nwsDaily[0].temperature}°F and ${forecast.nwsDaily[0].windSpeed} ${forecast.nwsDaily[0].windDirection}.`
     : "";
   return `${dayLabel} overview: ${phrase}${win}${nwsExtra}`;
 }
@@ -1097,10 +1097,10 @@ function renderAdvisorError(siteId,message){
   if(!errorEl){
     errorEl=document.createElement("div");
     errorEl.className="ai-error";
-    errorEl.innerHTML=`<span>âš  ${esc(message)}</span><button type="button" data-site="${siteId}">Retry</button>`;
+    errorEl.innerHTML=`<span>⚠ ${esc(message)}</span><button type="button" data-site="${siteId}">Retry</button>`;
     card.querySelector(".ai-card-inner").appendChild(errorEl);
   }else{
-    errorEl.querySelector("span").textContent="âš  "+message;
+    errorEl.querySelector("span").textContent="⚠ "+message;
   }
   if(textEl) textEl.textContent="Advisor unavailable.";
   if(briefEl) briefEl.textContent="Weather data could not be loaded for this site.";
@@ -1119,9 +1119,9 @@ async function loadForecastForAdvisor(siteId){
       `&hourly=windspeed_10m,windgusts_10m,precipitation,winddirection_10m,temperature_2m`+
       `&temperature_unit=fahrenheit&windspeed_unit=mph&precipitation_unit=inch&timezone=auto&forecast_days=7`;
     const resp=await fetch(url);
-    if(!resp.ok) throw new Error("Openâ€‘Meteo HTTP "+resp.status);
+    if(!resp.ok) throw new Error("Open‑Meteo HTTP "+resp.status);
     const data=await resp.json();
-    if(!data.current||!data.hourly) throw new Error("Openâ€‘Meteo missing fields");
+    if(!data.current||!data.hourly) throw new Error("Open‑Meteo missing fields");
     cacheSet(site.id,"om",data);
     omRes={ts:Date.now(),data};
   }
@@ -1209,7 +1209,7 @@ async function fetchOpenMeteo(site){
     `&hourly=windspeed_10m,windgusts_10m,precipitation,winddirection_10m,temperature_2m`+
     `&temperature_unit=fahrenheit&windspeed_unit=mph&precipitation_unit=inch&timezone=auto&forecast_days=7`;
   const resp=await fetch(url);
-  if(!resp.ok) throw new Error("Openâ€‘Meteo HTTP "+resp.status);
+  if(!resp.ok) throw new Error("Open‑Meteo HTTP "+resp.status);
   const data=await resp.json();
   cacheSet(site.id,"om",data);
   return {ts:Date.now(),data};
@@ -1252,17 +1252,17 @@ function renderHourlyCards(hourlyArr,max=8){
       const hour=e.time.toLocaleTimeString([],{hour:"numeric"});
       const labelDay=e.time.toLocaleDateString([],{weekday:"short"});
       const windTxt = e.windGust != null && e.windGust !== e.windSpeed
-        ? `${e.windSpeed.toFixed(1)} mph wind Â· ${e.windGust.toFixed(1)} mph gusts`
+        ? `${e.windSpeed.toFixed(1)} mph wind · ${e.windGust.toFixed(1)} mph gusts`
         : `${e.windSpeed.toFixed(1)} mph wind`;
       const precipTxt = (e.precipitation!=null && !isNaN(e.precipitation))
         ? (e.precipitation>0 ? `${e.precipitation.toFixed(2)} in precip` : "No precip")
         : (e.precipitationText || "Precip N/A");
-      const dirTxt = e.windDir ? ` Â· ${esc(e.windDir)}` : "";
-      const extra = e.shortForecast ? ` Â· ${esc(e.shortForecast)}` : "";
+      const dirTxt = e.windDir ? ` · ${esc(e.windDir)}` : "";
+      const extra = e.shortForecast ? ` · ${esc(e.shortForecast)}` : "";
       return `<div class="forecast-item">
-        <div class="forecast-item-title">${labelDay} Â· ${hour}</div>
-        <div class="forecast-item-temp">${Math.round(e.temperature)}Â°F</div>
-        <div class="forecast-item-text">${windTxt} Â· ${precipTxt}${dirTxt}${extra}</div>
+        <div class="forecast-item-title">${labelDay} · ${hour}</div>
+        <div class="forecast-item-temp">${Math.round(e.temperature)}°F</div>
+        <div class="forecast-item-text">${windTxt} · ${precipTxt}${dirTxt}${extra}</div>
       </div>`;
     }).join("")
   }</div>`;
@@ -1327,7 +1327,7 @@ function renderSiteLists(){
       </div>
       <div class="site-pill-row2">
         <div class="site-pill-condition site-pill-marginal" id="site-cond-${site.id}">
-          <span>â€¢â€¢â€¢</span>
+          <span>•••</span>
         </div>
         <div style="display:flex;align-items:center;gap:6px;">
           <div class="site-pill-score" id="site-score-${site.id}">--/100</div>
@@ -1358,7 +1358,7 @@ function renderDetailSkeleton(){
           <div class="detail-title-emoji">${site.emoji}</div>
           <div class="detail-title-text">${site.name}</div>
         </div>
-        <div class="detail-title-sub">${site.city} Â· ${site.type}</div>
+        <div class="detail-title-sub">${site.city} · ${site.type}</div>
       </div>
       <div class="detail-header-right">
         <div class="condition-pill marginal"><span>Loading</span></div>
@@ -1369,18 +1369,18 @@ function renderDetailSkeleton(){
       </div>
     </div>
     <div class="decision-banner" id="decision-banner">
-      <div class="decision-main">Analyzingâ€¦</div>
+      <div class="decision-main">Analyzing…</div>
       <div class="decision-sub">Waiting for live weather data.</div>
     </div>
-    <div class="last-updated">Loading live dataâ€¦</div>
+    <div class="last-updated">Loading live data…</div>
 
     <div class="detail-grid-top">
       <div>
         <div class="ai-card" id="advisor-card-${site.id}">
           <div class="ai-card-inner">
             <div class="ai-card-header">
-              <div class="ai-card-title">ðŸ¤– AI FLYING ADVISOR</div>
-              <div class="ai-chip">Openâ€‘Meteo + NWS</div>
+              <div class="ai-card-title">🤖 AI FLYING ADVISOR</div>
+              <div class="ai-chip">Open‑Meteo + NWS</div>
             </div>
             <div class="ai-summary-text">
               <span class="skel skel-line" style="width:82%;display:block;"></span>
@@ -1388,7 +1388,7 @@ function renderDetailSkeleton(){
               <span class="skel skel-line" style="width:74%;display:block;"></span>
             </div>
             <div class="ai-best-window">
-              <span class="emoji">ðŸª‚</span>
+              <span class="emoji">🪂</span>
               <span>Best window: --</span>
             </div>
             <div class="ai-daily-brief">Daily briefing will appear once forecast data loads.</div>
@@ -1413,7 +1413,7 @@ function renderDetailSkeleton(){
     <div class="detail-grid-mid">
       <div class="card" id="om-card-${site.id}">
         <div class="card-header" data-target="om-body-${site.id}">
-          <div class="card-title">Openâ€‘Meteo Forecast</div>
+          <div class="card-title">OPEN‑METEO FORECAST</div>
           <div class="card-toggle-pill open" id="om-pill-${site.id}">Tap to collapse</div>
         </div>
         <div class="card-body open" id="om-body-${site.id}"></div>
@@ -1421,7 +1421,7 @@ function renderDetailSkeleton(){
 
       <div class="card" id="nws-card-${site.id}">
         <div class="card-header" data-target="nws-body-${site.id}">
-          <div class="card-title">NWS Forecast</div>
+          <div class="card-title">NWS FORECAST</div>
           <div class="card-toggle-pill open" id="nws-pill-${site.id}">Tap to collapse</div>
         </div>
         <div class="card-body open" id="nws-body-${site.id}"></div>
@@ -1447,8 +1447,8 @@ function renderDetailSkeleton(){
 
     <div class="windy-shell">
       <div class="windy-header">
-        <span>Windy â€” Live wind field around ${site.name}</span>
-        <span style="font-size:10px;color:#9ca3af;">Map: drag / zoom for detail Â· Forecast panel open by default</span>
+        <span>Windy — Live wind field around ${site.name}</span>
+        <span style="font-size:10px;color:#9ca3af;">Map: drag / zoom for detail · Forecast panel open by default</span>
       </div>
       <div class="windy-embed-wrapper">
         <iframe class="windy-iframe" src="${site.windyEmbed}" loading="lazy"></iframe>
@@ -1480,7 +1480,7 @@ function renderDetail(siteId){
   const lastEl=document.querySelector(".last-updated");
   if(header){
     const sub=header.querySelector(".detail-title-sub");
-    if(sub) sub.textContent=`${site.city} Â· ${site.type}`;
+    if(sub) sub.textContent=`${site.city} · ${site.type}`;
     const condPill=header.querySelector(".condition-pill");
     const safetyChip=header.querySelector(".safety-chip");
     if(condPill){
@@ -1508,9 +1508,9 @@ function renderDetail(siteId){
     }else{
       banner.classList.add("decision-nogo");
     }
-    main.textContent = `${ratingInfo.labelBase} Â· ${ratingInfo.ratingLabel}`;
+    main.textContent = `${ratingInfo.labelBase} · ${ratingInfo.ratingLabel}`;
     const winText=state.bestWindow ? `Best window: ${state.bestWindow}. ` : "";
-    sub.textContent=`${winText}Safety score ${score}/100 Â· ${site.difficulty.toUpperCase()} site. ${ratingInfo.explanation}`;
+    sub.textContent=`${winText}Safety score ${score}/100 · ${site.difficulty.toUpperCase()} site. ${ratingInfo.explanation}`;
   }
 
   const metricsCard=document.querySelector(".metrics-card");
@@ -1543,13 +1543,13 @@ function renderDetail(siteId){
             <span class="metric-main">${gustVal.toFixed(1)}</span>
             <span class="metric-unit">mph</span>
           </div>
-          <div class="metric-sub">${gustVal>=STATE.gustThreshold?"âš  Above gust threshold â€” advanced only":"Within normal gust range"}</div>
+          <div class="metric-sub">${gustVal>=STATE.gustThreshold?"⚠ Above gust threshold — advanced only":"Within normal gust range"}</div>
         </div>
         <div class="metric">
           <div class="metric-label">Temperature</div>
           <div class="metric-value">
             <span class="metric-main">${temp}</span>
-            <span class="metric-unit">Â°F</span>
+            <span class="metric-unit">°F</span>
           </div>
           <div class="metric-sub">At launch level, representative of now</div>
         </div>
@@ -1559,7 +1559,7 @@ function renderDetail(siteId){
             <span class="metric-main">${prec.toFixed(2)}</span>
             <span class="metric-unit">in</span>
           </div>
-          <div class="metric-sub">${prec? "Showers in play â€” watch wing loading":"Dry air â€” better for fabric & lines"}</div>
+          <div class="metric-sub">${prec? "Showers in play — watch wing loading":"Dry air — better for fabric & lines"}</div>
         </div>
       </div>
     `;
@@ -1567,12 +1567,21 @@ function renderDetail(siteId){
 
   const omBody=document.getElementById("om-body-"+site.id);
   if(omBody){omBody.innerHTML=renderOpenMeteoForecast(site,state);wireOmTabs(site.id);}
+
+  const nwsBody=document.getElementById("nws-body-"+site.id);
+  if(nwsBody){
+    if(state.nwsHourly && state.nwsHourly.length){
+      nwsBody.innerHTML=renderNwsForecast(site,state);
+      wireNwsTabs(site.id);
+    }else{
+      nwsBody.innerHTML=`<div style="font-size:12px;color:#9ca3af;">No NWS forecast available.</div>`;
+    }
+  }
+
   const infoBody=document.getElementById("info-body-"+site.id);
   if(infoBody) infoBody.innerHTML=renderSiteInfo(site);
   const reportsBody=document.getElementById("reports-body-"+site.id);
   if(reportsBody) reportsBody.innerHTML=renderReports(site.id);
-
-  ensureNwsDailyAndHourly(site.id);
 
   document.querySelectorAll(".card-header").forEach(h=>{
     h.addEventListener("click",()=>{
@@ -1597,7 +1606,7 @@ function renderDetail(siteId){
   updateSidebarRow(siteId);
 }
 
-/* Openâ€‘Meteo forecast with windDir */
+/* Open‑Meteo forecast with windDir */
 function renderOpenMeteoForecast(site,state){
   const om=state.om.data;
   const hourly=om.hourly||{};
@@ -1661,7 +1670,7 @@ function renderOpenMeteoForecast(site,state){
     <div class="forecast-tabs">
       <button class="forecast-tab active" data-om-tab="today" data-site="${site.id}">Today (from now)</button>
       <button class="forecast-tab" data-om-tab="tomorrow" data-site="${site.id}">Tomorrow</button>
-      <button class="forecast-tab" data-om-tab="week" data-site="${site.id}">6â€‘Day</button>
+      <button class="forecast-tab" data-om-tab="week" data-site="${site.id}">6‑Day</button>
     </div>
     ${timeline}
     <div id="om-panel-${site.id}-today" class="om-panel">
@@ -1677,7 +1686,7 @@ function renderOpenMeteoForecast(site,state){
 }
 function wireOmTabs(siteId){
   const detail=document.getElementById("detail");
-  const tabs=detail.querySelectorAll(`.forecast-tab[data-site="${siteId}"]`);
+  const tabs=detail.querySelectorAll(`.forecast-tab[data-om-tab][data-site="${siteId}"]`);
   tabs.forEach(tab=>{
     tab.addEventListener("click",()=>{
       const mode=tab.getAttribute("data-om-tab");
@@ -1691,390 +1700,26 @@ function wireOmTabs(siteId){
   });
 }
 
-/* NWS daily + hourly combined card, with direction on daily rows */
-async function ensureNwsDailyAndHourly(siteId){
-  const site=SITES.find(s=>s.id===siteId);
-  const state=STATE.siteData[siteId]||{};
-  const body=document.getElementById("nws-body-"+siteId);
-  const pill=document.getElementById("nws-pill-"+siteId);
-  if(state.nwsRendered) return;
-  body.innerHTML=`<div style="font-size:12px;color:#9ca3af;">Loading NWS forecastâ€¦</div>`;
-  pill.textContent="Loadingâ€¦";
-  try{
-    const [nwsDayRes,nwsHourRes]=await Promise.all([
-      fetchNWSDaily(site).catch(()=>null),
-      fetchNWSHourly(site).catch(()=>null)
-    ]);
-
-    const dailyPeriods = nwsDayRes && nwsDayRes.data.properties && nwsDayRes.data.properties.periods
-      ? nwsDayRes.data.properties.periods
-      : [];
-    const hourlyPeriods = nwsHourRes && nwsHourRes.data.properties && nwsHourRes.data.properties.periods
-      ? nwsHourRes.data.properties.periods
-      : [];
-
-    let dailyHtml="";
-    if(dailyPeriods.length){
-      const firstFew=dailyPeriods.slice(0,8);
-      dailyHtml = `<div style="font-size:11px;text-transform:uppercase;letter-spacing:0.16em;color:#9ca3af;margin-bottom:4px;">Daily outlook</div>`+
-        `<div class="forecast-grid">${
-          firstFew.map(p=>{
-            const name=esc(p.name || "");
-            const temp=p.temperature;
-            const short=esc(p.shortForecast || "");
-            const ws=p.windSpeed || "";
-            const dir=p.windDirection || "";
-            const windPhrase = ws && dir ? `${ws} ${esc(dir)}` : (ws || "");
-            return `<div class="forecast-item">
-              <div class="forecast-item-title">${name}</div>
-              <div class="forecast-item-temp">${Math.round(temp)}Â°F</div>
-              <div class="forecast-item-text">${short}${windPhrase ? " Â· "+windPhrase : ""}</div>
-            </div>`;
-          }).join("")
-        }</div>`;
-    }else{
-      dailyHtml = `<div style="font-size:12px;color:#9ca3af;">No NWS daily forecast available.</div>`;
-    }
-
-    let hourlyHtml="";
-    if(hourlyPeriods.length){
-      const now=nowLocal();
-      const startIdx=hourlyPeriods.findIndex(p=>new Date(p.startTime)>=now);
-      const fromIdx=startIdx>=0?startIdx:0;
-      const sliced=hourlyPeriods.slice(fromIdx,fromIdx+12);
-      const hourlyNorm=sliced.map(p=>{
-        const t=new Date(p.startTime);
-        const temp=p.temperature;
-        const short=p.shortForecast||"";
-        const ws=p.windSpeed||"";
-        let avgWind=0;
-        const m=ws.match(/(\d+)\s*(?:to|-)\s*(\d+)\s*mph/i);
-        const m2=ws.match(/(\d+)\s*mph/i);
-        if(m){
-          avgWind=(parseInt(m[1],10)+parseInt(m[2],10))/2;
-        }else if(m2){
-          avgWind=parseInt(m2[1],10);
-        }
-        const precipMention=/rain|shower|storm|snow|drizzle/i.test(short);
-        const precipTxt=precipMention?"Precip possible":"No explicit precip";
-        const windDir=p.windDirection || "";
-        return {
-          time:t,
-          windSpeed:avgWind||0,
-          windGust:null,
-          temperature:temp,
-          precipitation:null,
-          precipitationText:precipTxt,
-          shortForecast:short,
-          windDir
-        };
-      });
-      hourlyHtml = `<div style="font-size:11px;text-transform:uppercase;letter-spacing:0.16em;color:#9ca3af;margin:8px 0 4px;">Next hours (NWS)</div>`+
-        renderHourlyCards(hourlyNorm,8);
-    }else{
-      hourlyHtml += `<div style="font-size:12px;color:#9ca3af;margin-top:6px;">No NWS hourly data available.</div>`;
-    }
-
-    body.innerHTML = dailyHtml+hourlyHtml;
-    pill.textContent="Tap to collapse";
-    state.nwsRendered=true;
-    STATE.siteData[siteId]=state;
-  }catch(e){
-    console.error("NWS forecast error",e);
-    body.innerHTML=`<div style="font-size:12px;color:#fca5a5;">Failed to load NWS forecast. Try again later.</div>`;
-    pill.textContent="Tap to expand";
+/* NWS tabs + timeline using Open‑Meteo shell */
+function renderNwsForecast(site,state){
+  const periods = state.nwsHourly || [];
+  if(!periods.length){
+    return `<div style="font-size:12px;color:#9ca3af;">No NWS hourly forecast available.</div>`;
   }
-}
 
-/* Site info & reports */
-function renderSiteInfo(site){
-  const diffClass=site.difficulty==="beginner"?"diff-beginner":site.difficulty==="advanced"?"diff-advanced":"diff-intermediate";
-  const diffLabel=site.difficulty==="beginner"?"Beginner":site.difficulty==="advanced"?"Advanced":"Intermediate";
-  return `
-    <div class="info-grid">
-      <div class="info-item">
-        <div class="info-label">Elevation</div>
-        <div class="info-value">${site.elevation}</div>
-      </div>
-      <div class="info-item">
-        <div class="info-label">Difficulty</div>
-        <div class="info-value"><span class="diff-pill ${diffClass}">${diffLabel}</span></div>
-      </div>
-      <div class="info-item">
-        <div class="info-label">Typical wind</div>
-        <div class="info-value">${site.typicalWind}</div>
-      </div>
-      <div class="info-item">
-        <div class="info-label">Landing zone</div>
-        <div class="info-value">${site.landing}</div>
-      </div>
-      <div class="info-item">
-        <div class="info-label">Emergency</div>
-        <div class="info-value">${site.emergency}</div>
-      </div>
-      <div class="info-item">
-        <div class="info-label">Airspace / NOTAM</div>
-        <div class="info-value">
-          <span class="notam-pill">âš  Check NOTAMs & TFRs Â· ${site.notamHint}</span>
-        </div>
-      </div>
-    </div>
-  `;
-}
-function renderReports(siteId){
-  const list=STATE.reports[siteId]||[];
-  const items=list.length?list.map(r=>`
-    <div class="report-item">
-      <div class="report-meta">${new Date(r.ts).toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"})} Â· ${minutesAgo(r.ts)}</div>
-      <div class="report-text">${esc(r.text)}</div>
-    </div>`).join(""):`<div style="font-size:12px;color:#9ca3af;">No recent pilot reports. Be the first to post what you see on launch.</div>`;
-  return `
-    <div class="report-list">${items}</div>
-    <div class="report-form">
-      <textarea class="report-input" id="report-input-${siteId}" placeholder="Quick observation â€” e.g. 'Flying great, 12mph SW at ridge, light thermals 2â€“3PM'"></textarea>
-      <button class="report-submit" data-site="${siteId}">Post report</button>
-    </div>
-  `;
-}
+  const now = nowLocal();
+  const fromIdx = periods.findIndex(p => new Date(p.startTime) >= now);
+  const start = fromIdx >= 0 ? fromIdx : 0;
 
-/* Sidebar row update */
-function updateSidebarRow(siteId){
-  const site=SITES.find(s=>s.id===siteId);
-  const state=STATE.siteData[siteId];
-  if(!state||!state.om) return;
-  const om=state.om.data;
-  const liveCurrent = state.liveCurrent || (om.current || {});
-  const wind=liveCurrent.windspeed_10m||0;
-  const gust=liveCurrent.windgusts_10m||wind;
-  const dir=state.liveDirText
-    ? state.liveDirText
-    : dirFromDeg(liveCurrent.winddirection_10m||0);
-  const cat=state.safetyCategory;
-  const label=cat==="SAFE"?"Safe":cat==="MARGINAL"?"Marginal":"Dangerous";
-  const condEl=document.getElementById("site-cond-"+siteId);
-  const scoreEl=document.getElementById("site-score-"+siteId);
-  const windEl=document.getElementById("site-wind-"+siteId);
-  const gustDot=document.getElementById("gust-dot-"+siteId);
-  if(condEl){
-    condEl.textContent=label;
-    condEl.className="site-pill-condition "+(cat==="SAFE"?"site-pill-safe":cat==="MARGINAL"?"site-pill-marginal":"site-pill-danger");
-  }
-  if(scoreEl) scoreEl.textContent=state.safetyScore+"/100";
-  if(windEl) windEl.textContent=`${wind.toFixed(1)} ${dir}`;
-  if(gustDot) gustDot.style.display=gust>=STATE.gustThreshold?"block":"none";
-}
+  const buckets = { today: [], tomorrow: [], week: [] };
 
-/* Global click handlers */
-document.addEventListener("click",e=>{
-  const reportBtn=e.target.closest(".report-submit");
-  if(reportBtn){
-    const siteId=reportBtn.dataset.site;
-    const textarea=document.getElementById("report-input-"+siteId);
-    if(!textarea) return;
-    const text=textarea.value.trim();
-    if(!text) return;
-    saveReport(siteId,text);
-    textarea.value="";
-    const reportsBody=document.getElementById("reports-body-"+siteId);
-    if(reportsBody) reportsBody.innerHTML=renderReports(siteId);
-  }
-  const retryBtn=e.target.closest(".ai-error button");
-  if(retryBtn){
-    const siteId=retryBtn.dataset.site;
-    updateAdvisor(siteId);
-  }
-});
+  for(let i=start;i<periods.length;i++){
+    const p = periods[i];
+    const t = new Date(p.startTime);
+    const diffDays = Math.floor((t - now)/86400000);
 
-/* Site selection */
-function selectSite(id){
-  STATE.currentId=id;
-  document.querySelectorAll(".site-pill").forEach(el=>{
-    el.classList.toggle("active",el.id==="site-pill-"+id);
-  });
-  document.querySelectorAll(".mobile-nav-btn").forEach(el=>{
-    el.classList.toggle("active",el.dataset.site===id);
-  });
-  renderDetailSkeleton();
-  loadSiteData(id);
-}
-
-/* Load site data: NWS drives liveCurrent when present */
-async function loadSiteData(siteId){
-  const site=SITES.find(s=>s.id===siteId);
-  if(!site) return;
-  try{
-    const omRes=await fetchOpenMeteo(site);
-    const om=omRes.data;
-
-    let nwsDayRes=null;
-    let nwsPeriodsDaily=null;
-    let nwsHourRes=null;
-    let nwsPeriodsHourly=null;
-    let nwsCurrent=null;
-    try{
-      nwsDayRes=await fetchNWSDaily(site);
-      nwsPeriodsDaily=(nwsDayRes.data.properties && nwsDayRes.data.properties.periods) || [];
-
-      nwsHourRes=await fetchNWSHourly(site);
-      nwsPeriodsHourly=(nwsHourRes.data.properties && nwsHourRes.data.properties.periods) || [];
-      if(nwsPeriodsHourly.length){
-        nwsCurrent=nwsHourlyToCurrent(site,nwsPeriodsHourly);
-      }
-    }catch(e){
-      console.warn("NWS daily/hourly unavailable, falling back to Openâ€‘Meteo for live conditions",e);
-    }
-
-    let liveCurrent, liveDirText;
-    if(nwsCurrent){
-      liveCurrent=nwsCurrent.current;
-      liveDirText=nwsCurrent.dirText;
-    }else{
-      const c=om.current||{};
-      liveCurrent=c;
-      liveDirText=null;
-    }
-
-    const precip=liveCurrent.precipitation||0;
-    const score=computeSafetyScore(site,liveCurrent,precip);
-    const cat=safetyCategory(score,site);
-    const bestWindow=bestWindowFromHourly(site,om.hourly||{});
-    const prev=STATE.siteData[siteId]||{};
-
-    STATE.siteData[siteId]=Object.assign({},prev,{
-      om:omRes,
-      nwsDaily:nwsPeriodsDaily || null,
-      nwsHourly:nwsPeriodsHourly || null,
-      liveCurrent,
-      liveDirText,
-      safetyScore:score,
-      safetyCategory:cat,
-      bestWindow,
-      updatedTs:Date.now()
-    });
-
-    updateSidebarRow(siteId);
-    if(STATE.currentId===siteId){
-      renderDetail(siteId);
-    }
-    updateAdvisor(siteId);
-  }catch(e){
-    console.error("Openâ€‘Meteo / NWS error",e);
-    if(STATE.currentId===siteId){
-      const detail=document.getElementById("detail");
-      detail.innerHTML=`<div style="padding:16px;font-size:13px;color:#fca5a5;">Failed to load live weather data. Check your connection and try again.</div>`;
-    }
-  }
-}
-
-/* Clock & countdown */
-function startClock(){
-  const clock=document.getElementById("clock");
-  function tick(){clock.textContent=fmtClock(nowLocal());}
-  tick();
-  setInterval(tick,1000);
-}
-function startCountdown(){
-  const el=document.getElementById("next-refresh");
-  if(STATE.countdownTimer) clearInterval(STATE.countdownTimer);
-  STATE.countdown=180;
-  el.textContent="in 180s";
-  STATE.countdownTimer=setInterval(()=>{
-    STATE.countdown--;
-    if(STATE.countdown<=0){
-      refreshAll();
-      STATE.countdown=180;
-    }
-    el.textContent="in "+STATE.countdown+"s";
-  },1000);
-}
-
-/* Offline & gust toast */
-function setupOffline(){
-  const banner=document.getElementById("offline-banner");
-  function handle(){banner.style.display=navigator.onLine?"none":"flex";}
-  window.addEventListener("online",handle);
-  window.addEventListener("offline",handle);
-  handle();
-}
-function showGustToast(site,gust){
-  const toast=document.getElementById("gust-toast");
-  toast.textContent=`Gust alert at ${site.name}: ${gust.toFixed(1)} mph`;
-  toast.style.display="block";
-  setTimeout(()=>{toast.style.display="none";},5000);
-}
-
-/* Refresh all */
-function refreshAll(){
-  for(const site of SITES){
-    loadSiteData(site.id);
-  }
-}
-
-/* Service worker */
-const SW_CODE=`
-const CACHE_NAME='bay-area-soaring-v1';
-self.addEventListener('install',event=>{
-  event.waitUntil(caches.open(CACHE_NAME).then(cache=>cache.addAll(['./'])));
-  self.skipWaiting();
-});
-self.addEventListener('activate',event=>{
-  event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE_NAME).map(k=>caches.delete(k)))));
-  self.clients.claim();
-});
-self.addEventListener('fetch',event=>{
-  const url=event.request.url;
-  if(url.includes('api.open-meteo.com')||url.includes('api.weather.gov')){
-    event.respondWith(
-      fetch(event.request).then(resp=>{
-        const clone=resp.clone();
-        caches.open(CACHE_NAME).then(c=>c.put(event.request,clone));
-        return resp;
-      }).catch(()=>caches.match(event.request))
-    );
-    return;
-  }
-  event.respondWith(
-    caches.match(event.request).then(cached=>{
-      return cached||fetch(event.request).then(resp=>{
-        const clone=resp.clone();
-        caches.open(CACHE_NAME).then(c=>c.put(event.request,clone));
-        return resp;
-      });
-    })
-  );
-});
-`;
-function registerServiceWorker(){
-  if(!("serviceWorker" in navigator)) return;
-  const blob=new Blob([SW_CODE],{type:"text/javascript"});
-  const url=URL.createObjectURL(blob);
-  navigator.serviceWorker.register(url).catch(()=>{});
-}
-
-/* Init */
-document.addEventListener("DOMContentLoaded",()=>{
-  renderSiteLists();
-  loadReports();
-  selectSite(STATE.currentId);
-  startClock();
-  startCountdown();
-  setupOffline();
-  registerServiceWorker();
-  document.getElementById("refresh-btn").addEventListener("click",()=>{
-    STATE.countdown=180;
-    refreshAll();
-  });
-  window.addEventListener("online",()=>{
-    for(const site of SITES){
-      const state=STATE.siteData[site.id];
-      const live=state && state.liveCurrent;
-      if(live){
-        const gust=live.windgusts_10m||live.windspeed_10m||0;
-        if(gust>=STATE.gustThreshold) showGustToast(site,gust);
-      }
-    }
-  });
-});
-</script>
-</body>
-</html>
+    const temp = p.temperature;
+    const short = p.shortForecast || "";
+    const ws = p.windSpeed || "";
+    let avgWind = 0;
+    const m = ws.match(/(\d+)\s
