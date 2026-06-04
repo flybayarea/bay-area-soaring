@@ -1062,7 +1062,6 @@ async function loadForecastForAdvisor(siteId){
   const cat=safetyCategory(safetyScore,site);
   const bestWindow=bestWindowFromHourly(site,om.hourly||{});
 
-  // Pull hourly NWS as well for advisor’s awareness
   let nwsHourly=null;
   let nwsHourRes=cacheGet(site.id,"nws_hourly");
   if(!nwsHourRes){
@@ -1135,6 +1134,32 @@ async function fetchNWSHourly(site){
   const data=await resp.json();
   cacheSet(site.id,"nws_hourly",data);
   return {ts:Date.now(),data};
+}
+
+/* Shared hourly renderer: same layout for OM & NWS */
+function renderHourlyCards(hourlyArr,max=8){
+  if(!hourlyArr || !hourlyArr.length){
+    return `<div style="font-size:12px;color:#9ca3af;">No future hours available.</div>`;
+  }
+  const cut=hourlyArr.slice(0,max);
+  return `<div class="forecast-grid">${
+    cut.map(e=>{
+      const hour=e.time.toLocaleTimeString([],{hour:"numeric"});
+      const labelDay=e.time.toLocaleDateString([],{weekday:"short"});
+      const windTxt = e.windGust != null && e.windGust !== e.windSpeed
+        ? `${e.windSpeed.toFixed(1)} mph wind · ${e.windGust.toFixed(1)} mph gusts`
+        : `${e.windSpeed.toFixed(1)} mph wind`;
+      const precipTxt = (e.precipitation!=null && !isNaN(e.precipitation))
+        ? (e.precipitation>0 ? `${e.precipitation.toFixed(2)} in precip` : "No precip")
+        : (e.precipitationText || "Precip N/A");
+      const extra = e.shortForecast ? ` · ${esc(e.shortForecast)}` : "";
+      return `<div class="forecast-item">
+        <div class="forecast-item-title">${labelDay} · ${hour}</div>
+        <div class="forecast-item-temp">${Math.round(e.temperature)}°F</div>
+        <div class="forecast-item-text">${windTxt} · ${precipTxt}${extra}</div>
+      </div>`;
+    }).join("")
+  }</div>`;
 }
 
 /* Sidebar & mobile nav */
@@ -1412,10 +1437,8 @@ function renderDetail(siteId){
       if(targetId.startsWith("nws-body-")&&open){
         ensureNwsLoaded(site.id);
       }
-      if(targetId.startsWith("om-body-")&&open){
-        pill.textContent="Tap to collapse";
-      } else if(targetId.startsWith("om-body-")&&!open){
-        pill.textContent="Tap to expand";
+      if(targetId.startsWith("om-body-")){
+        pill.textContent=open?"Tap to collapse":"Tap to expand";
       }
       if(targetId.startsWith("nws-body-")){
         pill.textContent=open?"Tap to collapse":"Tap to load";
@@ -1429,7 +1452,7 @@ function renderDetail(siteId){
   updateSidebarRow(siteId);
 }
 
-/* Align Open‑Meteo hourly to current time */
+/* Open-Meteo hourly from current time; uses shared renderer */
 function renderOpenMeteoForecast(site,state){
   const om=state.om.data;
   const hourly=om.hourly||{};
@@ -1439,51 +1462,42 @@ function renderOpenMeteoForecast(site,state){
   }
   const now=nowLocal();
   const nowMs=now.getTime();
-  // Find first index where time >= now rounded down to hour
   const startIdx = times.findIndex(tStr=>{
     const t=new Date(tStr);
-    return t.getTime()>=nowMs-30*60*1000; // small buffer
+    return t.getTime()>=nowMs-30*60*1000;
   });
   const fromIdx = startIdx>=0?startIdx:0;
 
-  const slicesByMode={today:[],tomorrow:[],week:[]};
   const todaySafety=[];
+  const buckets={today:[],tomorrow:[],week:[]};
+
   for(let i=fromIdx;i<times.length;i++){
     const t=new Date(times[i]);
     const diffDays=Math.floor((t-now)/86400000);
-    const labelDay=t.toLocaleDateString([],{weekday:"short"});
     const temp=hourly.temperature_2m[i]||0;
     const wind=hourly.windspeed_10m[i]||0;
     const gust=hourly.windgusts_10m[i]||wind;
     const precip=hourly.precipitation[i]||0;
-    const entry={t,labelDay,temp,wind,gust,precip};
+    const entry={
+      time:t,
+      windSpeed:wind,
+      windGust:gust,
+      temperature:temp,
+      precipitation:precip,
+      precipitationText:null,
+      shortForecast:""
+    };
     if(diffDays<=0){
-      slicesByMode.today.push(entry);
+      buckets.today.push(entry);
       const score=computeSafetyScore(site,{windspeed_10m:wind,windgusts_10m:gust},precip);
       const cat=safetyCategory(score,site);
       todaySafety.push(cat);
     }else if(diffDays===1){
-      slicesByMode.tomorrow.push(entry);
+      buckets.tomorrow.push(entry);
     }
     if(diffDays>=0 && diffDays<=5){
-      slicesByMode.week.push(entry);
+      buckets.week.push(entry);
     }
-  }
-
-  function bucketToCards(list,max=8){
-    if(!list.length) return `<div style="font-size:12px;color:#9ca3af;">No future hours available.</div>`;
-    const cut=list.slice(0,max);
-    return `<div class="forecast-grid">${
-      cut.map(e=>{
-        const hour=e.t.toLocaleTimeString([],{hour:"numeric"});
-        const precipLine=e.precip>0?`${e.precip.toFixed(2)} in precip`:"No precip";
-        return `<div class="forecast-item">
-          <div class="forecast-item-title">${e.labelDay} · ${hour}</div>
-          <div class="forecast-item-temp">${Math.round(e.temp)}°F</div>
-          <div class="forecast-item-text">${e.wind.toFixed(1)} mph wind · ${e.gust.toFixed(1)} mph gusts · ${precipLine}</div>
-        </div>`;
-      }).join("")
-    }</div>`;
   }
 
   const timeline = todaySafety.length
@@ -1501,13 +1515,13 @@ function renderOpenMeteoForecast(site,state){
     </div>
     ${timeline}
     <div id="om-panel-${site.id}-today" class="om-panel">
-      ${bucketToCards(slicesByMode.today)}
+      ${renderHourlyCards(buckets.today,8)}
     </div>
     <div id="om-panel-${site.id}-tomorrow" class="om-panel" style="display:none;">
-      ${bucketToCards(slicesByMode.tomorrow)}
+      ${renderHourlyCards(buckets.tomorrow,8)}
     </div>
     <div id="om-panel-${site.id}-week" class="om-panel" style="display:none;">
-      ${bucketToCards(slicesByMode.week,8)}
+      ${renderHourlyCards(buckets.week,8)}
     </div>
   `;
 }
@@ -1527,7 +1541,7 @@ function wireOmTabs(siteId){
   });
 }
 
-/* NWS hourly: align to Open-Meteo format & current time */
+/* NWS hourly: normalize into same shape & render with shared grid */
 async function ensureNwsLoaded(siteId){
   const site=SITES.find(s=>s.id===siteId);
   const state=STATE.siteData[siteId]||{};
@@ -1549,30 +1563,45 @@ async function ensureNwsLoaded(siteId){
     const now=nowLocal();
     const startIdx=periods.findIndex(p=>new Date(p.startTime)>=now);
     const fromIdx=startIdx>=0?startIdx:0;
-    const sliced=periods.slice(fromIdx,fromIdx+16); // up to 16 hours
+    const sliced=periods.slice(fromIdx,fromIdx+24);
 
-    const cards=`
-      <div class="forecast-grid">
-        ${sliced.map(p=>{
-          const t=new Date(p.startTime);
-          const labelDay=t.toLocaleDateString([],{weekday:"short"});
-          const hour=t.toLocaleTimeString([],{hour:"numeric"});
-          const temp=p.temperature;
-          const tempUnit=p.temperatureUnit||"F";
-          const wind=p.windSpeed||"N/A";
-          const dir=p.windDirection||"";
-          const short=p.shortForecast||"";
-          // NWS hourly doesn't have explicit precip amount for all points; we show mention if in text
-          const precipHint=/rain|shower|storm|snow|drizzle/i.test(short)?"Precip possible":"No explicit precip";
-          return `<div class="forecast-item">
-            <div class="forecast-item-title">${labelDay} · ${hour}</div>
-            <div class="forecast-item-temp">${temp}°${tempUnit}</div>
-            <div class="forecast-item-text">${esc(short)} · ${esc(wind)} ${esc(dir)} · ${precipHint}</div>
-          </div>`;
-        }).join("")}
-      </div>
-    `;
-    body.innerHTML=cards;
+    const hourlyNorm=sliced.map(p=>{
+      const t=new Date(p.startTime);
+      const temp=p.temperature;
+      const short=p.shortForecast||"";
+      // windSpeed is like "5 to 10 mph". Extract a representative mph.
+      let avgWind=0;
+      let gust=null;
+      const ws=p.windSpeed||"";
+      const m=ws.match(/(\d+)\s*(?:to|-)\s*(\d+)\s*mph/i);
+      const m2=ws.match(/(\d+)\s*mph/i);
+      if(m){
+        avgWind=(parseInt(m[1],10)+parseInt(m[2],10))/2;
+      }else if(m2){
+        avgWind=parseInt(m2[1],10);
+      }
+      // NWS hourly doesn't expose gust explicitly; we leave gust=null to render plain wind
+      const precipMention=/rain|shower|storm|snow|drizzle/i.test(short)?"Precip possible":"No explicit precip";
+      return {
+        time:t,
+        windSpeed:avgWind||0,
+        windGust:null,
+        temperature:temp,
+        precipitation:null,
+        precipitationText:precipMention,
+        shortForecast:short
+      };
+    });
+
+    if(!hourlyNorm.length){
+      body.innerHTML=`<div style="font-size:12px;color:#9ca3af;">No future NWS hours available.</div>`;
+      pill.textContent="Tap to collapse";
+      state.nwsHourlyRendered=true;
+      STATE.siteData[siteId]=state;
+      return;
+    }
+
+    body.innerHTML=renderHourlyCards(hourlyNorm,8);
     pill.textContent="Tap to collapse";
     state.nwsHourlyRendered=true;
     STATE.siteData[siteId]=state;
