@@ -1450,9 +1450,7 @@ function renderDetailSkeleton(){
         <span>Windy — Live wind field around ${site.name}</span>
         <span style="font-size:10px;color:#9ca3af;">Map: drag / zoom for detail · Forecast panel open by default</span>
       </div>
-      <div class="windy-embed-wrapper">
-        <iframe class="windy-iframe" src="${site.windyEmbed}" loading="lazy"></iframe>
-      </div>
+      <div class="windy-embed-wrapper" id="windy-wrapper-${site.id}"></div>
     </div>
   `;
 }
