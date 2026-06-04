@@ -182,8 +182,8 @@ button{font-family:inherit;border:none;background:none;cursor:pointer}
 .site-pill-safe{background:rgba(34,197,94,0.18);border:1px solid rgba(34,197,94,0.6);color:#bbf7d0}
 .site-pill-marginal{background:rgba(234,179,8,0.18);border:1px solid rgba(234,179,8,0.7);color:#fef9c3}
 .site-pill-danger{background:rgba(239,68,68,0.18);border:1px solid rgba(239,68,68,0.7);color:#fee2e2}
-.site-pill-score{font-family:'JetBrains Mono',monospace;font-size:11px;color:#9ca3af}
-.site-pill-wind{font-family:'JetBrains Mono',monospace;font-size:11px;color:#9ca3af}
+.site-pill-score{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted)}
+.site-pill-wind{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted-soft)}
 .gust-dot{
   width:8px;height:8px;border-radius:999px;
   background:var(--accent-danger);
@@ -195,26 +195,14 @@ button{font-family:inherit;border:none;background:none;cursor:pointer}
   100%{transform:scale(1);box-shadow:0 0 0 0 rgba(248,113,113,0)}
 }
 
-/* Sidebar footer: cams + FlyXC */
+/* FlyXC link in sidebar */
 .sidebar-footer{
   padding:8px 12px 10px;
   border-top:1px solid rgba(31,41,55,0.9);
-  display:flex;
-  flex-direction:column;
-  gap:6px;
+  display:flex;justify-content:space-between;align-items:center;gap:8px;
 }
-.sidebar-footer-row{
-  display:flex;
-  justify-content:space-between;
-  gap:6px;
-}
-.sidebar-footer-row.single{
-  justify-content:flex-start;
-}
-.footer-link-btn{
-  display:inline-flex;
-  align-items:center;
-  gap:6px;
+.flyxc-link-btn{
+  display:inline-flex;align-items:center;gap:6px;
   border-radius:999px;
   padding:4px 10px;
   font-size:11px;
@@ -222,9 +210,8 @@ button{font-family:inherit;border:none;background:none;cursor:pointer}
   border:1px solid rgba(56,189,248,0.6);
   color:#e0f2fe;
   text-decoration:none;
-  white-space:nowrap;
 }
-.footer-link-btn span.icon{font-size:13px}
+.flyxc-link-btn span.icon{font-size:13px}
 
 /* Detail */
 .detail{
@@ -253,7 +240,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer}
   border:1px solid rgba(148,163,184,0.4);
 }
 .safety-score-val{font-family:'JetBrains Mono',monospace;font-size:13px}
-.safety-label{font-size:10px;text-transform:uppercase;letter-spacing:0.12em;color:#9ca3af}
+.safety-label{font-size:10px;text-transform:uppercase;letter-spacing:0.12em;color:var(--muted-soft)}
 .safety-chip.safe{background:rgba(34,197,94,0.10);border-color:rgba(34,197,94,0.7);color:#bbf7d0}
 .safety-chip.marginal{background:rgba(234,179,8,0.10);border-color:rgba(234,179,8,0.7);color:#fef9c3}
 .safety-chip.danger{background:rgba(239,68,68,0.10);border-color:rgba(239,68,68,0.7);color:#fee2e2}
@@ -265,7 +252,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer}
 .condition-pill.safe{background:rgba(34,197,94,0.18);border:1px solid rgba(34,197,94,0.7);color:#bbf7d0}
 .condition-pill.marginal{background:rgba(234,179,8,0.18);border:1px solid rgba(234,179,8,0.7);color:#fef9c3}
 .condition-pill.danger{background:rgba(239,68,68,0.18);border:1px solid rgba(239,68,68,0.8);color:#fee2e2}
-.last-updated{font-size:11px;font-family:'JetBrains Mono',monospace;color:#9ca3af}
+.last-updated{font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--muted-soft)}
 
 /* Decision banner */
 .decision-banner{
@@ -330,9 +317,9 @@ button{font-family:inherit;border:none;background:none;cursor:pointer}
   border:1px solid rgba(191,219,254,0.65);
   background:rgba(15,23,42,0.65);color:#e0f2fe;
 }
-.ai-summary-text{font-size:13px;color:#e5e7eb;line-height:1.55}
+.ai-summary-text{font-size:13px;color:var(--text);line-height:1.55}
 .ai-best-window{
-  margin-top:6px;border-radius:999px;padding:3px 9px;
+  margin-top:6px;border-radius:var(--radius-pill);padding:3px 9px;
   font-size:11px;display:none;align-items:center;gap:4px;
   background:rgba(34,197,94,0.14);border:1px solid rgba(34,197,94,0.7);color:#bbf7d0;
 }
@@ -352,7 +339,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer}
   border:1px solid rgba(248,113,113,0.7);color:#fee2e2;
 }
 
-/* Metrics */
+/* Metrics card (no mode buttons) */
 .metrics-card{
   border-radius:var(--radius-lg);
   padding:10px 10px 10px;
@@ -406,9 +393,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer}
 }
 .skel-line{height:10px;margin:3px 0;border-radius:999px}
 
-/* Mid cards, tabs, safety timeline, info, reports, Windy, footer, mobile nav */
-/* (same as previous file, omitted comments for brevity) */
-
+/* Middle cards, info, reports, Open-Meteo tabs, etc. */
 .detail-grid-mid{
   display:grid;
   grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);
@@ -484,7 +469,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer}
   color:#9ca3af;
 }
 
-/* Safety timeline */
+/* Safety timeline under Open-Meteo */
 .safety-timeline{
   margin-top:8px;
   display:flex;
@@ -499,8 +484,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer}
 .safety-slot.marginal{background:#eab308}
 .safety-slot.danger{background:#ef4444}
 
-/* Info, reports, Windy, footer, mobile nav remain same as earlier file */
-
+/* Info grid, reports, same as before */
 .info-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-top:6px}
 .info-item{
   border-radius:var(--radius-md);
@@ -549,6 +533,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer}
   color:#eff6ff;border:1px solid rgba(59,130,246,0.85);
 }
 
+/* Windy map */
 .windy-shell{
   margin-top:8px;
   border-radius:var(--radius-lg);
@@ -569,6 +554,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer}
   border:0;background:#020617;
 }
 
+/* Footer */
 .footer{
   max-width:1680px;
   margin:8px auto 18px;
@@ -580,6 +566,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer}
 .footer-links a{color:#9ca3af}
 .footer-warning{max-width:620px}
 
+/* Mobile nav */
 .mobile-nav{
   position:fixed;bottom:0;left:0;right:0;height:54px;
   background:rgba(15,23,42,0.96);
@@ -599,6 +586,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer}
 .mobile-nav-btn span.emoji{font-size:16px}
 .mobile-nav-btn.active{color:#e5f2ff}
 
+/* Responsiveness */
 @media(max-width:1280px){
   .header-inner,
   .app-main-inner,
@@ -662,24 +650,10 @@ button{font-family:inherit;border:none;background:none;cursor:pointer}
         </div>
         <div class="sidebar-sites" id="site-list"></div>
         <div class="sidebar-footer">
-          <div class="sidebar-footer-row">
-            <a class="footer-link-btn" href="https://www.youtube.com/watch?v=vZEINdmawdc" target="_blank" rel="noopener noreferrer">
-              <span class="icon">🎥</span>
-              <span>Mussel Rock live cam</span>
-            </a>
-          </div>
-          <div class="sidebar-footer-row">
-            <a class="footer-link-btn" href="http://windslammer.net/WindSlammer/" target="_blank" rel="noopener noreferrer">
-              <span class="icon">📷</span>
-              <span>Ed Levin live cam</span>
-            </a>
-          </div>
-          <div class="sidebar-footer-row single">
-            <a class="footer-link-btn" href="https://flyxc.app" target="_blank" rel="noopener noreferrer">
-              <span class="icon">📡</span>
-              <span>FlyXC Live Tracking</span>
-            </a>
-          </div>
+          <a class="flyxc-link-btn" href="https://flyxc.app" target="_blank" rel="noopener noreferrer">
+            <span class="icon">📡</span>
+            <span>FlyXC Live Tracking</span>
+          </a>
         </div>
       </aside>
 
@@ -707,13 +681,1090 @@ button{font-family:inherit;border:none;background:none;cursor:pointer}
 <script>
 "use strict";
 
-/* All JS logic is identical to the last working file you deployed:
-   sites array, state, caching, scoring, advisor, Open‑Meteo & NWS fetch,
-   detail rendering, safety timeline, reports, Windy embed, SW, etc.
-   Only the sidebar footer HTML changed to add the two cam links.[page:1] */
+const SITES=[
+  {
+    id:"levin",
+    name:"Ed R. Levin Park",
+    emoji:"🪂",
+    city:"Milpitas, CA",
+    type:"Paragliding",
+    lat:37.4619,
+    lon:-121.861,
+    elevation:"1,102 ft (336 m)",
+    difficulty:"intermediate",
+    typicalWind:"SW thermic in afternoon",
+    emergency:"Santa Clara County Parks · +1 (408) 262‑6980",
+    landing:"Lower park LZ near main entrance",
+    windyEmbed:"https://embed.windy.com/embed2.html?lat=37.4619&lon=-121.861&detailLat=37.4619&detailLon=-121.861&width=650&height=350&zoom=11&level=surface&overlay=wind&product=ecmwf&menu=&message=&marker=true&calendar=now&pressure=true&type=map&location=coordinates&detail=true&metricWind=mph&metricTemp=%C2%B0F&radarRange=-1",
+    nwsOffice:"MTR",
+    nwsX:97,
+    nwsY:93,
+    notamHint:"Check KSJC / NUQ for TFRs",
+    externalSite:"http://windslammer.net/WindSlammer/",
+    youtubeId:null
+  },
+  {
+    id:"mussel",
+    name:"Mussel Rock Park",
+    emoji:"🏔",
+    city:"Daly City, CA",
+    type:"Hang / Paraglide",
+    lat:37.674,
+    lon:-122.4887,
+    elevation:"557 ft (170 m)",
+    difficulty:"advanced",
+    typicalWind:"Strong W–NW ocean flow",
+    emergency:"San Mateo County Dispatch · 911",
+    landing:"Beach below cliffs — advanced pilots only",
+    windyEmbed:"https://embed.windy.com/embed2.html?lat=37.674&lon=-122.4887&detailLat=37.674&detailLon=-122.4887&width=650&height=350&zoom=12&level=surface&overlay=wind&product=ecmwf&menu=&message=&marker=true&calendar=now&pressure=true&type=map&location=coordinates&detail=true&metricWind=mph&metricTemp=%C2%B0F&radarRange=-1",
+    nwsOffice:"MTR",
+    nwsX:82,
+    nwsY:120,
+    notamHint:"Check KSFO / Class B shelves & TFRs",
+    youtubeId:"vZEINdmawdc",
+    externalSite:null
+  },
+  {
+    id:"shoreline",
+    name:"Shoreline Kite Area",
+    emoji:"🪁",
+    city:"Mountain View, CA",
+    type:"Kite Flying",
+    lat:37.4297,
+    lon:-122.0766,
+    elevation:"3 ft (1 m)",
+    difficulty:"beginner",
+    typicalWind:"NW bay breeze, afternoons",
+    emergency:"Mountain View Fire · 911",
+    landing:"Open grass fields throughout park",
+    windyEmbed:"https://embed.windy.com/embed2.html?lat=37.4297&lon=-122.0766&detailLat=37.4297&detailLon=-122.0766&width=650&height=350&zoom=12&level=surface&overlay=wind&product=ecmwf&menu=&message=&marker=true&calendar=now&pressure=true&type=map&location=coordinates&detail=true&metricWind=mph&metricTemp=%C2%B0F&radarRange=-1",
+    nwsOffice:"MTR",
+    nwsX:90,
+    nwsY:93,
+    notamHint:"Near PAO / NUQ — check NOTAMs",
+    youtubeId:"sqQbWv7YgEk",
+    externalSite:null
+  },
+  {
+    id:"mission",
+    name:"Mission Peak",
+    emoji:"⛰",
+    city:"Fremont, CA",
+    type:"Paragliding / Hang",
+    lat:37.5131,
+    lon:-121.8803,
+    elevation:"2,305 ft (703 m)",
+    difficulty:"advanced",
+    typicalWind:"SSW thermic with valley breeze",
+    emergency:"EBRPD Police · +1 (510) 881‑1833",
+    landing:"Designated LZ in Fremont foothills",
+    windyEmbed:"https://embed.windy.com/embed2.html?lat=37.5131&lon=-121.8803&detailLat=37.5131&detailLon=-121.8803&width=650&height=350&zoom=12&level=surface&overlay=wind&product=ecmwf&menu=&message=&marker=true&calendar=now&pressure=true&type=map&location=coordinates&detail=true&metricWind=mph&metricTemp=%C2%B0F&radarRange=-1",
+    nwsOffice:"MTR",
+    nwsX:100,
+    nwsY:99,
+    notamHint:"Check KSJC TFRs and local advisories",
+    youtubeId:"6uJdeuY2Z7A",
+    externalSite:null
+  }
+];
 
-/* ... paste the same JS from the last index.html I gave you, unchanged ... */
+const STATE={
+  currentId:SITES[0].id,
+  siteData:{},
+  countdown:180,
+  countdownTimer:null,
+  localCacheTTL:3600000,
+  gustThreshold:25,
+  reports:{}
+};
 
+function nowLocal(){return new Date();}
+function fmtClock(d){return d.toLocaleTimeString([], {hour:"2-digit",minute:"2-digit",second:"2-digit"});}
+function minutesAgo(ts){
+  const diff=Math.floor((Date.now()-ts)/60000);
+  if(diff<=0) return "just now";
+  if(diff===1) return "1 min ago";
+  return diff+" mins ago";
+}
+function dirFromDeg(deg){
+  const dirs=["N","NNE","NE","ENE","E","ESE","SE","SSE","S","SSW","SW","WSW","W","WNW","NW","NNW"];
+  return dirs[Math.round(deg/22.5)%16];
+}
+function clamp(v,min,max){return v<min?min:v>max?max:v;}
+function esc(str){return String(str).replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+
+/* Cache helpers */
+function cacheKey(siteId,suffix){return "bas_"+siteId+"_"+suffix;}
+function cacheSet(siteId,suffix,data){
+  try{localStorage.setItem(cacheKey(siteId,suffix),JSON.stringify({ts:Date.now(),data}));}catch(e){}
+}
+function cacheGet(siteId,suffix){
+  try{
+    const raw=localStorage.getItem(cacheKey(siteId,suffix));
+    if(!raw) return null;
+    const obj=JSON.parse(raw);
+    if(Date.now()-obj.ts>STATE.localCacheTTL) return null;
+    return obj;
+  }catch(e){return null;}
+}
+
+/* Reports */
+function loadReports(){
+  SITES.forEach(s=>{
+    try{STATE.reports[s.id]=JSON.parse(localStorage.getItem("bas_reports_"+s.id))||[];}
+    catch(e){STATE.reports[s.id]=[];}
+  });
+}
+function saveReport(siteId,text){
+  const entry={text,ts:Date.now()};
+  const list=STATE.reports[siteId]||[];
+  list.unshift(entry);
+  STATE.reports[siteId]=list.slice(0,10);
+  try{localStorage.setItem("bas_reports_"+siteId,JSON.stringify(STATE.reports[siteId]));}catch(e){}
+}
+
+/* Safety / scoring */
+function computeSafetyScore(site,current,precip){
+  const wind=current.windspeed_10m||0;
+  const gust=current.windgusts_10m||wind;
+  let score=100;
+  if(wind>25) score-=35;
+  else if(wind>18) score-=20;
+  else if(wind>12) score-=10;
+  else if(wind<3) score-=5;
+  const diff=gust-wind;
+  if(gust>32) score-=30;
+  else if(gust>24) score-=18;
+  else if(gust>18) score-=8;
+  if(diff>10) score-=10;
+  if(precip>0.4) score-=30;
+  else if(precip>0.1) score-=15;
+  else if(precip>0) score-=5;
+  if(site.type==="Kite Flying" && wind>=8 && wind<=20) score+=5;
+  return clamp(Math.round(score),0,100);
+}
+function safetyCategory(score,site){
+  if(site.type==="Kite Flying"){
+    if(score>=65) return "SAFE";
+    if(score>=35) return "MARGINAL";
+    return "DANGEROUS";
+  }
+  if(score>=70) return "SAFE";
+  if(score>=40) return "MARGINAL";
+  return "DANGEROUS";
+}
+function bestWindowFromHourly(site,hourly){
+  if(!hourly||!hourly.time) return null;
+  const now=nowLocal();
+  const scores=[];
+  for(let i=0;i<hourly.time.length;i++){
+    const t=new Date(hourly.time[i]);
+    if(t<now) continue;
+    const wind=hourly.windspeed_10m[i]||0;
+    const gust=hourly.windgusts_10m[i]||wind;
+    const precip=hourly.precipitation[i]||0;
+    const score=computeSafetyScore(site,{windspeed_10m:wind,windgusts_10m:gust},precip);
+    const hr=t.getHours();
+    const dayBonus=hr>=10&&hr<=17?5:0;
+    scores.push({t,score:score+dayBonus});
+  }
+  if(!scores.length) return null;
+  scores.sort((a,b)=>b.score-a.score);
+  const best=scores[0];
+  if(best.score<45) return "No clearly good window today";
+  const start=best.t;
+  const end=new Date(start.getTime()+2*3600000);
+  const fmt=t=>{
+    let h=t.getHours(),m=t.getMinutes();
+    const am=h>=12?"PM":"AM";
+    h=h%12||12;
+    return m?`${h}:${String(m).padStart(2,"0")} ${am}`:`${h} ${am}`;
+  };
+  return `${fmt(start)} – ${fmt(end)}`;
+}
+
+/* Advisor text */
+function buildAdvisorSummary(site,forecast){
+  const om=forecast.om.data;
+  const current=om.current||{};
+  const wind=current.windspeed_10m||0;
+  const gust=current.windgusts_10m||wind;
+  const dir=dirFromDeg(current.winddirection_10m||0);
+  const temp=Math.round(current.temperature_2m||0);
+  const precip=current.precipitation||0;
+  const cat=forecast.safetyCategory;
+
+  let intro="";
+  if(cat==="SAFE"){
+    intro=site.type==="Kite Flying"
+      ? `Good kiting conditions at ${site.name}. `
+      : `Good flying window at ${site.name}. `;
+  }else if(cat==="MARGINAL"){
+    intro=`Borderline conditions at ${site.name}. `;
+  }else{
+    intro=`⛔ High‑risk conditions at ${site.name}. `;
+  }
+
+  const windPart=`${dir} winds ${wind.toFixed(1)} mph, gusting ${gust.toFixed(1)} mph. `;
+  const tempPart=`Temperature around ${temp}°F. `;
+  let precipPart="";
+  if(precip>0.2) precipPart="Light to moderate precipitation nearby — expect wet gear and possible shutdowns. ";
+  else if(precip>0) precipPart="Isolated showers possible. ";
+  else precipPart="Skies dry with no significant precipitation. ";
+
+  let advice="";
+  if(cat==="SAFE"){
+    advice=site.difficulty==="beginner"
+      ? "Suitable for newer pilots with site briefing and standard caution. "
+      : "Appropriate for rated pilots with normal margins. ";
+  }else if(cat==="MARGINAL"){
+    advice="Recommended for experienced P3/H3+ pilots only; newer pilots should stand down. ";
+  }else{
+    advice="Stand down — treat this as a non‑flying day unless you have strong alpine experience and local coaching. ";
+  }
+
+  if(forecast.bestWindow){
+    advice+=`Best time window: ${forecast.bestWindow}.`;
+  }
+  return intro+windPart+tempPart+precipPart+advice;
+}
+function buildDailyBrief(site,forecast){
+  const now=nowLocal();
+  const dayLabel=now.toLocaleDateString([], {weekday:"long"});
+  let phrase="";
+  if(forecast.safetyCategory==="SAFE"){
+    phrase="Overall a workable day with at least one decent flying window.";
+  }else if(forecast.safetyCategory==="MARGINAL"){
+    phrase="Day looks sketchy — tight margins and variable wind.";
+  }else{
+    phrase="Today looks mostly blown out or unstable for safe flying.";
+  }
+  const win=forecast.bestWindow?` Primary window: ${forecast.bestWindow}.`:"";
+  const nwsExtra=forecast.nws&&forecast.nws.periods&&forecast.nws.periods[0]
+    ? ` NWS calls it “${forecast.nws.periods[0].shortForecast}” with ${forecast.nws.periods[0].temperature}°${forecast.nws.periods[0].temperatureUnit}.`
+    : "";
+  return `${dayLabel} overview: ${phrase}${win}${nwsExtra}`;
+}
+
+/* Advisor UI */
+function setAdvisorState(siteId,state){
+  const card=document.getElementById("advisor-card-"+siteId);
+  if(!card) return;
+  const textEl=card.querySelector(".ai-summary-text");
+  const briefEl=card.querySelector(".ai-daily-brief");
+  const bestEl=card.querySelector(".ai-best-window");
+  const errorEl=card.querySelector(".ai-error");
+  if(state==="loading"){
+    if(textEl){
+      textEl.innerHTML=`<span class="skel skel-line" style="width:82%;display:block;"></span>
+        <span class="skel skel-line" style="width:65%;display:block;"></span>
+        <span class="skel skel-line" style="width:74%;display:block;"></span>`;
+    }
+    if(briefEl) briefEl.textContent="Daily briefing will appear once forecast data loads.";
+    if(bestEl) bestEl.style.display="none";
+    if(errorEl) errorEl.style.display="none";
+  }else if(state==="success"){
+    if(errorEl) errorEl.style.display="none";
+  }else if(state==="error"){
+    if(bestEl) bestEl.style.display="none";
+  }
+  const siteState=STATE.siteData[siteId]||{};
+  siteState.advisorState=state;
+  STATE.siteData[siteId]=siteState;
+}
+function renderAdvisorSummary(siteId,forecast){
+  const card=document.getElementById("advisor-card-"+siteId);
+  if(!card) return;
+  const site=SITES.find(s=>s.id===siteId);
+  const textEl=card.querySelector(".ai-summary-text");
+  const briefEl=card.querySelector(".ai-daily-brief");
+  const bestEl=card.querySelector(".ai-best-window");
+  const summary=buildAdvisorSummary(site,forecast);
+  const brief=buildDailyBrief(site,forecast);
+  if(textEl) textEl.textContent=summary;
+  if(briefEl) briefEl.textContent=brief;
+  if(bestEl){
+    if(forecast.bestWindow){
+      bestEl.style.display="inline-flex";
+      bestEl.querySelector("span:last-child").textContent="Best window: "+forecast.bestWindow;
+    }else{
+      bestEl.style.display="none";
+    }
+  }
+}
+function renderAdvisorError(siteId,message){
+  const card=document.getElementById("advisor-card-"+siteId);
+  if(!card) return;
+  const textEl=card.querySelector(".ai-summary-text");
+  const briefEl=card.querySelector(".ai-daily-brief");
+  const bestEl=card.querySelector(".ai-best-window");
+  let errorEl=card.querySelector(".ai-error");
+  if(!errorEl){
+    errorEl=document.createElement("div");
+    errorEl.className="ai-error";
+    errorEl.innerHTML=`<span>⚠ ${esc(message)}</span><button type="button" data-site="${siteId}">Retry</button>`;
+    card.querySelector(".ai-card-inner").appendChild(errorEl);
+  }else{
+    errorEl.querySelector("span").textContent="⚠ "+message;
+  }
+  if(textEl) textEl.textContent="Advisor unavailable.";
+  if(briefEl) briefEl.textContent="Weather data could not be loaded for this site.";
+  if(bestEl) bestEl.style.display="none";
+  errorEl.style.display="flex";
+}
+
+/* Advisor loader */
+async function loadForecastForAdvisor(siteId){
+  const site=SITES.find(s=>s.id===siteId);
+  if(!site) throw new Error("Unknown site");
+  let omRes=cacheGet(site.id,"om");
+  if(!omRes){
+    const url=`https://api.open-meteo.com/v1/forecast?latitude=${site.lat}&longitude=${site.lon}`+
+      `&current=temperature_2m,precipitation,windspeed_10m,windgusts_10m,winddirection_10m`+
+      `&hourly=windspeed_10m,windgusts_10m,precipitation,winddirection_10m,temperature_2m`+
+      `&temperature_unit=fahrenheit&windspeed_unit=mph&precipitation_unit=inch&timezone=auto&forecast_days=7`;
+    const resp=await fetch(url);
+    if(!resp.ok) throw new Error("Open‑Meteo HTTP "+resp.status);
+    const data=await resp.json();
+    if(!data.current||!data.hourly) throw new Error("Open‑Meteo missing fields");
+    cacheSet(site.id,"om",data);
+    omRes={ts:Date.now(),data};
+  }
+  const om=omRes.data;
+  const current=om.current||{};
+  const precip=current.precipitation||0;
+  const safetyScore=computeSafetyScore(site,current,precip);
+  const cat=safetyCategory(safetyScore,site);
+  const bestWindow=bestWindowFromHourly(site,om.hourly||{});
+
+  let nwsWrap=null;
+  let nwsRes=cacheGet(site.id,"nws");
+  if(!nwsRes){
+    try{
+      const url2=`https://api.weather.gov/gridpoints/${site.nwsOffice}/${site.nwsX},${site.nwsY}/forecast`;
+      const resp2=await fetch(url2,{headers:{
+        "User-Agent":"BayAreaSoaring/1.0 (github.com/flybayarea)",
+        "Accept":"application/geo+json"
+      }});
+      if(resp2.ok){
+        const data2=await resp2.json();
+        const periods=(data2.properties&&data2.properties.periods)||null;
+        if(periods) nwsWrap={periods};
+        cacheSet(site.id,"nws",data2);
+      }
+    }catch(e){}
+  }else{
+    const periods=(nwsRes.data.properties&&nwsRes.data.properties.periods)||null;
+    if(periods) nwsWrap={periods};
+  }
+
+  return {
+    site,
+    om:omRes,
+    nws:nwsWrap,
+    safetyScore,
+    safetyCategory:cat,
+    bestWindow,
+    updatedTs:Date.now()
+  };
+}
+async function updateAdvisor(siteId){
+  setAdvisorState(siteId,"loading");
+  try{
+    const forecast=await loadForecastForAdvisor(siteId);
+    const prev=STATE.siteData[siteId]||{};
+    STATE.siteData[siteId]=Object.assign({},prev,forecast);
+    renderAdvisorSummary(siteId,forecast);
+    setAdvisorState(siteId,"success");
+  }catch(err){
+    console.error("Advisor error for",siteId,err);
+    renderAdvisorError(siteId,"Could not load advisor data. Please refresh or tap Retry.");
+    setAdvisorState(siteId,"error");
+  }
+}
+
+/* Fetch helpers */
+async function fetchOpenMeteo(site){
+  const cached=cacheGet(site.id,"om");
+  if(cached) return cached;
+  const url=`https://api.open-meteo.com/v1/forecast?latitude=${site.lat}&longitude=${site.lon}`+
+    `&current=temperature_2m,precipitation,windspeed_10m,windgusts_10m,winddirection_10m`+
+    `&hourly=windspeed_10m,windgusts_10m,precipitation,winddirection_10m,temperature_2m`+
+    `&temperature_unit=fahrenheit&windspeed_unit=mph&precipitation_unit=inch&timezone=auto&forecast_days=7`;
+  const resp=await fetch(url);
+  if(!resp.ok) throw new Error("Open‑Meteo HTTP "+resp.status);
+  const data=await resp.json();
+  cacheSet(site.id,"om",data);
+  return {ts:Date.now(),data};
+}
+async function fetchNWS(site){
+  const cached=cacheGet(site.id,"nws");
+  if(cached) return cached;
+  const url=`https://api.weather.gov/gridpoints/${site.nwsOffice}/${site.nwsX},${site.nwsY}/forecast`;
+  const resp=await fetch(url,{headers:{
+    "User-Agent":"BayAreaSoaring/1.0 (github.com/flybayarea)",
+    "Accept":"application/geo+json"
+  }});
+  if(!resp.ok) throw new Error("NWS HTTP "+resp.status);
+  const data=await resp.json();
+  cacheSet(site.id,"nws",data);
+  return {ts:Date.now(),data};
+}
+
+/* Sidebar & mobile nav */
+function renderSiteLists(){
+  const list=document.getElementById("site-list");
+  const mobile=document.getElementById("mobile-nav-inner");
+  list.innerHTML="";
+  mobile.innerHTML="";
+  for(const site of SITES){
+    const pill=document.createElement("div");
+    pill.className="site-pill";
+    pill.id="site-pill-"+site.id;
+    pill.innerHTML=`
+      <div class="site-pill-row1">
+        <div class="site-pill-name">
+          <span class="emoji">${site.emoji}</span>
+          <span>${site.name}</span>
+        </div>
+        <div class="site-pill-meta">${site.city}</div>
+      </div>
+      <div class="site-pill-row2">
+        <div class="site-pill-condition site-pill-marginal" id="site-cond-${site.id}">
+          <span>•••</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <div class="site-pill-score" id="site-score-${site.id}">--/100</div>
+          <div class="site-pill-wind" id="site-wind-${site.id}">-- mph</div>
+          <div class="gust-dot" id="gust-dot-${site.id}" style="display:none;"></div>
+        </div>
+      </div>`;
+    pill.addEventListener("click",()=>selectSite(site.id));
+    list.appendChild(pill);
+
+    const btn=document.createElement("button");
+    btn.className="mobile-nav-btn";
+    btn.dataset.site=site.id;
+    btn.innerHTML=`<span class="emoji">${site.emoji}</span><span>${site.name.split(" ")[0]}</span>`;
+    btn.addEventListener("click",()=>selectSite(site.id));
+    mobile.appendChild(btn);
+  }
+}
+
+/* Detail skeleton */
+function renderDetailSkeleton(){
+  const site=SITES.find(s=>s.id===STATE.currentId);
+  const detail=document.getElementById("detail");
+  detail.innerHTML=`
+    <div class="detail-header">
+      <div class="detail-heading-block">
+        <div class="detail-title-row">
+          <div class="detail-title-emoji">${site.emoji}</div>
+          <div class="detail-title-text">${site.name}</div>
+        </div>
+        <div class="detail-title-sub">${site.city} · ${site.type}</div>
+      </div>
+      <div class="detail-header-right">
+        <div class="condition-pill marginal"><span>Loading</span></div>
+        <div class="safety-chip marginal">
+          <span class="safety-score-val">--</span>
+          <span class="safety-label">Safety score</span>
+        </div>
+      </div>
+    </div>
+    <div class="decision-banner" id="decision-banner">
+      <div class="decision-main">Analyzing…</div>
+      <div class="decision-sub">Waiting for live weather data.</div>
+    </div>
+    <div class="last-updated">Loading live data…</div>
+
+    <div class="detail-grid-top">
+      <div>
+        <div class="ai-card" id="advisor-card-${site.id}">
+          <div class="ai-card-inner">
+            <div class="ai-card-header">
+              <div class="ai-card-title">🤖 AI FLYING ADVISOR</div>
+              <div class="ai-chip">Open‑Meteo + NWS</div>
+            </div>
+            <div class="ai-summary-text">
+              <span class="skel skel-line" style="width:82%;display:block;"></span>
+              <span class="skel skel-line" style="width:65%;display:block;"></span>
+              <span class="skel skel-line" style="width:74%;display:block;"></span>
+            </div>
+            <div class="ai-best-window">
+              <span class="emoji">🪂</span>
+              <span>Best window: --</span>
+            </div>
+            <div class="ai-daily-brief">Daily briefing will appear once forecast data loads.</div>
+            <div class="ai-error"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="metrics-card">
+        <div class="metrics-header">
+          <div class="metrics-title">Live Conditions (Now)</div>
+        </div>
+        <div class="metrics-grid">
+          <div class="metric"><div class="skel skel-line" style="width:60%;height:24px;"></div></div>
+          <div class="metric"><div class="skel skel-line" style="width:60%;height:24px;"></div></div>
+          <div class="metric"><div class="skel skel-line" style="width:60%;height:24px;"></div></div>
+          <div class="metric"><div class="skel skel-line" style="width:60%;height:24px;"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="detail-grid-mid">
+      <div class="card" id="om-card-${site.id}">
+        <div class="card-header" data-target="om-body-${site.id}">
+          <div class="card-title">Open‑Meteo Forecast</div>
+          <div class="card-toggle-pill" id="om-pill-${site.id}">Tap to expand</div>
+        </div>
+        <div class="card-body" id="om-body-${site.id}"></div>
+      </div>
+
+      <div class="card" id="nws-card-${site.id}">
+        <div class="card-header" data-target="nws-body-${site.id}">
+          <div class="card-title">NWS Forecast</div>
+          <div class="card-toggle-pill" id="nws-pill-${site.id}">Tap to load</div>
+        </div>
+        <div class="card-body" id="nws-body-${site.id}"></div>
+      </div>
+    </div>
+
+    <div class="detail-grid-mid">
+      <div class="card">
+        <div class="card-header" data-target="info-body-${site.id}">
+          <div class="card-title">Site Information</div>
+          <div class="card-toggle-pill" id="info-pill-${site.id}">Tap to expand</div>
+        </div>
+        <div class="card-body" id="info-body-${site.id}"></div>
+      </div>
+      <div class="card">
+        <div class="card-header" data-target="reports-body-${site.id}">
+          <div class="card-title">Pilot Condition Reports</div>
+          <div class="card-toggle-pill" id="reports-pill-${site.id}">Tap to expand</div>
+        </div>
+        <div class="card-body" id="reports-body-${site.id}"></div>
+      </div>
+    </div>
+
+    <div class="windy-shell">
+      <div class="windy-header">
+        <span>Windy — Live wind field around ${site.name}</span>
+        <span style="font-size:10px;color:#9ca3af;">Map: drag / zoom for detail · Forecast panel open by default</span>
+      </div>
+      <div class="windy-embed-wrapper">
+        <iframe class="windy-iframe" src="${site.windyEmbed}" loading="lazy"></iframe>
+      </div>
+    </div>
+  `;
+}
+
+/* Detail render */
+function renderDetail(siteId){
+  const site=SITES.find(s=>s.id===siteId);
+  const state=STATE.siteData[siteId];
+  if(!state||!state.om){
+    renderDetailSkeleton();
+    return;
+  }
+  const om=state.om.data;
+  const current=om.current||{};
+  const precip=current.precipitation||0;
+  const score=state.safetyScore;
+  const cat=state.safetyCategory;
+  const gust=current.windgusts_10m||current.windspeed_10m||0;
+  const gustAlert=gust>=STATE.gustThreshold;
+  const condLabel=cat==="SAFE"?"Safe":cat==="MARGINAL"?"Marginal":"Dangerous";
+  const condClass=cat==="SAFE"?"safe":cat==="MARGINAL"?"marginal":"danger";
+  const lastTs=state.updatedTs;
+  const lastText=lastTs?("Last updated "+minutesAgo(lastTs)):"Awaiting first update";
+
+  const header=document.querySelector(".detail-header");
+  const lastEl=document.querySelector(".last-updated");
+  if(header){
+    const sub=header.querySelector(".detail-title-sub");
+    if(sub) sub.textContent=`${site.city} · ${site.type}`;
+    const condPill=header.querySelector(".condition-pill");
+    const safetyChip=header.querySelector(".safety-chip");
+    if(condPill){
+      condPill.className="condition-pill "+condClass;
+      condPill.innerHTML=`<span>${condLabel}</span>`;
+    }
+    if(safetyChip){
+      safetyChip.className="safety-chip "+condClass;
+      safetyChip.querySelector(".safety-score-val").textContent=score;
+    }
+  }
+  if(lastEl) lastEl.textContent=lastText;
+
+  const banner=document.getElementById("decision-banner");
+  if(banner){
+    banner.className="decision-banner";
+    const main=banner.querySelector(".decision-main");
+    const sub=banner.querySelector(".decision-sub");
+    if(cat==="SAFE"){
+      banner.classList.add("decision-go");
+      main.textContent="GO (for rated pilots)";
+    }else if(cat==="MARGINAL"){
+      banner.classList.add("decision-caution");
+      main.textContent="CAUTION";
+    }else{
+      banner.classList.add("decision-nogo");
+      main.textContent="NO‑GO";
+    }
+    const winText=state.bestWindow ? `Best window: ${state.bestWindow}. ` : "";
+    sub.textContent=`${winText}Safety score ${score}/100 · ${site.difficulty.toUpperCase()} site.`;
+  }
+
+  const metricsCard=document.querySelector(".metrics-card");
+  if(metricsCard){
+    const wind=current.windspeed_10m||0;
+    const gustVal=current.windgusts_10m||wind;
+    const dir=dirFromDeg(current.winddirection_10m||0);
+    const temp=Math.round(current.temperature_2m||0);
+    const prec=precip;
+    const gustClass=gustVal>=STATE.gustThreshold?"metric gust-alert":"metric";
+
+    metricsCard.innerHTML=`
+      <div class="metrics-header">
+        <div class="metrics-title">Live Conditions (Now)</div>
+      </div>
+      <div class="metrics-grid">
+        <div class="metric">
+          <div class="metric-label">Wind speed</div>
+          <div class="metric-value">
+            <span class="metric-main">${wind.toFixed(1)}</span>
+            <span class="metric-unit">mph</span>
+          </div>
+          <div class="metric-sub">${dir} surface flow</div>
+        </div>
+        <div class="${gustClass}">
+          <div class="metric-label">Gusts</div>
+          <div class="metric-value">
+            <span class="metric-main">${gustVal.toFixed(1)}</span>
+            <span class="metric-unit">mph</span>
+          </div>
+          <div class="metric-sub">${gustVal>=STATE.gustThreshold?"⚠ Above gust threshold — advanced only":"Within normal gust range"}</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">Temperature</div>
+          <div class="metric-value">
+            <span class="metric-main">${temp}</span>
+            <span class="metric-unit">°F</span>
+          </div>
+          <div class="metric-sub">At launch level, representative of now</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">Precipitation</div>
+          <div class="metric-value">
+            <span class="metric-main">${prec.toFixed(2)}</span>
+            <span class="metric-unit">in</span>
+          </div>
+          <div class="metric-sub">${prec? "Showers in play — watch wing loading":"Dry air — better for fabric & lines"}</div>
+        </div>
+      </div>
+    `;
+  }
+
+  const omBody=document.getElementById("om-body-"+site.id);
+  if(omBody){omBody.innerHTML=renderOpenMeteoForecast(site,state);wireOmTabs(site.id);}
+  const infoBody=document.getElementById("info-body-"+site.id);
+  if(infoBody) infoBody.innerHTML=renderSiteInfo(site);
+  const reportsBody=document.getElementById("reports-body-"+site.id);
+  if(reportsBody) reportsBody.innerHTML=renderReports(site.id);
+
+  document.querySelectorAll(".card-header").forEach(h=>{
+    h.addEventListener("click",()=>{
+      const targetId=h.getAttribute("data-target");
+      const body=document.getElementById(targetId);
+      const pill=h.querySelector(".card-toggle-pill");
+      const open=!body.classList.contains("open");
+      body.classList.toggle("open",open);
+      pill.classList.toggle("open",open);
+      pill.textContent=open?"Tap to collapse":"Tap to expand";
+      if(targetId.startsWith("nws-body-")&&open){
+        ensureNwsLoaded(site.id);
+      }
+    });
+  });
+
+  updateSidebarRow(siteId);
+}
+
+/* Open-Meteo forecast with safety timeline */
+function renderOpenMeteoForecast(site,state){
+  const om=state.om.data;
+  const hourly=om.hourly||{};
+  const times=hourly.time||[];
+  if(!times.length){
+    return `<div style="font-size:12px;color:#9ca3af;">No hourly forecast available.</div>`;
+  }
+  const now=nowLocal();
+  const buckets={today:[],tomorrow:[],week:[]};
+  const todaySafety=[];
+  for(let i=0;i<times.length;i++){
+    const t=new Date(times[i]);
+    const dayDiff=Math.floor((t-now)/86400000);
+    const labelDay=t.toLocaleDateString([],{weekday:"short"});
+    const temp=hourly.temperature_2m[i]||0;
+    const wind=hourly.windspeed_10m[i]||0;
+    const gust=hourly.windgusts_10m[i]||wind;
+    const precip=hourly.precipitation[i]||0;
+    const entry={t,labelDay,temp,wind,gust,precip};
+    if(dayDiff<=0) {
+      buckets.today.push(entry);
+      const score=computeSafetyScore(site,{windspeed_10m:wind,windgusts_10m:gust},precip);
+      const cat=safetyCategory(score,site);
+      todaySafety.push(cat);
+    } else if(dayDiff===1) {
+      buckets.tomorrow.push(entry);
+    }
+    if(dayDiff>=0&&dayDiff<=5) buckets.week.push(entry);
+  }
+  function bucketToCards(list,max=6){
+    if(!list.length) return `<div style="font-size:12px;color:#9ca3af;">No data.</div>`;
+    const cut=list.slice(0,max);
+    return `<div class="forecast-grid">${
+      cut.map(e=>{
+        const hour=e.t.toLocaleTimeString([],{hour:"numeric"});
+        const precipLine=e.precip>0?`${e.precip.toFixed(2)} in precip`:"No precip";
+        return `<div class="forecast-item">
+          <div class="forecast-item-title">${e.labelDay} · ${hour}</div>
+          <div class="forecast-item-temp">${Math.round(e.temp)}°F</div>
+          <div class="forecast-item-text">${e.wind.toFixed(1)} mph wind · ${e.gust.toFixed(1)} mph gusts · ${precipLine}</div>
+        </div>`;
+      }).join("")
+    }</div>`;
+  }
+  const timeline = todaySafety.length
+    ? `<div class="safety-timeline">${todaySafety.map(cat=>{
+        const cls = cat==="SAFE"?"safe":cat==="MARGINAL"?"marginal":"danger";
+        return `<div class="safety-slot ${cls}"></div>`;
+      }).join("")}</div>`
+    : "";
+
+  return `
+    <div class="forecast-tabs">
+      <button class="forecast-tab active" data-om-tab="today" data-site="${site.id}">Today</button>
+      <button class="forecast-tab" data-om-tab="tomorrow" data-site="${site.id}">Tomorrow</button>
+      <button class="forecast-tab" data-om-tab="week" data-site="${site.id}">6‑Day</button>
+    </div>
+    ${timeline}
+    <div id="om-panel-${site.id}-today" class="om-panel">
+      ${bucketToCards(buckets.today)}
+    </div>
+    <div id="om-panel-${site.id}-tomorrow" class="om-panel" style="display:none;">
+      ${bucketToCards(buckets.tomorrow)}
+    </div>
+    <div id="om-panel-${site.id}-week" class="om-panel" style="display:none;">
+      ${bucketToCards(buckets.week,6)}
+    </div>
+  `;
+}
+function wireOmTabs(siteId){
+  const detail=document.getElementById("detail");
+  const tabs=detail.querySelectorAll(`.forecast-tab[data-site="${siteId}"]`);
+  tabs.forEach(tab=>{
+    tab.addEventListener("click",()=>{
+      const mode=tab.getAttribute("data-om-tab");
+      tabs.forEach(t=>t.classList.remove("active"));
+      tab.classList.add("active");
+      ["today","tomorrow","week"].forEach(m=>{
+        const panel=document.getElementById(`om-panel-${siteId}-${m}`);
+        if(panel) panel.style.display=m===mode?"block":"none";
+      });
+    });
+  });
+}
+
+/* NWS forecast */
+async function ensureNwsLoaded(siteId){
+  const site=SITES.find(s=>s.id===siteId);
+  const state=STATE.siteData[siteId]||{};
+  const body=document.getElementById("nws-body-"+siteId);
+  const pill=document.getElementById("nws-pill-"+siteId);
+  if(state.nwsLoaded) return;
+  body.innerHTML=`<div style="font-size:12px;color:#9ca3af;">Loading NWS forecast…</div>`;
+  pill.textContent="Loading…";
+  try{
+    const nwsRes=await fetchNWS(site);
+    const periods=(nwsRes.data.properties&&nwsRes.data.properties.periods)||[];
+    state.nws={periods};
+    state.nwsLoaded=true;
+    STATE.siteData[siteId]=state;
+    body.innerHTML=`
+      <div class="forecast-grid">
+        ${periods.slice(0,8).map(p=>`
+          <div class="forecast-item">
+            <div class="forecast-item-title">${esc(p.name)}</div>
+            <div class="forecast-item-temp">${p.temperature}°${p.temperatureUnit}</div>
+            <div class="forecast-item-text">${esc(p.shortForecast)} · ${esc(p.windSpeed)} ${esc(p.windDirection||"")}</div>
+          </div>`).join("")}
+      </div>
+    `;
+    pill.textContent="Tap to collapse";
+  }catch(e){
+    body.innerHTML=`<div style="font-size:12px;color:#fca5a5;">Failed to load NWS forecast. Try again later.</div>`;
+    pill.textContent="Tap to retry";
+  }
+}
+
+/* Site info & reports */
+function renderSiteInfo(site){
+  const diffClass=site.difficulty==="beginner"?"diff-beginner":site.difficulty==="advanced"?"diff-advanced":"diff-intermediate";
+  const diffLabel=site.difficulty==="beginner"?"Beginner":site.difficulty==="advanced"?"Advanced":"Intermediate";
+  return `
+    <div class="info-grid">
+      <div class="info-item">
+        <div class="info-label">Elevation</div>
+        <div class="info-value">${site.elevation}</div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">Difficulty</div>
+        <div class="info-value"><span class="diff-pill ${diffClass}">${diffLabel}</span></div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">Typical wind</div>
+        <div class="info-value">${site.typicalWind}</div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">Landing zone</div>
+        <div class="info-value">${site.landing}</div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">Emergency</div>
+        <div class="info-value">${site.emergency}</div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">Airspace / NOTAM</div>
+        <div class="info-value">
+          <span class="notam-pill">⚠ Check NOTAMs & TFRs · ${site.notamHint}</span>
+        </div>
+      </div>
+    </div>
+  `;
+}
+function renderReports(siteId){
+  const list=STATE.reports[siteId]||[];
+  const items=list.length?list.map(r=>`
+    <div class="report-item">
+      <div class="report-meta">${new Date(r.ts).toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"})} · ${minutesAgo(r.ts)}</div>
+      <div class="report-text">${esc(r.text)}</div>
+    </div>`).join(""):`<div style="font-size:12px;color:#9ca3af;">No recent pilot reports. Be the first to post what you see on launch.</div>`;
+  return `
+    <div class="report-list">${items}</div>
+    <div class="report-form">
+      <textarea class="report-input" id="report-input-${siteId}" placeholder="Quick observation — e.g. 'Flying great, 12mph SW at ridge, light thermals 2–3PM'"></textarea>
+      <button class="report-submit" data-site="${siteId}">Post report</button>
+    </div>
+  `;
+}
+
+/* Sidebar row update */
+function updateSidebarRow(siteId){
+  const site=SITES.find(s=>s.id===siteId);
+  const state=STATE.siteData[siteId];
+  if(!state||!state.om) return;
+  const om=state.om.data;
+  const current=om.current||{};
+  const wind=current.windspeed_10m||0;
+  const gust=current.windgusts_10m||wind;
+  const dir=dirFromDeg(current.winddirection_10m||0);
+  const cat=state.safetyCategory;
+  const label=cat==="SAFE"?"Safe":cat==="MARGINAL"?"Marginal":"Dangerous";
+  const condEl=document.getElementById("site-cond-"+siteId);
+  const scoreEl=document.getElementById("site-score-"+siteId);
+  const windEl=document.getElementById("site-wind-"+siteId);
+  const gustDot=document.getElementById("gust-dot-"+siteId);
+  if(condEl){
+    condEl.textContent=label;
+    condEl.className="site-pill-condition "+(cat==="SAFE"?"site-pill-safe":cat==="MARGINAL"?"site-pill-marginal":"site-pill-danger");
+  }
+  if(scoreEl) scoreEl.textContent=state.safetyScore+"/100";
+  if(windEl) windEl.textContent=`${wind.toFixed(1)} ${dir}`;
+  if(gustDot) gustDot.style.display=gust>=STATE.gustThreshold?"block":"none";
+}
+
+/* Global click handlers */
+document.addEventListener("click",e=>{
+  const reportBtn=e.target.closest(".report-submit");
+  if(reportBtn){
+    const siteId=reportBtn.dataset.site;
+    const textarea=document.getElementById("report-input-"+siteId);
+    if(!textarea) return;
+    const text=textarea.value.trim();
+    if(!text) return;
+    saveReport(siteId,text);
+    textarea.value="";
+    const reportsBody=document.getElementById("reports-body-"+siteId);
+    if(reportsBody) reportsBody.innerHTML=renderReports(siteId);
+  }
+  const retryBtn=e.target.closest(".ai-error button");
+  if(retryBtn){
+    const siteId=retryBtn.dataset.site;
+    updateAdvisor(siteId);
+  }
+});
+
+/* Site selection */
+function selectSite(id){
+  STATE.currentId=id;
+  document.querySelectorAll(".site-pill").forEach(el=>{
+    el.classList.toggle("active",el.id==="site-pill-"+id);
+  });
+  document.querySelectorAll(".mobile-nav-btn").forEach(el=>{
+    el.classList.toggle("active",el.dataset.site===id);
+  });
+  renderDetailSkeleton();
+  loadSiteData(id);
+}
+
+/* Load site data then advisor */
+async function loadSiteData(siteId){
+  const site=SITES.find(s=>s.id===siteId);
+  if(!site) return;
+  try{
+    const omRes=await fetchOpenMeteo(site);
+    const om=omRes.data;
+    const current=om.current||{};
+    const precip=current.precipitation||0;
+    const score=computeSafetyScore(site,current,precip);
+    const cat=safetyCategory(score,site);
+    const bestWindow=bestWindowFromHourly(site,om.hourly||{});
+    const prev=STATE.siteData[siteId]||{};
+    STATE.siteData[siteId]=Object.assign({},prev,{
+      om:omRes,
+      safetyScore:score,
+      safetyCategory:cat,
+      bestWindow,
+      updatedTs:Date.now()
+    });
+    updateSidebarRow(siteId);
+    if(STATE.currentId===siteId){
+      renderDetail(siteId);
+    }
+    updateAdvisor(siteId);
+  }catch(e){
+    console.error("Open‑Meteo error",e);
+    if(STATE.currentId===siteId){
+      const detail=document.getElementById("detail");
+      detail.innerHTML=`<div style="padding:16px;font-size:13px;color:#fca5a5;">Failed to load live weather data. Check your connection and try again.</div>`;
+    }
+  }
+}
+
+/* Clock & countdown */
+function startClock(){
+  const clock=document.getElementById("clock");
+  function tick(){clock.textContent=fmtClock(nowLocal());}
+  tick();
+  setInterval(tick,1000);
+}
+function startCountdown(){
+  const el=document.getElementById("next-refresh");
+  if(STATE.countdownTimer) clearInterval(STATE.countdownTimer);
+  STATE.countdown=180;
+  el.textContent="in 180s";
+  STATE.countdownTimer=setInterval(()=>{
+    STATE.countdown--;
+    if(STATE.countdown<=0){
+      refreshAll();
+      STATE.countdown=180;
+    }
+    el.textContent="in "+STATE.countdown+"s";
+  },1000);
+}
+
+/* Offline & gust toast */
+function setupOffline(){
+  const banner=document.getElementById("offline-banner");
+  function handle(){banner.style.display=navigator.onLine?"none":"flex";}
+  window.addEventListener("online",handle);
+  window.addEventListener("offline",handle);
+  handle();
+}
+function showGustToast(site,gust){
+  const toast=document.getElementById("gust-toast");
+  toast.textContent=`Gust alert at ${site.name}: ${gust.toFixed(1)} mph`;
+  toast.style.display="block";
+  setTimeout(()=>{toast.style.display="none";},5000);
+}
+
+/* Refresh all */
+function refreshAll(){
+  for(const site of SITES){
+    loadSiteData(site.id);
+  }
+}
+
+/* Service worker */
+const SW_CODE=`
+const CACHE_NAME='bay-area-soaring-v1';
+self.addEventListener('install',event=>{
+  event.waitUntil(caches.open(CACHE_NAME).then(cache=>cache.addAll(['./'])));
+  self.skipWaiting();
+});
+self.addEventListener('activate',event=>{
+  event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE_NAME).map(k=>caches.delete(k)))));
+  self.clients.claim();
+});
+self.addEventListener('fetch',event=>{
+  const url=event.request.url;
+  if(url.includes('api.open-meteo.com')||url.includes('api.weather.gov')){
+    event.respondWith(
+      fetch(event.request).then(resp=>{
+        const clone=resp.clone();
+        caches.open(CACHE_NAME).then(c=>c.put(event.request,clone));
+        return resp;
+      }).catch(()=>caches.match(event.request))
+    );
+    return;
+  }
+  event.respondWith(
+    caches.match(event.request).then(cached=>{
+      return cached||fetch(event.request).then(resp=>{
+        const clone=resp.clone();
+        caches.open(CACHE_NAME).then(c=>c.put(event.request,clone));
+        return resp;
+      });
+    })
+  );
+});
+`;
+function registerServiceWorker(){
+  if(!("serviceWorker" in navigator)) return;
+  const blob=new Blob([SW_CODE],{type:"text/javascript"});
+  const url=URL.createObjectURL(blob);
+  navigator.serviceWorker.register(url).catch(()=>{});
+}
+
+/* Init */
+document.addEventListener("DOMContentLoaded",()=>{
+  renderSiteLists();
+  loadReports();
+  selectSite(STATE.currentId);
+  startClock();
+  startCountdown();
+  setupOffline();
+  registerServiceWorker();
+  document.getElementById("refresh-btn").addEventListener("click",()=>{
+    STATE.countdown=180;
+    refreshAll();
+  });
+  window.addEventListener("online",()=>{
+    for(const site of SITES){
+      const state=STATE.siteData[site.id];
+      const om=state&&state.om&&state.om.data;
+      if(om){
+        const current=om.current||{};
+        const gust=current.windgusts_10m||current.windspeed_10m||0;
+        if(gust>=STATE.gustThreshold) showGustToast(site,gust);
+      }
+    }
+  });
+});
 </script>
 </body>
 </html>
