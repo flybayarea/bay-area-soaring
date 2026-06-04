@@ -93,6 +93,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer}
   display:none;z-index:9998;box-shadow:0 18px 45px rgba(0,0,0,0.85);
 }
 
+/* Layout shell */
 .app-shell{display:flex;flex-direction:column;min-height:100vh}
 
 /* Header */
@@ -132,7 +133,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer}
 .refresh-button:hover{transform:translateY(-1px);filter:brightness(1.08)}
 .refresh-button:active{transform:translateY(0)}
 
-/* Main */
+/* Main layout */
 .app-main{flex:1;display:flex;justify-content:center;padding:16px 16px 64px}
 .app-main-inner{
   width:100%;max-width:1680px;margin:0 auto;
@@ -253,13 +254,41 @@ button{font-family:inherit;border:none;background:none;cursor:pointer}
 .condition-pill.danger{background:rgba(239,68,68,0.18);border:1px solid rgba(239,68,68,0.8);color:#fee2e2}
 .last-updated{font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--muted-soft)}
 
+/* Decision banner */
+.decision-banner{
+  margin-top:6px;
+  border-radius:16px;
+  padding:8px 10px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-size:13px;
+}
+.decision-main{font-weight:600}
+.decision-sub{font-size:11px;color:#9ca3af}
+.decision-go{
+  background:rgba(34,197,94,0.12);
+  border:1px solid rgba(34,197,94,0.7);
+  color:#bbf7d0;
+}
+.decision-caution{
+  background:rgba(234,179,8,0.16);
+  border:1px solid rgba(234,179,8,0.8);
+  color:#fef9c3;
+}
+.decision-nogo{
+  background:rgba(239,68,68,0.16);
+  border:1px solid rgba(239,68,68,0.85);
+  color:#fee2e2;
+}
+
 .detail-grid-top{
   display:grid;
   grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);
   gap:10px;
 }
 
-/* AI card */
+/* AI card, metrics, etc. */
 .ai-card{
   position:relative;
   border-radius:var(--radius-lg);
@@ -310,7 +339,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer}
   border:1px solid rgba(248,113,113,0.7);color:#fee2e2;
 }
 
-/* Metrics */
+/* Metrics card (no mode buttons) */
 .metrics-card{
   border-radius:var(--radius-lg);
   padding:10px 10px 10px;
@@ -322,18 +351,6 @@ button{font-family:inherit;border:none;background:none;cursor:pointer}
 }
 .metrics-title{
   font-size:11px;text-transform:uppercase;letter-spacing:0.16em;color:#9ca3af;
-}
-.metrics-mode-toggle{
-  display:flex;gap:4px;background:rgba(15,23,42,0.9);
-  border-radius:999px;padding:2px;border:1px solid rgba(31,41,55,0.85);
-}
-.metrics-mode-btn{
-  border-radius:999px;padding:2px 8px;font-size:10px;
-  color:#9ca3af;background:transparent;
-}
-.metrics-mode-btn.active{
-  background:radial-gradient(circle at top,#38bdf8,#4f46e5);
-  color:#e5f2ff;
 }
 .metrics-grid{
   display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;
@@ -376,7 +393,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer}
 }
 .skel-line{height:10px;margin:3px 0;border-radius:999px}
 
-/* Middle cards */
+/* Middle cards, info, reports, Open-Meteo tabs, etc. */
 .detail-grid-mid{
   display:grid;
   grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);
@@ -406,7 +423,68 @@ button{font-family:inherit;border:none;background:none;cursor:pointer}
 .card-body{margin-top:7px;display:none}
 .card-body.open{display:block}
 
-/* Info grid */
+.forecast-tabs{
+  display:flex;
+  gap:4px;
+  margin-top:6px;
+}
+.forecast-tab{
+  flex:1;
+  border-radius:999px;
+  padding:3px 6px;
+  font-size:10px;
+  text-align:center;
+  background:rgba(15,23,42,0.9);
+  border:1px solid rgba(31,41,55,0.9);
+  color:#9ca3af;
+}
+.forecast-tab.active{
+  background:radial-gradient(circle at top,#38bdf8,#4f46e5);
+  border-color:rgba(59,130,246,0.9);
+  color:#e5f2ff;
+}
+.forecast-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:6px;
+  margin-top:7px;
+}
+.forecast-item{
+  border-radius:var(--radius-md);
+  padding:6px 7px;
+  background:var(--surface-soft);
+  border:1px solid rgba(31,41,55,0.9);
+}
+.forecast-item-title{
+  font-size:11px;
+  color:#9ca3af;
+}
+.forecast-item-temp{
+  font-size:14px;
+  font-family:'JetBrains Mono',monospace;
+}
+.forecast-item-text{
+  font-size:11px;
+  margin-top:2px;
+  color:#9ca3af;
+}
+
+/* Safety timeline under Open-Meteo */
+.safety-timeline{
+  margin-top:8px;
+  display:flex;
+  gap:1px;
+}
+.safety-slot{
+  flex:1;
+  height:9px;
+  border-radius:2px;
+}
+.safety-slot.safe{background:#22c55e}
+.safety-slot.marginal{background:#eab308}
+.safety-slot.danger{background:#ef4444}
+
+/* Info grid, reports, same as before */
 .info-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-top:6px}
 .info-item{
   border-radius:var(--radius-md);
@@ -429,8 +507,6 @@ button{font-family:inherit;border:none;background:none;cursor:pointer}
   background:rgba(248,250,252,0.03);
   border:1px dashed rgba(248,250,252,0.18);color:#f9fafb;
 }
-
-/* Reports */
 .report-list{max-height:120px;overflow-y:auto;margin-top:4px}
 .report-item{
   border-radius:var(--radius-md);
@@ -457,7 +533,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer}
   color:#eff6ff;border:1px solid rgba(59,130,246,0.85);
 }
 
-/* Windy map only */
+/* Windy map */
 .windy-shell{
   margin-top:8px;
   border-radius:var(--radius-lg);
@@ -472,9 +548,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer}
   font-size:11px;color:#9ca3af;
   background:linear-gradient(90deg,rgba(15,23,42,0.98),rgba(15,23,42,0.96));
 }
-.windy-embed-wrapper{
-  position:relative;width:100%;height:520px;
-}
+.windy-embed-wrapper{position:relative;width:100%;height:520px}
 .windy-iframe{
   position:absolute;inset:0;width:100%;height:100%;
   border:0;background:#020617;
@@ -607,7 +681,6 @@ button{font-family:inherit;border:none;background:none;cursor:pointer}
 <script>
 "use strict";
 
-/* Sites and state */
 const SITES=[
   {
     id:"levin",
@@ -1078,7 +1151,7 @@ function renderSiteLists(){
   }
 }
 
-/* Detail skeleton & render */
+/* Detail skeleton */
 function renderDetailSkeleton(){
   const site=SITES.find(s=>s.id===STATE.currentId);
   const detail=document.getElementById("detail");
@@ -1099,6 +1172,10 @@ function renderDetailSkeleton(){
         </div>
       </div>
     </div>
+    <div class="decision-banner" id="decision-banner">
+      <div class="decision-main">Analyzing…</div>
+      <div class="decision-sub">Waiting for live weather data.</div>
+    </div>
     <div class="last-updated">Loading live data…</div>
 
     <div class="detail-grid-top">
@@ -1107,7 +1184,7 @@ function renderDetailSkeleton(){
           <div class="ai-card-inner">
             <div class="ai-card-header">
               <div class="ai-card-title">🤖 AI FLYING ADVISOR</div>
-              <div class="ai-chip">Rule‑based · No API key</div>
+              <div class="ai-chip">Open‑Meteo + NWS</div>
             </div>
             <div class="ai-summary-text">
               <span class="skel skel-line" style="width:82%;display:block;"></span>
@@ -1126,12 +1203,7 @@ function renderDetailSkeleton(){
 
       <div class="metrics-card">
         <div class="metrics-header">
-          <div class="metrics-title">Live Conditions</div>
-          <div class="metrics-mode-toggle">
-            <button class="metrics-mode-btn active" data-mode="today">Today</button>
-            <button class="metrics-mode-btn" data-mode="tomorrow">Tomorrow</button>
-            <button class="metrics-mode-btn" data-mode="week">6‑Day</button>
-          </div>
+          <div class="metrics-title">Live Conditions (Now)</div>
         </div>
         <div class="metrics-grid">
           <div class="metric"><div class="skel skel-line" style="width:60%;height:24px;"></div></div>
@@ -1189,6 +1261,7 @@ function renderDetailSkeleton(){
   `;
 }
 
+/* Detail render */
 function renderDetail(siteId){
   const site=SITES.find(s=>s.id===siteId);
   const state=STATE.siteData[siteId];
@@ -1226,20 +1299,37 @@ function renderDetail(siteId){
   }
   if(lastEl) lastEl.textContent=lastText;
 
+  const banner=document.getElementById("decision-banner");
+  if(banner){
+    banner.className="decision-banner";
+    const main=banner.querySelector(".decision-main");
+    const sub=banner.querySelector(".decision-sub");
+    if(cat==="SAFE"){
+      banner.classList.add("decision-go");
+      main.textContent="GO (for rated pilots)";
+    }else if(cat==="MARGINAL"){
+      banner.classList.add("decision-caution");
+      main.textContent="CAUTION";
+    }else{
+      banner.classList.add("decision-nogo");
+      main.textContent="NO‑GO";
+    }
+    const winText=state.bestWindow ? `Best window: ${state.bestWindow}. ` : "";
+    sub.textContent=`${winText}Safety score ${score}/100 · ${site.difficulty.toUpperCase()} site.`;
+  }
+
   const metricsCard=document.querySelector(".metrics-card");
   if(metricsCard){
     const wind=current.windspeed_10m||0;
+    const gustVal=current.windgusts_10m||wind;
     const dir=dirFromDeg(current.winddirection_10m||0);
     const temp=Math.round(current.temperature_2m||0);
-    const gustClass=gustAlert?"metric gust-alert":"metric";
+    const prec=precip;
+    const gustClass=gustVal>=STATE.gustThreshold?"metric gust-alert":"metric";
+
     metricsCard.innerHTML=`
       <div class="metrics-header">
-        <div class="metrics-title">Live Conditions</div>
-        <div class="metrics-mode-toggle">
-          <button class="metrics-mode-btn active" data-mode="today">Today</button>
-          <button class="metrics-mode-btn" data-mode="tomorrow">Tomorrow</button>
-          <button class="metrics-mode-btn" data-mode="week">6‑Day</button>
-        </div>
+        <div class="metrics-title">Live Conditions (Now)</div>
       </div>
       <div class="metrics-grid">
         <div class="metric">
@@ -1253,10 +1343,10 @@ function renderDetail(siteId){
         <div class="${gustClass}">
           <div class="metric-label">Gusts</div>
           <div class="metric-value">
-            <span class="metric-main">${gust.toFixed(1)}</span>
+            <span class="metric-main">${gustVal.toFixed(1)}</span>
             <span class="metric-unit">mph</span>
           </div>
-          <div class="metric-sub">${gustAlert?"⚠ Above gust threshold — advanced only":"Within normal gust range"}</div>
+          <div class="metric-sub">${gustVal>=STATE.gustThreshold?"⚠ Above gust threshold — advanced only":"Within normal gust range"}</div>
         </div>
         <div class="metric">
           <div class="metric-label">Temperature</div>
@@ -1264,15 +1354,15 @@ function renderDetail(siteId){
             <span class="metric-main">${temp}</span>
             <span class="metric-unit">°F</span>
           </div>
-          <div class="metric-sub">Feels cooler with wind at launch</div>
+          <div class="metric-sub">At launch level, representative of now</div>
         </div>
         <div class="metric">
           <div class="metric-label">Precipitation</div>
           <div class="metric-value">
-            <span class="metric-main">${precip.toFixed(2)}</span>
+            <span class="metric-main">${prec.toFixed(2)}</span>
             <span class="metric-unit">in</span>
           </div>
-          <div class="metric-sub">${precip? "Showers in play — watch wing loading":"Dry air — better for fabric & lines"}</div>
+          <div class="metric-sub">${prec? "Showers in play — watch wing loading":"Dry air — better for fabric & lines"}</div>
         </div>
       </div>
     `;
@@ -1299,18 +1389,11 @@ function renderDetail(siteId){
       }
     });
   });
-  document.querySelectorAll(".metrics-mode-btn").forEach(btn=>{
-    btn.addEventListener("click",()=>{
-      const parent=btn.parentElement;
-      parent.querySelectorAll(".metrics-mode-btn").forEach(b=>b.classList.remove("active"));
-      btn.classList.add("active");
-    });
-  });
 
   updateSidebarRow(siteId);
 }
 
-/* Open‑Meteo forecast UI */
+/* Open-Meteo forecast with safety timeline */
 function renderOpenMeteoForecast(site,state){
   const om=state.om.data;
   const hourly=om.hourly||{};
@@ -1320,6 +1403,7 @@ function renderOpenMeteoForecast(site,state){
   }
   const now=nowLocal();
   const buckets={today:[],tomorrow:[],week:[]};
+  const todaySafety=[];
   for(let i=0;i<times.length;i++){
     const t=new Date(times[i]);
     const dayDiff=Math.floor((t-now)/86400000);
@@ -1329,8 +1413,14 @@ function renderOpenMeteoForecast(site,state){
     const gust=hourly.windgusts_10m[i]||wind;
     const precip=hourly.precipitation[i]||0;
     const entry={t,labelDay,temp,wind,gust,precip};
-    if(dayDiff<=0) buckets.today.push(entry);
-    else if(dayDiff===1) buckets.tomorrow.push(entry);
+    if(dayDiff<=0) {
+      buckets.today.push(entry);
+      const score=computeSafetyScore(site,{windspeed_10m:wind,windgusts_10m:gust},precip);
+      const cat=safetyCategory(score,site);
+      todaySafety.push(cat);
+    } else if(dayDiff===1) {
+      buckets.tomorrow.push(entry);
+    }
     if(dayDiff>=0&&dayDiff<=5) buckets.week.push(entry);
   }
   function bucketToCards(list,max=6){
@@ -1348,12 +1438,20 @@ function renderOpenMeteoForecast(site,state){
       }).join("")
     }</div>`;
   }
+  const timeline = todaySafety.length
+    ? `<div class="safety-timeline">${todaySafety.map(cat=>{
+        const cls = cat==="SAFE"?"safe":cat==="MARGINAL"?"marginal":"danger";
+        return `<div class="safety-slot ${cls}"></div>`;
+      }).join("")}</div>`
+    : "";
+
   return `
     <div class="forecast-tabs">
       <button class="forecast-tab active" data-om-tab="today" data-site="${site.id}">Today</button>
       <button class="forecast-tab" data-om-tab="tomorrow" data-site="${site.id}">Tomorrow</button>
       <button class="forecast-tab" data-om-tab="week" data-site="${site.id}">6‑Day</button>
     </div>
+    ${timeline}
     <div id="om-panel-${site.id}-today" class="om-panel">
       ${bucketToCards(buckets.today)}
     </div>
@@ -1601,7 +1699,7 @@ function refreshAll(){
   }
 }
 
-/* Service worker (same) */
+/* Service worker */
 const SW_CODE=`
 const CACHE_NAME='bay-area-soaring-v1';
 self.addEventListener('install',event=>{
