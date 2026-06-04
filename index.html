@@ -1692,11 +1692,14 @@ function wireOmTabs(siteId){
 
 /* NWS daily + hourly combined card, with direction on daily rows */
 async function ensureNwsDailyAndHourly(siteId){
-  const site=SITES.find(s=>s.id===siteId);
-  const state=STATE.siteData[siteId]||{};
-  const body=document.getElementById("nws-body-"+siteId);
-  const pill=document.getElementById("nws-pill-"+siteId);
-  if(state.nwsRendered) return;
+  const state = STATE.siteData[siteId] || {};
+const body = document.getElementById("nws-body-" + siteId);
+const pill = document.getElementById("nws-pill-" + siteId);
+
+// Only skip if we know the DOM already has NWS content
+if (state.nwsRendered && body && body.innerHTML.trim() !== "") {
+  return;
+}
   body.innerHTML=`<div style="font-size:12px;color:#9ca3af;">Loading NWS forecast…</div>`;
   pill.textContent="Loading…";
   try{
