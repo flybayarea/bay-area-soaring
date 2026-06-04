@@ -579,60 +579,6 @@ button{
   color:#fee2e2;
 }
 
-/* Safety coach */
-.coach-card{
-  border-radius:var(--radius-lg);
-  padding:8px 10px;
-  background:linear-gradient(135deg,rgba(15,23,42,0.98),rgba(15,23,42,0.94));
-  border:1px solid rgba(31,41,55,0.95);
-  margin-top:6px;
-}
-.coach-header{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  font-size:11px;
-}
-.coach-title{
-  text-transform:uppercase;
-  letter-spacing:0.14em;
-  color:#9ca3af;
-}
-.coach-skill-toggle{
-  display:flex;
-  gap:4px;
-  background:rgba(15,23,42,0.9);
-  border-radius:999px;
-  padding:2px;
-  border:1px solid rgba(31,41,55,0.85);
-}
-.coach-skill-btn{
-  border-radius:999px;
-  padding:2px 8px;
-  font-size:10px;
-  color:#9ca3af;
-}
-.coach-skill-btn.active{
-  background:radial-gradient(circle at top,#38bdf8,#4f46e5);
-  color:#e5f2ff;
-}
-.coach-body{
-  margin-top:6px;
-  font-size:12px;
-  color:#e5e7eb;
-}
-.coach-decision{
-  font-weight:600;
-  margin-bottom:4px;
-}
-.coach-decision.good{color:#bbf7d0;}
-.coach-decision.caution{color:#fef9c3;}
-.coach-decision.nope{color:#fecaca;}
-.coach-reasons{
-  font-size:11px;
-  color:#9ca3af;
-}
-
 /* Metrics */
 .metrics-card{
   border-radius:var(--radius-lg);
@@ -726,35 +672,6 @@ button{
   background:rgba(239,68,68,0.25);
   border:1px solid rgba(248,113,113,0.85);
   color:#fee2e2;
-}
-
-/* Launch planner */
-.launch-planner{
-  margin-top:8px;
-  font-size:11px;
-  color:#9ca3af;
-}
-.launch-planner-row{
-  margin-top:2px;
-}
-.launch-badge{
-  display:inline-block;
-  padding:2px 6px;
-  border-radius:999px;
-  font-size:10px;
-  margin-right:6px;
-}
-.launch-badge.excellent{
-  background:rgba(34,197,94,0.2);
-  color:#bbf7d0;
-}
-.launch-badge.good{
-  background:rgba(52,211,153,0.2);
-  color:#a7f3d0;
-}
-.launch-badge.marginal{
-  background:rgba(234,179,8,0.2);
-  color:#fef9c3;
 }
 
 /* Skeleton */
@@ -953,7 +870,7 @@ button{
   border:0;
 }
 
-/* FlyXC tracking */
+/* FlyXC tracking – 2× taller, responsive */
 .flyxc-shell{
   border-radius:var(--radius-lg);
   overflow:hidden;
@@ -973,7 +890,7 @@ button{
 .flyxc-embed-wrapper{
   position:relative;
   width:100%;
-  height:260px;
+  height:520px; /* ~2× previous 260px desktop height */
 }
 .flyxc-iframe{
   position:absolute;
@@ -1034,7 +951,7 @@ button{
 }
 .report-meta{
   font-size:10px;
-  color:var(--muted-soft);
+  color:#9ca3af;
   margin-bottom:2px;
 }
 .report-text{
@@ -1054,12 +971,12 @@ button{
   font-size:11px;
   font-family:inherit;
   background:rgba(15,23,42,0.95);
-  color:var(--text);
+  color:#e5e7eb;
   resize:vertical;
   min-height:48px;
 }
 .report-input::placeholder{
-  color:var(--muted-soft);
+  color:#6b7280;
 }
 .report-submit{
   align-self:flex-end;
@@ -1077,14 +994,14 @@ button{
   margin:8px auto 18px;
   padding:0 12px;
   font-size:11px;
-  color:var(--muted-soft);
+  color:#9ca3af;
   display:flex;
   flex-wrap:wrap;
   justify-content:space-between;
   gap:6px;
 }
 .footer-links a{
-  color:var(--muted);
+  color:#9ca3af;
 }
 .footer-warning{
   max-width:520px;
@@ -1117,7 +1034,7 @@ button{
   justify-content:center;
   gap:2px;
   font-size:10px;
-  color:var(--muted-soft);
+  color:#9ca3af;
 }
 .mobile-nav-btn span.emoji{
   font-size:16px;
@@ -1145,9 +1062,11 @@ button{
   .detail-grid-bottom{
     grid-template-columns:minmax(0,1fr);
   }
-  .windy-embed-wrapper,
+  .windy-embed-wrapper{
+    height:260px;
+  }
   .flyxc-embed-wrapper{
-    height:240px;
+    height:380px; /* smaller but still larger than before on mobile */
   }
 }
 @media(max-width:640px){
@@ -1230,7 +1149,7 @@ button{
 <script>
 "use strict";
 
-/* Core state and sites (unchanged except we might reuse lat/lon for FlyXC) */
+/* Sites and state */
 const SITES=[
   {
     id:"levin",
@@ -1343,7 +1262,7 @@ function dirFromDeg(deg){
 function clamp(v,min,max){return v<min?min:v>max?max:v;}
 function esc(str){return String(str).replace(/</g,"&lt;").replace(/>/g,"&gt;");}
 
-/* Cache */
+/* Cache helpers */
 function cacheKey(siteId,suffix){return "bas_"+siteId+"_"+suffix;}
 function cacheSet(siteId,suffix,data){
   try{localStorage.setItem(cacheKey(siteId,suffix),JSON.stringify({ts:Date.now(),data}));}catch(e){}
@@ -1373,7 +1292,7 @@ function saveReport(siteId,text){
   try{localStorage.setItem("bas_reports_"+siteId,JSON.stringify(STATE.reports[siteId]));}catch(e){}
 }
 
-/* Safety / scoring (same as your existing) */
+/* Safety / scoring */
 function computeSafetyScore(site,current,precip){
   const wind=current.windspeed_10m||0;
   const gust=current.windgusts_10m||wind;
@@ -1403,7 +1322,6 @@ function safetyCategory(score,site){
   if(score>=40) return "MARGINAL";
   return "DANGEROUS";
 }
-
 function bestWindowFromHourly(site,hourly){
   if(!hourly||!hourly.time) return null;
   const now=nowLocal();
@@ -1434,7 +1352,7 @@ function bestWindowFromHourly(site,hourly){
   return `${fmt(start)} – ${fmt(end)}`;
 }
 
-/* Advisor text (same as before) */
+/* Advisor text */
 function buildAdvisorSummary(site,forecast){
   const om=forecast.om.data;
   const current=om.current||{};
@@ -1564,7 +1482,7 @@ function renderAdvisorError(siteId,message){
   errorEl.style.display="flex";
 }
 
-/* Advisor forecast loader */
+/* Advisor loader */
 async function loadForecastForAdvisor(siteId){
   const site=SITES.find(s=>s.id===siteId);
   if(!site) throw new Error("Unknown site");
@@ -1619,8 +1537,6 @@ async function loadForecastForAdvisor(siteId){
     updatedTs:Date.now()
   };
 }
-
-/* Advisor controller */
 async function updateAdvisor(siteId){
   setAdvisorState(siteId,"loading");
   try{
@@ -1636,7 +1552,7 @@ async function updateAdvisor(siteId){
   }
 }
 
-/* Open-Meteo & NWS */
+/* Open‑Meteo & NWS fetch */
 async function fetchOpenMeteo(site){
   const cached=cacheGet(site.id,"om");
   if(cached) return cached;
@@ -1664,7 +1580,7 @@ async function fetchNWS(site){
   return {ts:Date.now(),data};
 }
 
-/* Sidebar & mobile */
+/* Sidebar & mobile nav */
 function renderSiteLists(){
   const list=document.getElementById("site-list");
   const mobile=document.getElementById("mobile-nav-inner");
@@ -1704,7 +1620,7 @@ function renderSiteLists(){
   }
 }
 
-/* Detail skeleton */
+/* Detail skeleton with FlyXC */
 function renderDetailSkeleton(){
   const site=SITES.find(s=>s.id===STATE.currentId);
   const detail=document.getElementById("detail");
@@ -1815,11 +1731,11 @@ function renderDetailSkeleton(){
       </div>
       <div class="flyxc-shell">
         <div class="flyxc-header">
-          <span>FlyXC — Live tracking near ${site.name}</span>
-          <span style="font-size:10px;color:#9ca3af;">Shows pilots broadcasting to FlyXC in this area</span>
+          <span>FlyXC — Live tracking (California)</span>
+          <span style="font-size:10px;color:#9ca3af;">Centered on California; recenter to this site on load</span>
         </div>
         <div class="flyxc-embed-wrapper">
-          <iframe class="flyxc-iframe" id="flyxc-iframe-${site.id}" loading="lazy" src="" title="FlyXC live tracking"></iframe>
+          <iframe class="flyxc-iframe" id="flyxc-iframe" loading="lazy" src="" title="FlyXC live tracking"></iframe>
         </div>
       </div>
     </div>
@@ -1832,6 +1748,7 @@ function renderDetail(siteId){
   const state=STATE.siteData[siteId];
   if(!state||!state.om){
     renderDetailSkeleton();
+    setFlyXCCaliforniaDefault(); // default CA view even while loading
     return;
   }
   const om=state.om.data;
@@ -1947,28 +1864,29 @@ function renderDetail(siteId){
     });
   });
 
-  updateFlyXCIframe(site);
+  // After first detailed render, center FlyXC on this site
+  updateFlyXCIframeToSite(site);
 }
 
-/* FlyXC integration: center on site */
-function updateFlyXCIframe(site){
-  const iframeId="flyxc-iframe-"+site.id;
-  let iframe=document.getElementById(iframeId);
-  if(!iframe){
-    // if detail re-rendered from skeleton, ensure we grab the current one
-    iframe=document.querySelector(".flyxc-iframe");
-  }
+/* FlyXC: California default + per-site recenter */
+function setFlyXCCaliforniaDefault(){
+  const iframe=document.getElementById("flyxc-iframe");
   if(!iframe) return;
-
-  // FlyXC supports query params for center and zoom; using map view (not 3d). [web:21]
+  // Default California view centered near Bay Area, NorCal zoom
+  const url=`https://flyxc.app?lat=37.5&lon=-122.0&z=8&dark=1&live=1`;
+  iframe.src=url;
+}
+function updateFlyXCIframeToSite(site){
+  const iframe=document.getElementById("flyxc-iframe");
+  if(!iframe) return;
   const lat=site.lat;
   const lon=site.lon;
-  const zoom=11; // reasonable for site-scale view
+  const zoom=11; // site-scale view after selection
   const url=`https://flyxc.app?lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lon)}&z=${zoom}&dark=1&live=1`;
   iframe.src=url;
 }
 
-/* Open-Meteo forecast UI */
+/* Open‑Meteo forecast UI */
 function renderOpenMeteoForecast(site,state){
   const om=state.om.data;
   const hourly=om.hourly||{};
@@ -2071,7 +1989,7 @@ async function ensureNwsLoaded(siteId){
   }
 }
 
-/* Site info, reports, media (same as before) */
+/* Site info, reports, media */
 function renderSiteInfo(site){
   const diffClass=site.difficulty==="beginner"?"diff-beginner":site.difficulty==="advanced"?"diff-advanced":"diff-intermediate";
   const diffLabel=site.difficulty==="beginner"?"Beginner":site.difficulty==="advanced"?"Advanced":"Intermediate";
@@ -2189,7 +2107,7 @@ function updateSidebarRow(siteId){
   if(gustDot) gustDot.style.display=gust>=STATE.gustThreshold?"block":"none";
 }
 
-/* Click handlers */
+/* Clicks: reports & advisor retry */
 document.addEventListener("click",e=>{
   const reportBtn=e.target.closest(".report-submit");
   if(reportBtn){
@@ -2220,6 +2138,8 @@ function selectSite(id){
     el.classList.toggle("active",el.dataset.site===id);
   });
   renderDetailSkeleton();
+  // On skeleton render, default FlyXC to California view before data loads
+  setFlyXCCaliforniaDefault();
   loadSiteData(id);
 }
 
