@@ -741,7 +741,7 @@ const SITES=[
     typicalWind:"Strong W–NW ocean flow",
     emergency:"San Mateo County Dispatch · 911",
     landing:"Beach below cliffs — advanced pilots only",
-    windyEmbed:"https://embed.windy.com/embed2.html?lat=37.674&lon=-122.4887&detailLat=37.674&detailLon=-122.4887&width=650&height=350&zoom=12&level=surface&overlay=wind&product=ecmwf&menu=&message=&marker=true&calendar=now&pressure=true&type=map&location=coordinates&detail=true&metricWind=mph&metricTemp=%C2%B0F&radarRange=-1",
+    windyEmbed:"https://embed.windy.com/embed2.html?lat=37.674&lon=-122.4887&detailLat=37.674&detailLon:-122.4887&width:650&height:350&zoom:12&level:surface&overlay:wind&product:ecmwf&menu:&message:&marker:true&calendar:now&pressure:true&type:map&location:coordinates&detail:true&metricWind:mph&metricTemp:%C2%B0F&radarRange:-1",
     nwsOffice:"MTR",
     nwsX:82,
     nwsY:120,
@@ -762,12 +762,12 @@ const SITES=[
     typicalWind:"NW bay breeze, afternoons",
     emergency:"Mountain View Fire · 911",
     landing:"Open grass fields throughout park",
-    windyEmbed:"https://embed.windy.com/embed2.html?lat=37.4297&lon=-122.0766&detailLat=37.4297&detailLon=-122.0766&width=650&height=350&zoom=12&level=surface&overlay=wind&product=ecmwf&menu=&message=&marker=true&calendar=now&pressure=true&type=map&location=coordinates&detail=true&metricWind=mph&metricTemp=%C2%B0F&radarRange=-1",
+    windyEmbed:"https://embed.windy.com/embed2.html?lat=37.4297&lon:-122.0766&detailLat:37.4297&detailLon:-122.0766&width:650&height:350&zoom:12&level:surface&overlay:wind&product:ecmwf&menu:&message:&marker:true&calendar:now&pressure:true&type:map&location:coordinates&detail:true&metricWind:mph&metricTemp:%C2%B0F&radarRange:-1",
     nwsOffice:"MTR",
     nwsX:90,
     nwsY:93,
     notamHint:"Near PAO / NUQ — check NOTAMs",
-    youtubeId:"sqQbW7YgEk",
+    youtubeId:"sqQbWv7YgEk",
     externalSite:null
   },
   {
@@ -783,7 +783,7 @@ const SITES=[
     typicalWind:"SSW thermic with valley breeze",
     emergency:"EBRPD Police · +1 (510) 881‑1833",
     landing:"Designated LZ in Fremont foothills",
-    windyEmbed:"https://embed.windy.com/embed2.html?lat=37.5131&lon=-121.8803&detailLat=37.5131&detailLon=-121.8803&width=650&height=350&zoom=12&level=surface&overlay=wind&product=ecmwf&menu=&message=&marker=true&calendar=now&pressure=true&type=map&location=coordinates&detail=true&metricWind=mph&metricTemp=%C2%B0F&radarRange=-1",
+    windyEmbed:"https://embed.windy.com/embed2.html?lat=37.5131&lon:-121.8803&detailLat:37.5131&detailLon:-121.8803&width:650&height:350&zoom:12&level:surface&overlay:wind&product:ecmwf&menu:&message:&marker:true&calendar:now&pressure:true&type:map&location:coordinates&detail:true&metricWind:mph&metricTemp:%C2%B0F&radarRange:-1",
     nwsOffice:"MTR",
     nwsX:100,
     nwsY:99,
@@ -815,7 +815,7 @@ function dirFromDeg(deg){
   const dirs=["N","NNE","NE","ENE","E","ESE","SE","SSE","S","SSW","SW","WSW","W","WNW","NW","NNW"];
   return dirs[Math.round(deg/22.5)%16];
 }
-function clamp(v,min,max){return v<min?min:v>max?max:v;}
+function clamp(v,min,max){return v<min?min:v>max?v:max;}
 function esc(str){return String(str).replace(/</g,"&lt;").replace(/>/g,"&gt;");}
 
 /* Cache helpers */
@@ -908,7 +908,7 @@ function bestWindowFromHourly(site,hourly){
   return `${fmt(start)} – ${fmt(end)}`;
 }
 
-/* Advisor text */
+/* Advisor text (still OM-based for now) */
 function buildAdvisorSummary(site,forecast){
   const om=forecast.om.data;
   const current=om.current||{};
@@ -1136,7 +1136,7 @@ async function fetchNWSHourly(site){
   return {ts:Date.now(),data};
 }
 
-/* Shared hourly renderer */
+/* Shared hourly renderer with direction */
 function renderHourlyCards(hourlyArr,max=8){
   if(!hourlyArr || !hourlyArr.length){
     return `<div style="font-size:12px;color:#9ca3af;">No future hours available.</div>`;
@@ -1152,17 +1152,18 @@ function renderHourlyCards(hourlyArr,max=8){
       const precipTxt = (e.precipitation!=null && !isNaN(e.precipitation))
         ? (e.precipitation>0 ? `${e.precipitation.toFixed(2)} in precip` : "No precip")
         : (e.precipitationText || "Precip N/A");
+      const dirTxt = e.windDir ? ` · ${esc(e.windDir)}` : "";
       const extra = e.shortForecast ? ` · ${esc(e.shortForecast)}` : "";
       return `<div class="forecast-item">
         <div class="forecast-item-title">${labelDay} · ${hour}</div>
         <div class="forecast-item-temp">${Math.round(e.temperature)}°F</div>
-        <div class="forecast-item-text">${windTxt} · ${precipTxt}${extra}</div>
+        <div class="forecast-item-text">${windTxt} · ${precipTxt${dirTxt}${extra}</div>
       </div>`;
     }).join("")
   }</div>`;
 }
 
-/* Normalize NWS hourly first future period into "current" */
+/* Normalize NWS hourly to liveCurrent */
 function nwsHourlyToCurrent(site, periods){
   if(!periods || !periods.length) return null;
   const now = nowLocal();
@@ -1241,7 +1242,7 @@ function renderSiteLists(){
   }
 }
 
-/* Detail skeleton */
+/* Detail skeleton: cards open by default */
 function renderDetailSkeleton(){
   const site=SITES.find(s=>s.id===STATE.currentId);
   const detail=document.getElementById("detail");
@@ -1308,17 +1309,17 @@ function renderDetailSkeleton(){
       <div class="card" id="om-card-${site.id}">
         <div class="card-header" data-target="om-body-${site.id}">
           <div class="card-title">Open‑Meteo Forecast</div>
-          <div class="card-toggle-pill" id="om-pill-${site.id}">Tap to expand</div>
+          <div class="card-toggle-pill open" id="om-pill-${site.id}">Tap to collapse</div>
         </div>
-        <div class="card-body" id="om-body-${site.id}"></div>
+        <div class="card-body open" id="om-body-${site.id}"></div>
       </div>
 
       <div class="card" id="nws-card-${site.id}">
         <div class="card-header" data-target="nws-body-${site.id}">
           <div class="card-title">NWS Hourly Forecast</div>
-          <div class="card-toggle-pill" id="nws-pill-${site.id}">Tap to load</div>
+          <div class="card-toggle-pill open" id="nws-pill-${site.id}">Tap to collapse</div>
         </div>
-        <div class="card-body" id="nws-body-${site.id}"></div>
+        <div class="card-body open" id="nws-body-${site.id}"></div>
       </div>
     </div>
 
@@ -1326,16 +1327,16 @@ function renderDetailSkeleton(){
       <div class="card">
         <div class="card-header" data-target="info-body-${site.id}">
           <div class="card-title">Site Information</div>
-          <div class="card-toggle-pill" id="info-pill-${site.id}">Tap to expand</div>
+          <div class="card-toggle-pill open" id="info-pill-${site.id}">Tap to collapse</div>
         </div>
-        <div class="card-body" id="info-body-${site.id}"></div>
+        <div class="card-body open" id="info-body-${site.id}"></div>
       </div>
       <div class="card">
         <div class="card-header" data-target="reports-body-${site.id}">
           <div class="card-title">Pilot Condition Reports</div>
-          <div class="card-toggle-pill" id="reports-pill-${site.id}">Tap to expand</div>
+          <div class="card-toggle-pill open" id="reports-pill-${site.id}">Tap to collapse</div>
         </div>
-        <div class="card-body" id="reports-body-${site.id}"></div>
+        <div class="card-body open" id="reports-body-${site.id}"></div>
       </div>
     </div>
 
@@ -1461,10 +1462,14 @@ function renderDetail(siteId){
 
   const omBody=document.getElementById("om-body-"+site.id);
   if(omBody){omBody.innerHTML=renderOpenMeteoForecast(site,state);wireOmTabs(site.id);}
+
   const infoBody=document.getElementById("info-body-"+site.id);
   if(infoBody) infoBody.innerHTML=renderSiteInfo(site);
   const reportsBody=document.getElementById("reports-body-"+site.id);
   if(reportsBody) reportsBody.innerHTML=renderReports(site.id);
+
+  /* NWS card body: ensure it's loaded immediately when open by default */
+  ensureNwsLoaded(site.id);
 
   document.querySelectorAll(".card-header").forEach(h=>{
     h.addEventListener("click",()=>{
@@ -1477,13 +1482,10 @@ function renderDetail(siteId){
       if(targetId.startsWith("nws-body-")&&open){
         ensureNwsLoaded(site.id);
       }
-      if(targetId.startsWith("om-body-")){
-        pill.textContent=open?"Tap to collapse":"Tap to expand";
-      }
-      if(targetId.startsWith("nws-body-")){
-        pill.textContent=open?"Tap to collapse":"Tap to load";
-      }
-      if(targetId.startsWith("info-body-")||targetId.startsWith("reports-body-")){
+      if(targetId.startsWith("om-body-")||
+         targetId.startsWith("nws-body-")||
+         targetId.startsWith("info-body-")||
+         targetId.startsWith("reports-body-")){
         pill.textContent=open?"Tap to collapse":"Tap to expand";
       }
     });
@@ -1492,7 +1494,7 @@ function renderDetail(siteId){
   updateSidebarRow(siteId);
 }
 
-/* Open‑Meteo hourly from current time using shared renderer */
+/* OM hourly uses dirFromDeg for windDir */
 function renderOpenMeteoForecast(site,state){
   const om=state.om.data;
   const hourly=om.hourly||{};
@@ -1518,6 +1520,8 @@ function renderOpenMeteoForecast(site,state){
     const wind=hourly.windspeed_10m[i]||0;
     const gust=hourly.windgusts_10m[i]||wind;
     const precip=hourly.precipitation[i]||0;
+    const dirDeg=(hourly.winddirection_10m && hourly.winddirection_10m[i]) || 0;
+    const windDir=dirFromDeg(dirDeg);
     const entry={
       time:t,
       windSpeed:wind,
@@ -1525,7 +1529,8 @@ function renderOpenMeteoForecast(site,state){
       temperature:temp,
       precipitation:precip,
       precipitationText:null,
-      shortForecast:""
+      shortForecast:"",
+      windDir
     };
     if(diffDays<=0){
       buckets.today.push(entry);
@@ -1581,7 +1586,7 @@ function wireOmTabs(siteId){
   });
 }
 
-/* NWS hourly: normalize and render with shared layout */
+/* NWS hourly normalized with windDir text */
 async function ensureNwsLoaded(siteId){
   const site=SITES.find(s=>s.id===siteId);
   const state=STATE.siteData[siteId]||{};
@@ -1595,7 +1600,7 @@ async function ensureNwsLoaded(siteId){
     const periods=(nwsRes.data.properties&&nwsRes.data.properties.periods)||[];
     if(!periods.length){
       body.innerHTML=`<div style="font-size:12px;color:#9ca3af;">No NWS hourly data available.</div>`;
-      pill.textContent="Tap to collapse";
+      pill.textContent="Tap to expand";
       state.nwsHourlyRendered=true;
       STATE.siteData[siteId]=state;
       return;
@@ -1620,6 +1625,7 @@ async function ensureNwsLoaded(siteId){
       }
       const precipMention=/rain|shower|storm|snow|drizzle/i.test(short);
       const precipTxt=precipMention?"Precip possible":"No explicit precip";
+      const windDir=p.windDirection || "";
       return {
         time:t,
         windSpeed:avgWind||0,
@@ -1627,13 +1633,14 @@ async function ensureNwsLoaded(siteId){
         temperature:temp,
         precipitation:null,
         precipitationText:precipTxt,
-        shortForecast:short
+        shortForecast:short,
+        windDir
       };
     });
 
     if(!hourlyNorm.length){
       body.innerHTML=`<div style="font-size:12px;color:#9ca3af;">No future NWS hours available.</div>`;
-      pill.textContent="Tap to collapse";
+      pill.textContent="Tap to expand";
       state.nwsHourlyRendered=true;
       STATE.siteData[siteId]=state;
       return;
@@ -1646,7 +1653,7 @@ async function ensureNwsLoaded(siteId){
   }catch(e){
     console.error("NWS hourly error",e);
     body.innerHTML=`<div style="font-size:12px;color:#fca5a5;">Failed to load NWS hourly forecast. Try again later.</div>`;
-    pill.textContent="Tap to retry";
+    pill.textContent="Tap to expand";
   }
 }
 
@@ -1701,7 +1708,7 @@ function renderReports(siteId){
   `;
 }
 
-/* Sidebar row update: use liveCurrent (NWS‑driven) */
+/* Sidebar row update: uses liveCurrent & liveDirText */
 function updateSidebarRow(siteId){
   const site=SITES.find(s=>s.id===siteId);
   const state=STATE.siteData[siteId];
@@ -1762,7 +1769,7 @@ function selectSite(id){
   loadSiteData(id);
 }
 
-/* Load site data: NWS drives liveCurrent */
+/* Load site data: NWS drives liveCurrent when present */
 async function loadSiteData(siteId){
   const site=SITES.find(s=>s.id===siteId);
   if(!site) return;
