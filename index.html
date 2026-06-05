@@ -1571,9 +1571,9 @@ function renderDetail(siteId){
   const reportsBody=document.getElementById("reports-body-"+site.id);
   if(reportsBody) reportsBody.innerHTML=renderReports(site.id);
 
-  ensureNwsDailyAndHourly(site.id);
+  ensureNwsDailyAndHourly(siteId);
 
-  document.querySelectorAll(".card-header").forEach(h=>{
+  document.querySelectorAll(`[data-target$="-${siteId}"]`).forEach(h=>{
     h.addEventListener("click",()=>{
       const targetId=h.getAttribute("data-target");
       const body=document.getElementById(targetId);
@@ -1582,7 +1582,7 @@ function renderDetail(siteId){
       body.classList.toggle("open",open);
       pill.classList.toggle("open",open);
       if(targetId.startsWith("nws-body-")&&open){
-        ensureNwsDailyAndHourly(site.id);
+        ensureNwsDailyAndHourly(targetId.replace("nws-body-",""));
       }
       if(targetId.startsWith("om-body-")||
          targetId.startsWith("nws-body-")||
@@ -1701,8 +1701,8 @@ const pill = document.getElementById("nws-pill-" + siteId);
   pill.textContent="Loading…";
   try{
     const [nwsDayRes,nwsHourRes]=await Promise.all([
-      fetchNWSDaily(site).catch(()=>null),
-      fetchNWSHourly(site).catch(()=>null)
+      fetchNWSDaily(SITES.find(s=>s.id===siteId)).catch(()=>null),
+      fetchNWSHourly(SITES.find(s=>s.id===siteId)).catch(()=>null)
     ]);
 
     const dailyPeriods = nwsDayRes && nwsDayRes.data.properties && nwsDayRes.data.properties.periods
@@ -1780,8 +1780,8 @@ const pill = document.getElementById("nws-pill-" + siteId);
     STATE.siteData[siteId]=state;
   }catch(e){
     console.error("NWS forecast error",e);
-    body.innerHTML=`<div style="font-size:12px;color:#fca5a5;">Failed to load NWS forecast. Try again later.</div>`;
-    pill.textContent="Tap to expand";
+    body.innerHTML=`<div style="font-size:12px;color:#fca5a5;">⚠ NWS forecast unavailable — tap header to retry.</div>`;
+    pill.textContent="NWS error — click to retry";
   }
 }
 
