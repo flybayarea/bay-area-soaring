@@ -2011,7 +2011,7 @@ function refreshAll(){
 
 /* Service worker */
 const SW_CODE=`
-const CACHE_NAME='bay-area-soaring-v1';
+const CACHE_NAME='bay-area-soaring-v2';
 self.addEventListener('install',event=>{
   event.waitUntil(caches.open(CACHE_NAME).then(cache=>cache.addAll(['./'])));
   self.skipWaiting();
