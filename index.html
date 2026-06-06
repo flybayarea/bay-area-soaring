@@ -1420,7 +1420,7 @@ function renderDetailSkeleton(){
 
       <div class="card" id="nws-card-${site.id}">
         <div class="card-header" data-target="nws-body-${site.id}">
-          <div class="card-title">NWS Forecast</div>
+          <div class="card-title">NWS Forecast</div>               <a href="${site.nwsMapClickUrl}" target="_blank" rel="noopener" class="nws-graph-btn" title="View 48-hr NWS graphical forecast for ${site.name}">View NWS Graph ↗</a>
           <div class="card-toggle-pill open" id="nws-pill-${site.id}">Tap to collapse</div>
         </div>
         <div class="card-body open" id="nws-body-${site.id}"></div>
