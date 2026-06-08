@@ -657,7 +657,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer}
       <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
           <div class="sidebar-title">Flying Sites</div>
-          <div class="sidebar-badge">Live · Open‑Meteo + NWS</div>
+          <div class="sidebar-badge">Live · Windy + NWS</div>
         </div>
         <div class="sidebar-sites" id="site-list"></div>
         <div class="sidebar-footer">
@@ -977,13 +977,13 @@ function bestWindowFromHourly(site,hourly){
   return `${fmt(start)} – ${fmt(end)}`;
 }
 
-/* Advisor text */
+function bestWindowFromNWSHourly(site,periods){ if(!periods||!periods.length) return null; const now=nowLocal(); const scores=[]; for(let i=0;i<periods.length;i++){ const t=new Date(periods[i].startTime); if(t<now) continue; const ws=periods[i].windSpeed||''; let m=ws.match(/(\d+)\s*(?:to|-)\s*(\d+)\s*mph/i); let m2=ws.match(/(\d+)\s*mph/i); const wind=m?(parseInt(m[1],10)+parseInt(m[2],10))/2:m2?parseInt(m2[1],10):0; const precip=/rain|shower|storm|snow|drizzle/i.test(periods[i].shortForecast||'')?0.01:0; const score=computeSafetyScore(site,{windspeed_10m:wind,windgusts_10m:wind},precip); const hr=t.getHours(); const dayBonus=hr>=10&&hr<=17?5:0; scores.push({t,score:score+dayBonus}); } if(!scores.length) return null; scores.sort((a,b)=>b.score-a.score); const best=scores[0]; if(best.score<45) return 'No clearly good window today'; const start=best.t; const end=new Date(start.getTime()+2*3600000); const fmt=t=>{let h=t.getHours(),mm=t.getMinutes();const am=h>=12?'PM':'AM';h=h%12||12;return mm?`${h}:${String(mm).padStart(2,'0')} ${am}`:`${h} ${am}`;}; return `${fmt(start)} \u2013 ${fmt(end)}`; } /* Advisor text */
 function buildAdvisorSummary(site,forecast){
-  const om=forecast.om.data;
-  const current=om.current||{};
+  // om replaced by NWS
+  const current=forecast.liveCurrent||{};
   const wind=current.windspeed_10m||0;
   const gust=current.windgusts_10m||wind;
-  const dir=dirFromDeg(current.winddirection_10m||0);
+  const dir=forecast.liveDirText||dirFromDeg(current.winddirection_10m||0);
   const temp=Math.round(current.temperature_2m||0);
   const precip=current.precipitation||0;
   const cat=forecast.safetyCategory;
@@ -1111,8 +1111,8 @@ function renderAdvisorError(siteId,message){
 async function loadForecastForAdvisor(siteId){
   const site=SITES.find(s=>s.id===siteId);
   if(!site) throw new Error("Unknown site");
-  let omRes=cacheGet(site.id,"om");
-  if(!omRes){
+  let omRes=null; // OM replaced by NWS in loadForecastForAdvisor
+  if(false){ // OM fetch removed
     const url=`https://api.open-meteo.com/v1/forecast?latitude=${site.lat}&longitude=${site.lon}`+
       `&current=temperature_2m,precipitation,windspeed_10m,windgusts_10m,winddirection_10m`+
       `&hourly=windspeed_10m,windgusts_10m,precipitation,winddirection_10m,temperature_2m`+
@@ -1124,12 +1124,12 @@ async function loadForecastForAdvisor(siteId){
     cacheSet(site.id,"om",data);
     omRes={ts:Date.now(),data};
   }
-  const om=omRes.data;
-  const current=om.current||{};
+  const om={}; // OM removed
+  const current=(STATE.siteData[siteId]||{}).liveCurrent||{};
   const precip=current.precipitation||0;
   const safetyScore=computeSafetyScore(site,current,precip);
   const cat=safetyCategory(safetyScore,site);
-  const bestWindow=bestWindowFromHourly(site,om.hourly||{});
+  let bestWindow=null;
 
   let nwsDaily=null;
   let nwsHourly=null;
@@ -1175,11 +1175,11 @@ async function loadForecastForAdvisor(siteId){
 
   return {
     site,
-    om:omRes,
+    // om removed,
     nwsDaily,
     nwsHourly,
-    safetyScore,
-    safetyCategory:cat,
+    safetyScore:(STATE.siteData[siteId]||{}).safetyScore||50,
+    safetyCategory:(STATE.siteData[siteId]||{}).safetyCategory||cat, liveCurrent:(STATE.siteData[siteId]||{}).liveCurrent||{}, liveDirText:(STATE.siteData[siteId]||{}).liveDirText||null,
     bestWindow,
     updatedTs:Date.now()
   };
@@ -1902,7 +1902,7 @@ async function loadSiteData(siteId){
   const site=SITES.find(s=>s.id===siteId);
   if(!site) return;
   try{
-    const omRes=await fetchOpenMeteo(site);
+    const omRes={ts:Date.now(),data:{current:{},hourly:{}}}; // OM replaced by NWS
     const om=omRes.data;
 
     let nwsDayRes=null;
@@ -1936,11 +1936,11 @@ async function loadSiteData(siteId){
     const precip=liveCurrent.precipitation||0;
     const score=computeSafetyScore(site,liveCurrent,precip);
     const cat=safetyCategory(score,site);
-    const bestWindow=bestWindowFromHourly(site,om.hourly||{});
+    const bestWindow=bestWindowFromNWSHourly(site,nwsPeriodsHourly||[]);
     const prev=STATE.siteData[siteId]||{};
 
     STATE.siteData[siteId]=Object.assign({},prev,{
-      om:omRes,
+      // om removed,
       nwsDaily:nwsPeriodsDaily || null,
       nwsHourly:nwsPeriodsHourly || null,
       liveCurrent,
