@@ -1460,11 +1460,11 @@ function renderDetailSkeleton(){
 function renderDetail(siteId){
   const site=SITES.find(s=>s.id===siteId);
   const state=STATE.siteData[siteId];
-  if(!state||!state.om){
+  if(!state||!state.updatedTs){
     renderDetailSkeleton();
     return;
   }
-  const om=state.om.data;
+  const om=(state.om&&state.om.data)||{current:{},hourly:{}};
   const liveCurrent = state.liveCurrent || (om.current || {});
   const precip=liveCurrent.precipitation||0;
   const score=state.safetyScore;
@@ -1598,8 +1598,8 @@ function renderDetail(siteId){
 
 /* Windy Forecast with windDir */
 function renderOpenMeteoForecast(site,state){
-  const om=state.om.data;
-  const hourly=om.hourly||{};
+  const om=(state.om&&state.om.data)||{current:{},hourly:{}};
+  const nwsP=state.nwsHourly||[];const _times=[],_ws=[],_wg=[],_pr=[],_tp=[],_wd=[],_sf=[];nwsP.forEach(p=>{const ws=p.windSpeed||'';const m1=ws.match(/(\d+)\s*(?:to|-)\s*(\d+)\s*mph/i),m2=ws.match(/(\d+)\s*mph/i);const w=m1?(parseInt(m1[1])+parseInt(m1[2]))/2:m2?parseInt(m2[1]):0;_times.push(p.startTime);_ws.push(w);_wg.push(Math.round(w*1.2));_pr.push(/rain|shower|storm|snow|drizzle/i.test(p.shortForecast||'')?0.05:0);_tp.push(p.temperature||0);_wd.push(0);_sf.push(p.shortForecast||'');});const hourly={time:_times,windspeed_10m:_ws,windgusts_10m:_wg,precipitation:_pr,temperature_2m:_tp,winddirection_10m:_wd,shortForecast:_sf};
   const times=hourly.time||[];
   if(!times.length){
     return `<div style="font-size:12px;color:#9ca3af;">No hourly forecast available.</div>`;
@@ -1632,8 +1632,7 @@ function renderOpenMeteoForecast(site,state){
       temperature:temp,
       precipitation:precip,
       precipitationText:null,
-      shortForecast:"",
-      windDir
+      shortForecast:hourly.shortForecast&&hourly.shortForecast[i]||"",
     };
 
     if(diffDays<=0){
@@ -1841,7 +1840,7 @@ function updateSidebarRow(siteId){
   const site=SITES.find(s=>s.id===siteId);
   const state=STATE.siteData[siteId];
   if(!state||!state.om) return;
-  const om=state.om.data;
+  const om=(state.om&&state.om.data)||{current:{},hourly:{}};
   const liveCurrent = state.liveCurrent || (om.current || {});
   const wind=liveCurrent.windspeed_10m||0;
   const gust=liveCurrent.windgusts_10m||wind;
