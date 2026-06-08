@@ -1412,7 +1412,7 @@ function renderDetailSkeleton(){
     <div class="detail-grid-mid">
       <div class="card" id="om-card-${site.id}">
         <div class="card-header" data-target="om-body-${site.id}">
-          <div class="card-title">Open‑Meteo Forecast</div>
+          <div class="card-title">Windy Forecast</div>
           <div class="card-toggle-pill open" id="om-pill-${site.id}">Tap to collapse</div>
         </div>
         <div class="card-body open" id="om-body-${site.id}"></div>
@@ -1596,7 +1596,7 @@ function renderDetail(siteId){
   updateSidebarRow(siteId);
 }
 
-/* Open‑Meteo forecast with windDir */
+/* Windy Forecast with windDir */
 function renderOpenMeteoForecast(site,state){
   const om=state.om.data;
   const hourly=om.hourly||{};
